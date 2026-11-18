@@ -13,6 +13,17 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 - Markdown 기획서는 Pages에서 렌더링되지 않으므로 목차의 링크가 GitHub의 파일 보기로 연결됩니다.
 - 새 HTML을 추가하면 `index.html`의 카드 목록에도 항목을 추가해야 합니다.
 
+## 폴더 구조
+
+| 경로 | 내용 |
+| --- | --- |
+| `ai/` | AI 도구와 모델: 코딩 에이전트, 오프라인 음성 인식(STT)·합성(TTS) |
+| `computer_science/` | 소프트웨어 아키텍처, 네트워크·인프라, 관측성, 임베디드 영상 장비 |
+| `index.html` | GitHub Pages 목차 페이지 (루트에 유지) |
+| 루트의 `.md` | HTML이 아닌 기획서 |
+
+새 HTML은 주제에 맞는 폴더에 넣습니다. 폴더 안의 HTML끼리는 같은 폴더의 상대 경로로 서로 링크합니다.
+
 ## 저장소의 성격
 
 - 기술 참고 자료, 학습 가이드와 기획 문서를 모아 두는 저장소입니다. 문서에는 구조도, 비교표, 명령어·설정·의사 코드 예제가 포함됩니다.
@@ -24,30 +35,30 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 
 | 파일 | 주제 | 한 줄 요약 |
 | --- | --- | --- |
-| [Pi-코딩-에이전트-가이드.html](./Pi-코딩-에이전트-가이드.html) | Pi 코딩 에이전트 | 터미널에서 파일을 읽고 코드를 수정하고 명령을 실행하는 코딩 에이전트 Pi의 구조부터 첫 실행까지 정리한 사용 가이드 |
-| [offline-stt-guide.html](./offline-stt-guide.html) | 오프라인 STT 선택 | 저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트 |
-| [offline-tts-guide.html](./offline-tts-guide.html) | 오프라인 TTS 선택 | 작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트 |
-| [cctv-camera-guide.html](./cctv-camera-guide.html) | CCTV 카메라 선택 | ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트 |
-| [architecture-guide.html](./architecture-guide.html) | Monolith + 2-Tier + MVC | 화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드 |
-| [monolith-3-tier-spa-api.html](./monolith-3-tier-spa-api.html) | Monolith + 3-Tier · SPA + API | 브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드 |
-| [modular-monolith.html](./modular-monolith.html) | Modular Monolith | 업무 모듈의 공개 계약·데이터 소유권·의존성 경계를 유지하면서 하나의 애플리케이션으로 배포하는 구조 |
-| [microservices.html](./microservices.html) | Microservices | 독립 배포하는 업무 서비스의 계약, 데이터 소유권, 분산 트랜잭션과 장애 대응을 설명한 가이드 |
-| [micro-frontends.html](./micro-frontends.html) | Micro-frontends | 업무별 프런트엔드를 Shell과 조합하고 팀별 배포·라우팅·상태·스타일의 경계를 관리하는 방법 |
-| [event-driven-architecture.html](./event-driven-architecture.html) | 이벤트 기반 아키텍처(EDA) | 이벤트 발행·구독, Outbox, 중복·순서·실패 처리와 업무 완료 기준을 설명한 가이드 |
-| [hexagonal-architecture.html](./hexagonal-architecture.html) | Hexagonal Architecture | Port와 Adapter로 업무 핵심을 UI·DB·메시지 등 외부 기술과 연결하는 구조 |
-| [onion-architecture.html](./onion-architecture.html) | Onion Architecture | 도메인 모델을 중심에 두고 바깥 기술이 안쪽 정책에 의존하도록 설계하는 구조 |
-| [clean-architecture.html](./clean-architecture.html) | Clean Architecture | Dependency Rule과 Use Case 경계로 핵심 업무 규칙을 외부 기술에서 보호하는 구조 |
-| [cqrs.html](./cqrs.html) | CQRS | 명령과 조회의 모델·책임을 분리하고 읽기 모델의 갱신·지연·복구를 설계하는 패턴 |
-| [reverse-tunnel.html](./reverse-tunnel.html) | SSH 역방향 터널 | 내부 웹 서비스를 클라우드 VM의 Nginx와 SSH 역방향 터널로 공개하는 구성·보안·운영 노트 |
-| [cloud-internal-vpn.html](./cloud-internal-vpn.html) | 클라우드 ↔ 내부망 VPN | WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트 |
-| [opentelemetry-jaeger.html](./opentelemetry-jaeger.html) | OpenTelemetry + Jaeger | 계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드 |
+| [ai/Pi-코딩-에이전트-가이드.html](./ai/Pi-코딩-에이전트-가이드.html) | Pi 코딩 에이전트 | 터미널에서 파일을 읽고 코드를 수정하고 명령을 실행하는 코딩 에이전트 Pi의 구조부터 첫 실행까지 정리한 사용 가이드 |
+| [ai/offline-stt-guide.html](./ai/offline-stt-guide.html) | 오프라인 STT 선택 | 저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트 |
+| [ai/offline-tts-guide.html](./ai/offline-tts-guide.html) | 오프라인 TTS 선택 | 작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트 |
+| [computer_science/cctv-camera-guide.html](./computer_science/cctv-camera-guide.html) | CCTV 카메라 선택 | ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트 |
+| [computer_science/architecture-guide.html](./computer_science/architecture-guide.html) | Monolith + 2-Tier + MVC | 화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드 |
+| [computer_science/monolith-3-tier-spa-api.html](./computer_science/monolith-3-tier-spa-api.html) | Monolith + 3-Tier · SPA + API | 브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드 |
+| [computer_science/modular-monolith.html](./computer_science/modular-monolith.html) | Modular Monolith | 업무 모듈의 공개 계약·데이터 소유권·의존성 경계를 유지하면서 하나의 애플리케이션으로 배포하는 구조 |
+| [computer_science/microservices.html](./computer_science/microservices.html) | Microservices | 독립 배포하는 업무 서비스의 계약, 데이터 소유권, 분산 트랜잭션과 장애 대응을 설명한 가이드 |
+| [computer_science/micro-frontends.html](./computer_science/micro-frontends.html) | Micro-frontends | 업무별 프런트엔드를 Shell과 조합하고 팀별 배포·라우팅·상태·스타일의 경계를 관리하는 방법 |
+| [computer_science/event-driven-architecture.html](./computer_science/event-driven-architecture.html) | 이벤트 기반 아키텍처(EDA) | 이벤트 발행·구독, Outbox, 중복·순서·실패 처리와 업무 완료 기준을 설명한 가이드 |
+| [computer_science/hexagonal-architecture.html](./computer_science/hexagonal-architecture.html) | Hexagonal Architecture | Port와 Adapter로 업무 핵심을 UI·DB·메시지 등 외부 기술과 연결하는 구조 |
+| [computer_science/onion-architecture.html](./computer_science/onion-architecture.html) | Onion Architecture | 도메인 모델을 중심에 두고 바깥 기술이 안쪽 정책에 의존하도록 설계하는 구조 |
+| [computer_science/clean-architecture.html](./computer_science/clean-architecture.html) | Clean Architecture | Dependency Rule과 Use Case 경계로 핵심 업무 규칙을 외부 기술에서 보호하는 구조 |
+| [computer_science/cqrs.html](./computer_science/cqrs.html) | CQRS | 명령과 조회의 모델·책임을 분리하고 읽기 모델의 갱신·지연·복구를 설계하는 패턴 |
+| [computer_science/reverse-tunnel.html](./computer_science/reverse-tunnel.html) | SSH 역방향 터널 | 내부 웹 서비스를 클라우드 VM의 Nginx와 SSH 역방향 터널로 공개하는 구성·보안·운영 노트 |
+| [computer_science/cloud-internal-vpn.html](./computer_science/cloud-internal-vpn.html) | 클라우드 ↔ 내부망 VPN | WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트 |
+| [computer_science/opentelemetry-jaeger.html](./computer_science/opentelemetry-jaeger.html) | OpenTelemetry + Jaeger | 계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드 |
 | [linux-command-game-experience-plan.ko.md](./linux-command-game-experience-plan.ko.md) | 리눅스 명령어 학습 게임 기획 | 기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서 |
 
 ## 자료별 설명
 
 ### Pi 코딩 에이전트 가이드
 
-`Pi-코딩-에이전트-가이드.html`
+`ai/Pi-코딩-에이전트-가이드.html`
 
 Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐름을 다룹니다.
 
@@ -60,7 +71,7 @@ Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐�
 
 ### 오프라인 STT 선택 가이드
 
-`offline-stt-guide.html`
+`ai/offline-stt-guide.html`
 
 인터넷 없이 기기 안에서 동작하는 음성 인식을 고르기 위한 기술 선택 노트입니다. 한국어·영어 짧은 명령 인식을 전제로 다음 두 후보를 먼저 비교합니다.
 
@@ -71,7 +82,7 @@ Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐�
 
 ### 오프라인 TTS 선택 가이드
 
-`offline-tts-guide.html`
+`ai/offline-tts-guide.html`
 
 네트워크 없이 작은 보드에서 음성을 출력하기 위한 기술 선택 노트입니다.
 
@@ -83,7 +94,7 @@ Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐�
 
 ### CCTV 카메라 선택 노트
 
-`cctv-camera-guide.html`
+`computer_science/cctv-camera-guide.html`
 
 ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으로 볼 수 있는 저가 CCTV를 만들 때의 선택 노트입니다. 다음 두 후보를 비교합니다.
 
@@ -94,7 +105,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Monolith + 2-Tier + MVC
 
-`architecture-guide.html`
+`computer_science/architecture-guide.html`
 
 직원 PC의 주문·재고 관리 프로그램이 별도 DB 서버와 직접 통신하는 예시로, 배포 단위·실행 계층·내부 책임을 구분합니다.
 
@@ -104,7 +115,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Monolith + 3-Tier · SPA + API
 
-`monolith-3-tier-spa-api.html`
+`computer_science/monolith-3-tier-spa-api.html`
 
 브라우저 SPA → API 백엔드 → DB로 표현·업무·데이터의 실행 책임을 나눈 주문·재고 서비스 예시입니다. 여기서 Monolith는 여러 업무 기능을 함께 배포하는 API 백엔드를 가리킵니다.
 
@@ -114,7 +125,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Modular Monolith
 
-`modular-monolith.html`
+`computer_science/modular-monolith.html`
 
 업무별 모듈의 책임과 데이터 소유권을 분명히 하면서 애플리케이션은 하나로 배포하는 구조입니다.
 
@@ -124,7 +135,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Microservices
 
-`microservices.html`
+`computer_science/microservices.html`
 
 주문·재고·결제 서비스를 예로, 업무 경계에 맞춘 독립 실행·배포와 데이터 소유권을 설명합니다.
 
@@ -134,7 +145,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Micro-frontends
 
-`micro-frontends.html`
+`computer_science/micro-frontends.html`
 
 업무별 프런트엔드의 변경·배포 책임을 나누고 하나의 제품으로 조합하는 구조입니다. 주요 예시는 Shell이 경로에 따라 업무 앱을 로드하는 브라우저 런타임 조합입니다.
 
@@ -144,7 +155,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### 이벤트 기반 아키텍처(EDA)
 
-`event-driven-architecture.html`
+`computer_science/event-driven-architecture.html`
 
 주문 확정이라는 사실에 배송·알림·분석이 반응하는 예시로 이벤트 기반 협력을 설명합니다. 모놀리스 내부에도 적용할 수 있으며, 주요 예시는 브로커를 사용하는 비동기 분산 구성입니다.
 
@@ -154,7 +165,7 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 ### Hexagonal Architecture
 
-`hexagonal-architecture.html`
+`computer_science/hexagonal-architecture.html`
 
 Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술의 경계를 설명합니다.
 
@@ -164,7 +175,7 @@ Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술�
 
 ### Onion Architecture
 
-`onion-architecture.html`
+`computer_science/onion-architecture.html`
 
 도메인 모델을 중심에 두고 UI·인프라 등 바깥 코드가 안쪽 정책에 의존하도록 구성하는 구조입니다.
 
@@ -174,7 +185,7 @@ Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술�
 
 ### Clean Architecture
 
-`clean-architecture.html`
+`computer_science/clean-architecture.html`
 
 소스 코드 의존성이 안쪽 정책을 향해야 한다는 Dependency Rule을 중심으로 업무 규칙과 유스케이스를 보호하는 구조입니다.
 
@@ -184,7 +195,7 @@ Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술�
 
 ### CQRS
 
-`cqrs.html`
+`computer_science/cqrs.html`
 
 상태를 변경하는 명령 모델과 정보를 읽는 조회 모델을 목적에 맞게 분리하는 패턴입니다. 같은 프로세스·같은 DB에서도 적용할 수 있습니다.
 
@@ -194,7 +205,7 @@ Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술�
 
 ### SSH 역방향 터널
 
-`reverse-tunnel.html`
+`computer_science/reverse-tunnel.html`
 
 내부 서버가 클라우드 VM으로 SSH 연결을 먼저 맺고, VM의 Nginx가 HTTPS 요청을 터널을 통해 내부 웹 서비스에 전달하는 구성입니다.
 
@@ -204,7 +215,7 @@ Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술�
 
 ### 클라우드 ↔ 내부망 VPN
 
-`cloud-internal-vpn.html`
+`computer_science/cloud-internal-vpn.html`
 
 WireGuard로 클라우드 VM과 내부망 게이트웨이 사이에 암호화된 IP 경로를 만들고, VM의 Nginx가 내부 웹 서버에 접근하는 예시입니다.
 
@@ -214,7 +225,7 @@ WireGuard로 클라우드 VM과 내부망 게이트웨이 사이에 암호화된
 
 ### OpenTelemetry + Jaeger
 
-`opentelemetry-jaeger.html`
+`computer_science/opentelemetry-jaeger.html`
 
 OpenTelemetry의 계측·수집·전송과 Jaeger v2의 Trace 저장·조회 역할을 연결해 설명하는 관측 가이드입니다.
 
@@ -244,10 +255,10 @@ cd kyujanggak
 예를 들어 Windows PowerShell에서는 다음과 같이 HTML을 기본 브라우저로 엽니다.
 
 ```powershell
-Start-Process .\offline-stt-guide.html
+Start-Process .\ai\offline-stt-guide.html
 ```
 
-macOS에서는 `open offline-stt-guide.html`, Linux 데스크톱에서는 `xdg-open offline-stt-guide.html`을 사용할 수 있습니다.
+macOS에서는 `open ai/offline-stt-guide.html`, Linux 데스크톱에서는 `xdg-open ai/offline-stt-guide.html`을 사용할 수 있습니다.
 
 Google Fonts와 외부 참고 링크에는 인터넷 연결이 필요합니다. 네트워크가 없어도 HTML 본문과 내장 도식은 읽을 수 있으며, 웹 글꼴을 받지 못하면 시스템 글꼴로 표시됩니다. 아키텍처 문서의 넓은 도식은 작은 화면에서 좌우로 스크롤해 볼 수 있습니다.
 

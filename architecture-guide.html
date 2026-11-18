@@ -1,0 +1,721 @@
+<!doctype html><html lang="ko" data-register="paper"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Monolith이면서 2-Tier이고 MVC를 적용한 주문 관리 프로그램을 구조도와 처리 흐름으로 설명하는 한국어 학습 가이드"><title>Monolith + 2-Tier + MVC — 한 프로그램 안의 MVC, 분리된 DB</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M18 40V24l14-8 14 8v16l-14 8-14-8Z' fill='none' stroke='%23fbbf24' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%2338bdf8'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..600&amp;family=Atkinson+Hyperlegible+Next:wght@400;600&amp;family=Atkinson+Hyperlegible+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style data-ve-kit>
+/* visual-explainer kit. The renderer inlines this file at <link rel="stylesheet" data-ve-kit>.
+   Tokens sit in :where(), so a page's own :root rules (topic motif, a named palette) always win.
+   A page picks its register with <html data-register="instrument|blueprint|paper|editorial">; Instrument is the default. */
+
+/* scale, shared by every register */
+:where(:root) {
+  color-scheme: light dark;
+  --t-label: .75rem; --t-small: .875rem; --t-body: 1rem; --t-lead: 1.25rem; --t-h2: 1.625rem; --t-h1: clamp(2.25rem, 5.5vw, 4rem);
+  --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem;
+  --r-1: 4px; --r-2: 10px;
+  --ease: cubic-bezier(.16,1,.3,1); --fast: 150ms; --med: 300ms; --slow: 500ms;
+}
+
+/* Instrument (default): Geist, near-black and amber; dark first */
+:where(:root) {
+  --bg: #0b0d0c; --surface: #121614; --border: #1f2522; --border-bright: #5e6662;
+  --text: #e6ebe8; --text-dim: #919d97; --accent: #f2a93b; --accent-dim: rgba(242,169,59,.14);
+  --ok: #6fcf97; --warn: #e8c547; --risk: #ef6f5c; --info: #6cb6e0;
+  --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  --font-body: 'Geist', 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-display: var(--font-body); --display-weight: 600;
+  --stage: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.5px) 0 0 / 20px 20px;
+}
+@media (prefers-color-scheme: light) {
+  :where(:root) {
+    --bg: #f4f5f3; --surface: #ffffff; --border: #dfe3e0; --border-bright: #888e8b;
+    --text: #121614; --text-dim: #545e59; --accent: #955700; --accent-dim: rgba(149,87,0,.12);
+    --ok: #1c7443; --warn: #7a5e00; --risk: #b0341e; --info: #1a6890;
+    --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  }
+}
+
+/* Blueprint: IBM Plex, blue-black, a 24px line grid on the stage, r-1 everywhere; dark first */
+:where(:root[data-register="blueprint"]) {
+  --bg: #0d1520; --surface: #132031; --border: #22324a; --border-bright: #596b87;
+  --text: #e3ecf5; --text-dim: #92a6bb; --accent: #ffb547; --accent-dim: rgba(255,181,71,.14);
+  --ok: #6fd3a0; --warn: #e8d36a; --risk: #ff7b6b; --info: #7cc0f0;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --r-2: 4px;
+  --stage: linear-gradient(color-mix(in srgb, var(--border) 55%, transparent) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, color-mix(in srgb, var(--border) 55%, transparent) 1px, transparent 1px) 0 0 / 24px 24px;
+}
+@media (prefers-color-scheme: light) {
+  :where(:root[data-register="blueprint"]) {
+    --bg: #f2f6fa; --surface: #ffffff; --border: #d6e0ea; --border-bright: #818f9e;
+    --text: #0f1a26; --text-dim: #4d6074; --accent: #a34700; --accent-dim: rgba(163,71,0,.12);
+    --ok: #1c7443; --warn: #776300; --risk: #b0341e; --info: #145f99;
+  }
+}
+
+/* Paper: Newsreader headings over Atkinson Hyperlegible, ink blue; light first */
+:where(:root[data-register="paper"]) {
+  --bg: #f7f7f4; --surface: #ffffff; --border: #e3e3dc; --border-bright: #8e8e8a;
+  --text: #17191c; --text-dim: #575c63; --accent: #2c4cd0; --accent-dim: rgba(44,76,208,.12);
+  --ok: #1d7443; --warn: #836000; --risk: #b3301d; --info: #1b6a94;
+  --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  --font-body: 'Atkinson Hyperlegible Next', 'Segoe UI', sans-serif;
+  --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  --font-display: 'Newsreader', Georgia, serif; --display-weight: 500;
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-register="paper"]) {
+    --bg: #111316; --surface: #181b1f; --border: #262a30; --border-bright: #62676c;
+    --text: #e8e8e3; --text-dim: #9ba1a9; --accent: #93a6ff; --accent-dim: rgba(147,166,255,.14);
+    --ok: #6cc492; --warn: #e3b94d; --risk: #f0806b; --info: #6fb8dc;
+    --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  }
+}
+
+/* Editorial: Instrument Serif display over Instrument Sans; light first */
+:where(:root[data-register="editorial"]) {
+  --bg: #fbfbf9; --surface: #f1f0ec; --border: #e2e0da; --border-bright: #8c8a85;
+  --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --accent-dim: rgba(204,52,24,.12);
+  --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94;
+  --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  --font-body: 'Instrument Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Instrument Serif', Georgia, serif; --display-weight: 400;
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-register="editorial"]) {
+    --bg: #0f0f0f; --surface: #1a1a19; --border: #2b2a28; --border-bright: #696763;
+    --text: #f2f0eb; --text-dim: #a4a19b; --accent: #ff6e50; --accent-dim: rgba(255,110,80,.14);
+    --ok: #6cc492; --warn: #e3b94d; --risk: #f57fa2; --info: #7cb8e8;
+    --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  }
+}
+
+/* base */
+html { font-size: 17px; }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 400 var(--t-body)/1.6 var(--font-body); text-wrap: pretty; font-kerning: normal; font-synthesis: none; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--accent-dim); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+main { max-width: 64rem; margin: 0 auto; padding: var(--s-8) var(--s-5); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); }
+section, figure, header { min-width: 0; }
+header { display: grid; gap: var(--s-4); }
+header + figure { margin-top: calc(var(--s-6) - var(--s-8)); }
+/* text-box trims to cap height and baseline, so gaps are measured from the letters, not the line box */
+h1, h2, .kpi .val { text-box: trim-both cap alphabetic; }
+h1 { font-size: var(--t-h1); line-height: 1.05; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: -.035em; text-wrap: balance; max-width: 16ch; margin-bottom: var(--s-2); }
+h1 .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+h2 { font-size: var(--t-h2); line-height: 1.2; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: -.015em; text-wrap: balance; }
+/* section opener: hairline, mono label in columns 1–3, h2 in 4–12, on one baseline */
+.sec-head { display: grid; gap: var(--s-3) var(--s-5); align-items: baseline; border-top: 1px solid var(--border); padding-top: var(--s-5); margin-bottom: var(--s-6); }
+@media (min-width: 52rem) { .sec-head { grid-template-columns: 3fr 9fr; } }
+/* the other opener, a bare label above the h2, gets the same gaps, so the h2 never sits on the figure below */
+section > .ve-label:has(+ h2) { margin-bottom: var(--s-3); }
+section > h2 { margin-bottom: var(--s-6); }
+h3 { font-size: var(--t-body); line-height: 1.3; font-weight: 600; }
+.eyebrow { display: flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.eyebrow::before { content: ''; width: 1.25rem; height: 2px; background: currentColor; }
+.ve-label { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.caps { text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--text); }
+.lead { font-size: var(--t-lead); line-height: 1.5; color: var(--text-dim); max-width: 44ch; }
+.lead b { color: var(--text); font-weight: 600; }
+.meta { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.unit { font-size: .5em; font-weight: 500; color: var(--text-dim); letter-spacing: 0; }
+code { font: .875em var(--font-mono); font-variant-ligatures: none; }
+/* prose by element, at zero specificity so a page's own rules win: the measure on a section's own text (a card or a table sets
+   its own), code blocks, bare lists, and the gaps between a section's blocks (text to text closer than a block, the line after
+   an h3 closest). The opener keeps its own gaps, so h2 gets none. */
+:where(main, section:not(.sources)) > :where(p, ul, ol) { max-width: 65ch; }
+:where(pre) { font: 500 var(--t-small)/1.55 var(--font-mono); font-variant-ligatures: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); overflow-x: auto; }
+:where(pre) code { font: inherit; }
+:where(main :is(ul, ol):not([class])) { padding-left: 1.25rem; display: grid; gap: var(--s-2); }
+:where(section:not(.sources) > * + :not(h2)) { margin-top: var(--s-5); }
+:where(section:not(.sources) > :is(p, ul, ol) + :is(p, ul, ol)) { margin-top: var(--s-3); }
+:where(section:not(.sources) > h3 + *) { margin-top: var(--s-2); }
+
+/* section nav for 4+ sections: a sticky bar before <main>, aligned to its column; the links alone scroll sideways on a phone, and
+   kit.js marks the section in view */
+.ve-toc { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: var(--s-4); padding: 0 max(var(--s-5), (100% - 64rem) / 2 + var(--s-5)); background: var(--bg); border-bottom: 1px solid var(--border); }
+.ve-toc > div { display: flex; flex: 1; gap: var(--s-1); min-width: 0; padding: var(--s-2) 0; overflow-x: auto; scrollbar-width: none; mask-image: linear-gradient(90deg, #000 85%, transparent); }
+.ve-toc > div::-webkit-scrollbar { display: none; }
+.ve-toc a { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); text-decoration: none; padding: var(--s-2); border-radius: var(--r-1); white-space: nowrap; }
+.ve-toc a:hover { color: var(--text); }
+.ve-toc a[aria-current] { color: var(--text); background: var(--accent-dim); }
+.ve-toc .pos { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+:where(body:has(> .ve-toc) main > *) { scroll-margin-top: 4rem; }
+
+/* figure: the stage is a faint dot grid, so nodes read as objects placed on it */
+.frame { background: var(--stage), var(--bg); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-5); overflow-x: auto; }
+figcaption { font-size: var(--t-body); color: var(--text-dim); margin-top: var(--s-3); max-width: 65ch; }
+.fig-n { font: 600 var(--t-label) var(--font-mono); color: var(--text); margin-right: var(--s-2); }
+
+/* diagram kit (references/diagrams.md) */
+/* min-width keeps 14-unit labels >= 12px as rendered; narrow screens scroll the frame instead. kit/render.mjs sets --ve-min for a viewBox wider than 816. */
+.ve-svg { width: 100%; min-width: var(--ve-min, 700px); height: auto; display: block; font: 500 17px var(--font-body); }
+.ve-n .sh { fill: url(#ve-node); stroke: var(--border-bright); stroke-width: 1.5; filter: drop-shadow(0 6px 14px var(--lift)); transition: stroke var(--fast) var(--ease), opacity var(--med) var(--ease); }
+.ve-n .lid { fill: var(--node-top); }
+.ve-n.is-key .sh { fill: color-mix(in srgb, var(--accent) 11%, var(--surface)); stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--accent) var(--halo), transparent)); }
+.ve-n text { fill: var(--text); text-anchor: middle; dominant-baseline: central; font-weight: 600; }
+.ve-n .sub { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+.ve-n .gl { fill: none; stroke: var(--text-dim); stroke-width: 1.5; stroke-linejoin: round; }
+.ve-n .ve-kind { fill: var(--text-dim); font: 600 14px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.ve-n.is-key .gl { stroke: var(--accent); }
+.ve-e { fill: none; stroke: var(--text-dim); stroke-width: 1.75; marker-end: url(#ve-ah); }
+.ve-e.is-hot { stroke: var(--accent); stroke-width: 2.75; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 55%, transparent)); }
+.ve-e.is-async { stroke-dasharray: 6 5; }
+.ve-el { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+.ve-el.l { text-anchor: end; } .ve-el.r { text-anchor: start; }
+/* a dashed boundary around a group, with a mono tag in its corner */
+.ve-bnd { fill: none; stroke: var(--border-bright); stroke-width: 1; stroke-dasharray: 6 5; }
+.ve-bnd-t { fill: var(--text-dim); font: 600 14px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+/* a plain mono label on a drawing (a note, a count); .key and .risk color it */
+.ve-tag { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+.ve-tag.key { fill: var(--accent); } .ve-tag.risk { fill: var(--risk); }
+/* a slot in a queue or worker pool; .is-on fills it (.on is the stepper's) */
+.ve-slot { fill: var(--surface); stroke: var(--border-bright); stroke-width: 1.25; }
+.ve-slot.is-on { fill: var(--accent-dim); stroke: var(--accent); stroke-width: 1.75; }
+/* chart axes and ticks, and their labels */
+.ve-axis { fill: none; stroke: var(--border-bright); stroke-width: 1; }
+.ve-axis-t { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; font-variant-numeric: tabular-nums; }
+/* <ve-flow> on a page: its labels stay at 12 px or more, and a small drawing grows no more than 1.3× (kit/flow.mjs sets both) */
+.ve-svg.ve-flow { min-width: var(--min); max-width: var(--max); }
+/* flags on <ve-flow> parts: new, gone (an arrow also gets ✕) */
+.ve-n.is-new .sh { stroke: var(--ok); stroke-dasharray: 6 4; }
+.ve-n.is-gone .sh { stroke: var(--risk); stroke-dasharray: 3 4; opacity: .7; }
+.ve-n.is-gone text { text-decoration: line-through; }
+.ve-e.is-new { stroke: var(--ok); }
+.ve-e.is-gone { stroke: var(--risk); stroke-dasharray: 3 4; }
+/* a walked machine (references/machines.md): a state that can still reach a broken rule, the shortest way there, and the state
+   that breaks it; later rules win, so the breaking state stays red on the path */
+.ve-n.is-may-break .sh { stroke: var(--warn); } .ve-n.is-may-break:not(.is-key) .sh { fill: color-mix(in srgb, var(--warn) 10%, var(--surface)); }
+/* in a stepper the path lights only on its last step, the full picture; elsewhere it is always lit. :where() keeps the
+   condition from adding specificity, so .is-breaks below still wins and the breaking state stays red */
+.ve-n.is-bug-path:not(:where(.ve-steps:not(.is-full) *)) .sh, .ve-e.is-bug-path:not(:where(.ve-steps:not(.is-full) *)) { stroke: var(--accent); }
+.ve-n.is-breaks .sh, .ve-steps .ve-n.is-breaks.now > .sh { stroke: var(--risk); stroke-width: 2.5; stroke-dasharray: 6 3; }
+.ve-x { fill: var(--risk); font: 600 16px var(--font-mono); text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; }
+/* <ve-stack>: one bar split in proportion; labels under their segments */
+.ve-stack rect { fill: color-mix(in srgb, var(--text) 9%, var(--surface)); stroke: var(--border-bright); stroke-width: 1.5; }
+.ve-stack rect.hot { fill: var(--accent-dim); stroke: var(--accent); }
+.ve-stack text { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+
+/* numbered callouts and edge numbers (references/diagrams.md): .now fills the current one; .q keeps an edge number quiet until its step */
+.ve-co circle { fill: var(--surface); stroke: var(--accent); stroke-width: 1.75; }
+.ve-co text { fill: var(--accent); font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+.ve-co.now circle { fill: var(--accent); } .ve-co.now text { fill: var(--surface); }
+.ve-co.q circle { stroke: var(--border-bright); } .ve-co.q text { fill: var(--text-dim); }
+.ve-co.q.now circle { fill: var(--accent); stroke: var(--accent); } .ve-co.q.now text { fill: var(--surface); }
+
+/* dimension lines (references/diagrams.md) */
+.ve-dim path { fill: none; stroke-width: 1; } .ve-dim .ext { stroke: var(--border-bright); } .ve-dim .ln { stroke: var(--text-dim); }
+.ve-dim text { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; }
+.ve-dim.is-key .ln { stroke: var(--accent); } .ve-dim.is-key text { fill: var(--accent); }
+
+/* flow dots: they travel under the nodes, so a dot enters a box and leaves from the far side */
+[data-flow] { fill: none; stroke: none; }
+.ve-dots circle { fill: var(--text); }
+.ve-dots .hit { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+.ve-steps:not(.is-full) .ve-dots { display: none; }
+
+/* linked highlighting: same data-ref lights up together */
+/* Dim shapes, never text below 4.5:1: unlit labels drop to --text-dim instead of fading. */
+.ve-ref { text-decoration: underline dotted var(--text-dim) 1px; text-underline-offset: .22em; border-radius: var(--r-1); transition: background var(--fast) var(--ease); }
+.ve-ref.is-lit { background: var(--accent-dim); text-decoration-color: var(--accent); }
+svg [data-ref] { transition: opacity var(--med) var(--ease); }
+svg.has-lit path[data-ref]:not(.is-lit), svg.has-lit g[data-ref]:not(.is-lit) .sh { opacity: .25; }
+svg.has-lit g[data-ref]:not(.is-lit) text, svg.has-lit text[data-ref]:not(.is-lit) { fill: var(--text-dim); }
+.ve-n.is-lit .sh { stroke: var(--accent); }
+.ve-e.is-lit { stroke: var(--accent); }
+.ve-el.is-lit { fill: var(--text); }
+.case.is-lit { border-color: var(--accent); }
+
+/* stepper / scene player */
+/* Future steps: shapes stay as a faint outline; their labels are hidden, not faded to an unreadable gray. */
+.ve-steps [data-s] { transition: opacity var(--slow) var(--ease), stroke-dashoffset var(--slow) var(--ease); }
+.ve-steps [data-s]:not(.on) { opacity: .15; }
+.ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 0; }
+.ve-steps path[pathLength][data-s] { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ve-steps path[pathLength][data-s].on { stroke-dashoffset: 0; }
+.ve-steps .ve-n.now > .sh { stroke: var(--accent); }
+/* replay: the edges that fired light until the full picture, and each token runs its path once, after --d; edges and nodes still show the step without tokens */
+.ve-steps:not(.is-full) .ve-e.now { stroke: var(--accent); stroke-width: 2.75; }
+.ve-tok { fill: var(--accent); visibility: hidden; }
+.ve-steps:not(.is-still) .ve-tok.now { visibility: visible; animation: ve-run var(--dur, 900ms) ease-in-out var(--d, 0ms) both; }
+@keyframes ve-run { from { offset-distance: 0%; opacity: 0; } 10%, 75% { opacity: 1; } to { offset-distance: 100%; opacity: 0; } }
+/* a part that comes and goes (a queued job, a busy slot): shown only on the steps its data-s lists, arriving after --d */
+.ve-steps .ve-at { transition: opacity var(--med) var(--ease); }
+.ve-steps .ve-at:not(.now) { opacity: 0; }
+.ve-steps .ve-at.now { transition-delay: var(--d, 0ms); }
+/* a changing value: one text per step at one spot; the latest step's shows, swapped without a crossfade */
+/* zero-specificity parent, so a value inside a node, a dimension, or a stack keeps that part's own fill and font */
+:where(.ve-vals) text { fill: var(--text-dim); } :where(.ve-vals) .sub { font: 500 14px var(--font-mono); }
+.ve-steps .ve-vals text { transition: none; }
+.ve-vals text.on:has(~ text.on) { opacity: 0; }
+.ve-player { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-4); }
+.ve-cap { grid-column: 1 / -1; list-style: none; padding: 0; min-height: 3.2em; }
+.ve-cap li::before { content: attr(data-n); font: 600 var(--t-label) var(--font-mono); color: var(--accent); margin-right: var(--s-3); font-variant-numeric: tabular-nums; }
+.ve-player input { accent-color: var(--accent); min-width: 0; }
+button { font: 500 var(--t-small) var(--font-mono); color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); cursor: pointer; transition: border-color var(--fast) var(--ease); }
+button:hover, button:focus-visible { border-color: var(--accent); }
+
+/* KPI strip: one frame, cells split by hairlines, each number with its picture. Flex, so a wrapped last row stretches instead of leaving an empty gray cell. */
+.kpis { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+.kpi { flex: 1 1 14rem; background: var(--surface); padding: var(--s-5); display: grid; grid-template-rows: auto auto 1fr; gap: var(--s-3); min-width: 0; }
+.kpi .val { font: 600 2.75rem/1 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.ve-waffle { align-self: end; width: 11rem; height: auto; font: 500 13px var(--font-mono); overflow: visible; }
+.ve-waffle text { fill: var(--text-dim); dominant-baseline: central; }
+.ann { fill: none; stroke: var(--text-dim); stroke-width: 1; }
+.ve-bars { align-self: end; width: 100%; max-width: 16rem; height: auto; font: 500 13px var(--font-mono); overflow: visible; }
+.ve-bars text { fill: var(--text-dim); dominant-baseline: central; }
+.ve-bars rect { fill: var(--border-bright); transform-box: fill-box; transform-origin: left; transition: transform 900ms var(--ease) 150ms; }
+.ve-bars .hot { fill: var(--accent); }
+.ve-bars .hot + text { fill: var(--text); }
+
+/* small multiples: one mini diagram per case; the changed part takes the case's status color */
+.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: var(--s-4); }
+.case { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-3); align-content: start; transition: border-color var(--fast) var(--ease); }
+.case[data-st=ok] { --st: var(--ok); } .case[data-st=warn] { --st: var(--warn); } .case[data-st=risk] { --st: var(--risk); }
+.ve-mini { width: 100%; height: auto; font: 600 15px var(--font-body); }
+.ve-mini .ve-n .sh { filter: none; }
+/* a .cases column is never under 14.5rem, so a mini is ≥ 211 px and 14 units render ≥ 12.3 px */
+.ve-mini .ve-n .sub { font-size: 14px; }
+.ve-mini .is-st.ve-e { stroke: var(--st); stroke-width: 2.75; }
+.ve-mini .is-st .sh { stroke: var(--st); stroke-width: 2; }
+.ve-mini .is-st .sub { fill: var(--st); }
+.ve-mini .is-off { stroke-dasharray: 5 4; }
+.ve-mini .ve-e.is-off { opacity: .35; }
+
+/* chips */
+.chip { display: inline-flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); padding: 2px var(--s-2); border: 1px solid currentColor; border-radius: var(--r-1); white-space: nowrap; justify-self: start; }
+.chip::before { content: ''; width: .5rem; height: .5rem; background: currentColor; }
+.chip.ok { color: var(--ok); } .chip.ok::before { border-radius: 50%; }
+.chip.warn { color: var(--warn); } .chip.warn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.chip.risk { color: var(--risk); }
+
+/* a table: a scroll frame, the header in the label style, row rules only; .num cells are right-aligned numbers */
+.ve-table { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-2); }
+.ve-table table { border-collapse: collapse; width: 100%; font-size: var(--t-body); font-variant-numeric: tabular-nums; }
+.ve-table th, .ve-table td { padding: var(--s-3) var(--s-4); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+.ve-table thead th { background: var(--surface); font: 600 var(--t-label)/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+.ve-table tbody th { font-weight: 600; }
+.ve-table tbody tr:last-child > * { border-bottom: 0; }
+.ve-table .num { text-align: right; font-family: var(--font-mono); }
+.ve-table td small { display: block; color: var(--text-dim); font-size: var(--t-small); }
+
+details { border-top: 1px solid var(--border); padding-top: var(--s-4); color: var(--text-dim); font-size: var(--t-body); }
+summary { cursor: pointer; font: 500 var(--t-label) var(--font-mono); margin-bottom: var(--s-2); }
+/* sources stay visible: readers check them without hunting for a toggle */
+.sources { border-top: 1px solid var(--border); padding-top: var(--s-4); display: grid; gap: var(--s-2); }
+
+/* entrance: blocks rise in once; bars grow as their block arrives (JS adds .js-motion only when motion is allowed) */
+.js-motion main > * { transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); }
+.js-motion main > :not(.in) { opacity: 0; transform: translateY(1rem); }
+.js-motion main > :not(.in) .ve-bars rect { transform: scaleX(0); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .ve-tok { display: none; } }
+
+@media print {
+  /* Print uses the register's light foregrounds on white, every step fully drawn, and no effects. */
+  :where(:root) { --bg: #fff; --surface: #fff; --border: #dfe3e0; --border-bright: #888e8b; --text: #121614; --text-dim: #545e59; --accent: #955700; --ok: #1c7443; --warn: #7a5e00; --risk: #b0341e; --info: #1a6890; --node-top: #fff; }
+  :where(:root[data-register="blueprint"]) { --border: #d6e0ea; --border-bright: #818f9e; --text: #0f1a26; --text-dim: #4d6074; --accent: #a34700; --warn: #776300; --info: #145f99; }
+  :where(:root[data-register="paper"]) { --border: #e3e3dc; --border-bright: #8e8e8a; --text: #17191c; --text-dim: #575c63; --accent: #2c4cd0; --ok: #1d7443; --warn: #836000; --risk: #b3301d; --info: #1b6a94; }
+  :where(:root[data-register="editorial"]) { --border: #e2e0da; --border-bright: #8c8a85; --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94; }
+  .ve-player button, .ve-player input, .ve-dots { display: none; }
+  .ve-toc { display: none; }
+  .frame { overflow: visible; background: #fff; } .ve-svg, .ve-svg.ve-flow { min-width: 0; }
+  .frame, .case, .kpi { break-inside: avoid; } h2 { break-after: avoid; }
+  svg * { filter: none !important; }
+  .js-motion main > * { opacity: 1 !important; transform: none !important; }
+  .js-motion .ve-bars rect { transform: none !important; }
+  .ve-steps [data-s]:not(.on), .ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 1; }
+  .ve-steps .ve-at:not(.now) { opacity: 0; }
+  .ve-steps path[pathLength][data-s] { stroke-dashoffset: 0; }
+  .ve-tok, .ve-vals text:not(:last-child) { display: none; }
+}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;display=swap"><style>
+:root {color-scheme:dark;--bg:#2d3142;--surface:#393e53;--surface-2:#393e53;--text:#f5f5f5;--text-dim:#bfc0c0;--accent:#f08a59;--accent-dim:rgba(240,138,89,.10);--border:rgba(245,245,245,.14);--border-bright:#949eb2;--font-body:'Geist','Noto Sans KR','Malgun Gothic',sans-serif;--font-display:'Instrument Serif','Noto Serif KR','Batang',serif;--font-mono:'Geist Mono',Consolas,monospace;--r-1:4px;--r-2:8px;}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.9;word-break:keep-all;overflow-wrap:break-word}main{width:min(1184px,100%);margin:auto;padding:var(--s-6) var(--s-5) var(--s-5)}header{padding:var(--s-4) 0 var(--s-3)}header h1{font-family:var(--font-display);font-weight:400;font-size:clamp(34px,5vw,62px);line-height:1.25;letter-spacing:-.03em;margin:var(--s-2) 0 var(--s-4)}header h1 span{font-size:.73em;color:var(--text-dim)}.eyebrow{font-family:var(--font-body);font-size:var(--t-label);font-weight:600;color:var(--accent);letter-spacing:.04em;margin:0 0 var(--s-2)}.lead{font-size:var(--t-h3);max-width:52ch!important;color:var(--text-dim);margin:0}.lead strong{color:var(--text);font-weight:600}section{margin-top:var(--s-8);padding-top:var(--s-5);border-top:1px solid var(--border);scroll-margin-top:var(--s-5)}.section-head{margin-bottom:var(--s-5)}h2{font-family:var(--font-display);font-size:clamp(26px,3.1vw,38px);font-weight:400;line-height:1.5;letter-spacing:-.025em;margin:0}h3{font-size:var(--t-h3);line-height:1.6;margin:0 0 var(--s-3);font-weight:600}p,li{font-size:17px}p{max-width:76ch!important}figure{margin:var(--s-4) 0 var(--s-5);max-width:100%;min-width:0}figure .diagram-container{width:100%;overflow-x:auto;scrollbar-color:var(--text-dim) var(--bg);scrollbar-width:thin}.arch-svg{width:100%;display:block;max-width:none;overflow:visible}.arch-svg text{dominant-baseline:auto}figcaption{font-size:15px;line-height:1.8;color:var(--text-dim);max-width:90ch;padding:var(--s-3) 0;border-top:1px solid var(--border);margin-top:var(--s-2)}.fig-n{font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-right:var(--s-3);white-space:nowrap}.two-col{display:grid;grid-template-columns:1.1fr 1fr;gap:var(--s-6);margin:var(--s-5) 0}.two-col ul{padding-left:1.2em}.two-col li+li{margin-top:var(--s-3)}strong{font-weight:600}a{color:#a9c6f5;text-underline-offset:4px}a:hover{color:var(--text)}.ve-table{overflow-x:auto;margin:var(--s-5) 0;border:1px solid var(--border);border-radius:var(--r-2);background:transparent}.ve-table table{width:100%;border-collapse:collapse;font-size:16px;line-height:1.8;min-width:680px;table-layout:fixed}.ve-table th,.ve-table td{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--border);text-align:left;vertical-align:top;overflow-wrap:anywhere}.ve-table thead th{font-size:14px;color:var(--text-dim);background:#353a4d;font-weight:500}.ve-table th:first-child{width:20%}.ve-table tbody th{font-weight:600}.ve-table tr:last-child>*{border-bottom:0}.reading-note{font-size:15px;color:var(--text-dim)}.insight{background:var(--surface);padding:var(--s-4) var(--s-5);border:1px solid var(--border-bright);border-radius:var(--r-2);margin:var(--s-5) 0}.insight p{margin:var(--s-2) 0 0;font-size:20px;line-height:1.8}.insight strong{color:var(--accent)}details{border-top:1px solid var(--border);padding:var(--s-3) 0}summary{cursor:pointer;font-size:16px;font-weight:600;padding:var(--s-2) 0;line-height:1.8}summary::marker{color:var(--accent)}details p{font-size:16px;color:var(--text-dim);margin:var(--s-3) 0}code{font-family:var(--font-mono);font-size:.9em}pre{background:#252939;border:1px solid var(--border);padding:var(--s-4);overflow-x:auto;border-radius:var(--r-2);line-height:1.8;max-width:100%}.ve-toc{position:sticky;top:0;z-index:20;background:#2d3142;border-bottom:1px solid var(--border);backdrop-filter:none;padding:var(--s-3) max(var(--s-4),calc((100vw - 1104px)/2));gap:var(--s-4);box-shadow:none}.ve-toc>div{display:flex;gap:var(--s-4);overflow-x:auto;scrollbar-width:none}.ve-toc a{font-size:13px;white-space:nowrap;text-decoration:none;color:var(--text-dim)}.ve-toc a.active,.ve-toc a[aria-current]{color:var(--accent)}.ve-toc .pos{font-family:var(--font-mono);font-size:12px;white-space:nowrap}.ve-player{border:1px solid var(--border);background:var(--surface);border-radius:var(--r-2);padding:var(--s-4);margin-top:var(--s-3)}.ve-cap{margin:0!important;padding-left:1.4em;min-height:4em;max-width:none!important}.ve-cap li{font-size:16px;line-height:1.8}.player-buttons{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3);margin-top:var(--s-3)}.player-buttons button{background:var(--bg);color:var(--text);border:1px solid var(--border-bright);border-radius:var(--r-1);font:inherit;font-size:14px;padding:var(--s-1) var(--s-3);cursor:pointer;box-shadow:none}.player-buttons input{flex:1;min-width:100px;accent-color:var(--accent)}.player-buttons label{font-size:13px;color:var(--text-dim)}.check-yourself{margin-top:var(--s-6)}.sources ul{padding-left:1.2em;max-width:none!important}.sources li{font-size:14px;margin-bottom:var(--s-3)}.sources span{color:var(--text-dim)}.meta{font-size:13px;color:var(--text-dim);margin-top:var(--s-5)}footer{display:flex;justify-content:space-between;gap:var(--s-4);border-top:1px solid var(--border);padding-top:var(--s-4);margin-top:var(--s-7);font-size:12px;color:var(--text-dim)}button:focus-visible,a:focus-visible,summary:focus-visible,.diagram-container:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.ve-n.is-key,.is-key,.is-hot{filter:none!important;box-shadow:none!important}
+@media(max-width:720px){main{padding:var(--s-5) var(--s-4)}header h1{font-size:34px}.lead{font-size:18px}.two-col{grid-template-columns:1fr;gap:var(--s-4)}section{margin-top:var(--s-7)}p,li{font-size:16px}.ve-toc{padding:var(--s-3) var(--s-4)}.ve-toc .pos{display:none}footer{display:block}footer span{display:block}.insight{padding:var(--s-4)}.insight p{font-size:18px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.player-buttons{display:none!important}.ve-cap li{display:list-item!important;opacity:1!important}[data-s]{opacity:1!important;visibility:visible!important;filter:none!important;animation:none!important;transition:none!important}}
+@media print{html{color-scheme:light}body{background:white!important;color:#202532!important}.ve-toc,.player-buttons{display:none!important}main{width:100%;padding:12px}section{margin-top:32px;break-before:auto}.diagram-container{overflow-x:visible!important}.arch-svg{min-width:0!important;width:100%!important;print-color-adjust:exact;background:#2d3142}figure{break-inside:avoid}h2,h3{break-after:avoid}p,li,.lead,.reading-note,.meta{color:#303548!important}.two-col{grid-template-columns:1fr 1fr}.ve-table{overflow:visible}.ve-table table{min-width:0}.ve-table td,.ve-table th{color:#202532!important;background:transparent!important}.insight,.ve-player{background:#eee!important}.ve-cap li{display:list-item!important;color:#202532!important}.arch-svg [data-s]{opacity:1!important;visibility:visible!important;filter:none!important}footer{color:#303548!important}}
+header{max-width:none!important}header h1{max-width:none!important;width:100%}.diagram-help{display:none}@media(max-width:720px){.diagram-help{display:block;font-size:12px;color:var(--text-dim);margin:0 0 var(--s-2)}} </style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ve-ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>
+    <linearGradient id="ve-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--node-top)"/><stop offset="1" style="stop-color:var(--surface)"/></linearGradient>
+    <pattern id="ve-w-on" width="10" height="10" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="8" height="8" rx="1.5" style="fill:var(--accent)"/></pattern>
+    <pattern id="ve-w-off" width="10" height="10" patternUnits="userSpaceOnUse"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" style="fill:none;stroke:var(--text-dim)"/></pattern>
+  </defs>
+</svg><nav class="ve-toc" aria-label="학습 목차"><div><a href="#lenses">전체 구성</a><a href="#monolith">Monolith</a><a href="#scale">배포와 사용</a><a href="#tiers">2-Tier</a><a href="#layers">Layer와 Tier</a><a href="#mvc">MVC</a><a href="#request">요청 흐름</a><a href="#choose">특성과 운영</a></div><span class="pos"></span></nav><main><header><p class="eyebrow">SOFTWARE ARCHITECTURE · MONOLITH + 2-TIER + MVC</p><h1>Monolith + 2-Tier + MVC<br><span>한 프로그램 안의 MVC, 분리된 DB</span></h1><p class="lead">화면과 업무 기능을 <strong>하나의 애플리케이션</strong>으로 묶고, <strong>별도 DB 서버</strong>에 연결하는 구조를 살펴봅니다.</p></header><figure class=""><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1072px" viewBox="0 0 1072 436" role="img" aria-labelledby="overview-title overview-desc"><title id="overview-title">Monolith + 2-Tier + MVC의 전체 구성</title><desc id="overview-desc">MVC를 적용한 하나의 클라이언트 애플리케이션이 별도 DB 서버와 직접 통신하는 모놀리식 2계층 구성이다.</desc><defs><marker id="overview-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="overview-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="overview-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><rect x="40" y="48" width="696" height="292" rx="8" fill="#2d3142" stroke="#f08a59" stroke-width="1.5" stroke-dasharray="6,5"/><text x="60" y="76" fill="#f08a59" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 1 · MVC를 담은 하나의 클라이언트 프로그램</text><g><path d="M256 184 L384 184" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#overview-arrow)"/><rect x="278.0" y="151" width="84" height="24" rx="2" fill="#2d3142"/><text x="320" y="168" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">업무 호출</text></g><g><path d="M632 184 L864 184" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#overview-arrow)"/><rect x="708.0" y="151" width="80" height="24" rx="2" fill="#2d3142"/><text x="748" y="168" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text></g><g><path d="M168 224 L168 256" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#overview-arrow)"/><rect x="174.0" y="227" width="84" height="24" rx="2" fill="#2d3142"/><text x="216" y="244" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">화면 갱신</text></g><g><rect x="80" y="144" width="176" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="168.0" y="178.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Controller</text><text x="168.0" y="204.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">입력·흐름 제어</text></g><g><rect x="384" y="144" width="248" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="508.0" y="178.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Model</text><text x="508.0" y="204.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">상태·업무 규칙·저장소 협력</text></g><g><rect x="80" y="256" width="176" height="64" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="168.0" y="282.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">View</text><text x="168.0" y="308.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">사용자 화면</text></g><g><path d="M864,160 V216 C864,237 1032,237 1032,216 V160 Z" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><ellipse cx="948.0" cy="160" rx="84.0" ry="16" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><text x="948.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">DB 서버</text></g><text x="80" y="116" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">사용자 입력 → Controller</text><text x="864" y="108" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 2 · 데이터</text><text x="384" y="280" fill="#f5f5f5" font-size="16" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">회원·상품·주문·재고를 함께 배포</text><text x="384" y="312" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">화면과 업무 로직을 같은 프로그램에서 실행</text><line x1="40" y1="376" x2="1032" y2="376" stroke="#5e657a" stroke-width="1"/><text x="40" y="404" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">주황 점선: 하나의 애플리케이션 배포 단위</text><text x="568" y="404" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">실선: 호출 · 반환 경로는 생략</text></svg></div><figcaption><span class="fig-n">Fig. 1</span>Tier 1의 화면과 업무 기능은 하나의 애플리케이션으로 배포하고, Tier 2의 DB 서버와 직접 통신합니다. MVC는 Tier 1 내부의 책임 분리입니다.</figcaption></figure><section id="lenses"><div class="section-head"><p class="eyebrow">하나의 아키텍처를 읽는 방법</p><h2>세 용어가 합쳐져 이 구성의 특징을 설명합니다.</h2></div><div class="ve-table"><table><thead><tr><th scope="col">용어</th><th scope="col">정의</th><th scope="col">이 아키텍처에서의 의미</th></tr></thead><tbody><tr><th scope="row">Monolith</th><td>여러 업무 기능을 하나의 애플리케이션 배포 단위로 묶는 구조</td><td>회원·상품·주문·재고·화면을 하나의 프로그램으로 빌드하고 배포</td></tr><tr><th scope="row">2-Tier</th><td>시스템을 서로 통신하는 두 실행 계층으로 나누는 구조</td><td>Tier 1: 클라이언트 애플리케이션 / Tier 2: DB 서버</td></tr><tr><th scope="row">MVC</th><td>Model·View·Controller로 애플리케이션 내부의 책임을 나누는 패턴</td><td>Tier 1 안에서 업무 상태·화면·입력 처리를 분리</td></tr></tbody></table></div><p><strong>예시는 사내 주문·재고 관리 프로그램입니다.</strong> 직원 PC에 설치된 프로그램이 화면과 업무 처리를 맡고, 여러 직원이 같은 DB 서버의 데이터를 사용합니다. 이 문서는 이 구성 하나를 따라가며 각 용어가 실제로 어떻게 적용되는지 설명합니다.</p><p class="reading-note"><strong>Tier를 세는 범위:</strong> 여기서는 클라이언트 프로그램과 DB 서버를 두 Tier로 셉니다. 서버 대수나 코드 폴더 수가 기준은 아닙니다. 웹 인프라에서 브라우저를 제외하고 ‘앱 서버 + DB 서버’를 2-Tier라고 부르는 용례와는 범위를 구별합니다.</p></section><section id="monolith"><div class="section-head"><p class="eyebrow">MONOLITH</p><h2>화면과 업무 기능을 한 프로그램으로 배포합니다.</h2></div><figure class=""><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1072px" viewBox="0 0 1072 388" role="img" aria-labelledby="monolith-title monolith-desc"><title id="monolith-title">모놀리스의 핵심은 하나의 배포 단위</title><desc id="monolith-desc">분리된 업무 모듈을 하나의 애플리케이션 산출물로 빌드하고 함께 배포한다.</desc><defs><marker id="monolith-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="monolith-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="monolith-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><text x="40" y="44" fill="#f5f5f5" font-size="20" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">업무 모듈은 나누고, 배포는 함께합니다.</text><rect x="40" y="80" width="624" height="208" rx="8" fill="#2d3142" stroke="#f08a59" stroke-width="1.5" stroke-dasharray="6,5"/><text x="60" y="108" fill="#f08a59" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">하나의 애플리케이션 경계</text><g><path d="M664 184 L816 184" fill="none" stroke="#f08a59" stroke-width="1.75" marker-end="url(#monolith-accent)"/><rect x="692.0" y="151" width="96" height="24" rx="2" fill="#2d3142"/><text x="740" y="168" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">빌드·패키징</text></g><g><rect x="64" y="148" width="128" height="88" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="128.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">회원</text></g><g><rect x="212" y="148" width="128" height="88" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="276.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">상품</text></g><g><rect x="360" y="148" width="128" height="88" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="424.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">주문</text></g><g><rect x="508" y="148" width="128" height="88" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="572.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">재고</text></g><g><rect x="816" y="136" width="216" height="104" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="832" y="160" fill="#b5bfd4" font-size="12" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">DEPLOY</text><text x="924.0" y="190.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">order-manager.jar</text><text x="924.0" y="216.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">하나의 배포 산출물</text></g><line x1="40" y1="328" x2="1032" y2="328" stroke="#5e657a" stroke-width="1"/><text x="40" y="356" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">내부 호출: 일반적인 함수·메서드 호출</text><text x="568" y="356" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">주문 기능 수정 → 전체 애플리케이션 새 버전 배포</text></svg></div><figcaption><span class="fig-n">Fig. 2</span>Monolith의 핵심은 코드가 한 덩어리인지보다, 업무 기능을 독립적으로 배포할 수 있는지에 있습니다.</figcaption></figure><p>회원·상품·주문·재고 기능과 각 기능의 화면을 하나의 애플리케이션으로 묶습니다. 주문 처리 중 재고 기능이 필요하면 같은 프로그램 안에서 메서드를 호출합니다. 주문 기능을 수정하면 일반적으로 프로그램 전체를 새 버전으로 빌드하고 배포합니다.</p><div class="two-col"><div><h3>개발과 처리가 단순합니다.</h3><ul><li><strong>하나의 프로그램을 실행합니다.</strong> 화면과 주요 업무 기능을 함께 사용할 수 있습니다.</li><li><strong>업무 기능을 내부 호출로 연결합니다.</strong> 주문과 재고 사이에 별도의 네트워크 API가 없어도 됩니다.</li><li><strong>트랜잭션을 묶기 쉽습니다.</strong> 같은 DB 트랜잭션 안의 주문 저장과 재고 차감을 함께 확정하거나 취소할 수 있습니다.</li></ul></div><div><h3>변경과 장애의 범위가 묶입니다.</h3><ul><li><strong>배포가 함께 움직입니다.</strong> 화면이나 업무 규칙의 작은 수정도 전체 프로그램 업데이트로 이어집니다.</li><li><strong>회귀 검증이 필요합니다.</strong> 공통 코드 변경이 다른 업무 기능에 영향을 줄 수 있습니다.</li><li><strong>프로세스 자원을 공유합니다.</strong> 한 기능의 메모리 고갈이 같은 프로그램의 다른 기능에 영향을 줄 수 있습니다.</li></ul></div></div><details><summary>Monolith 안에서도 모듈을 명확하게 나눌 수 있나요?</summary><p>가능합니다. 모듈별 책임과 공개 인터페이스를 분명히 나누면서 하나로 배포하는 구성을 <strong>Modular Monolith</strong>라고 부릅니다. 주문 모듈이 재고 테이블을 직접 수정하기보다 재고 모듈의 인터페이스를 사용하도록 설계하는 식입니다.</p><p>Monolith는 배포 단위를 설명하므로 코드 품질을 자동으로 결정하지는 않습니다. 모듈 경계, 테스트와 의존성 관리는 별도로 설계합니다. 외부 결제 API의 결과까지 일반적인 로컬 DB 트랜잭션으로 되돌릴 수 있는 것도 아닙니다.</p></details></section><section id="scale"><div class="section-head"><p class="eyebrow">배포와 사용</p><h2>여러 직원이 같은 프로그램과 DB를 사용합니다.</h2></div><figure class=""><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1072px" viewBox="0 0 1072 524" role="img" aria-labelledby="replicas-title replicas-desc"><title id="replicas-title">모놀리식 프로그램의 여러 설치본과 공유 DB</title><desc id="replicas-desc">같은 애플리케이션을 여러 직원 PC에 설치하고 각 설치본이 공유 DB 서버에 직접 연결한다.</desc><defs><marker id="replicas-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="replicas-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="replicas-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><rect x="328" y="48" width="384" height="376" rx="8" fill="#2d3142" stroke="#b5bfd4" stroke-width="1.5" stroke-dasharray="6,5"/><text x="348" y="76" fill="#b5bfd4" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 1 · 사용자별 설치 프로그램</text><g><path d="M256 256 L360 256" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="286.0" y="223" width="44" height="24" rx="2" fill="#2d3142"/><text x="308" y="240" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">설치</text></g><path d="M256 224 H296 Q304 224 304 216 V144 Q304 136 312 136 H360" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="282.0" y="103" width="44" height="24" rx="2" fill="#2d3142"/><text x="304" y="120" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">설치</text><path d="M256 288 H296 Q304 288 304 296 V368 Q304 376 312 376 H360" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="282.0" y="387" width="44" height="24" rx="2" fill="#2d3142"/><text x="304" y="404" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">설치</text><g><path d="M680 256 L864 256" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="732.0" y="223" width="80" height="24" rx="2" fill="#2d3142"/><text x="772" y="240" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text></g><path d="M680 136 H808 Q816 136 816 144 V220 Q816 228 824 228 H864" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="708.0" y="103" width="80" height="24" rx="2" fill="#2d3142"/><text x="748" y="120" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text><path d="M680 376 H808 Q816 376 816 368 V292 Q816 284 824 284 H864" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#replicas-arrow)"/><rect x="708.0" y="387" width="80" height="24" rx="2" fill="#2d3142"/><text x="748" y="404" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text><g><rect x="40" y="208" width="216" height="96" rx="6" fill="#433a44" stroke="#f08a59" stroke-width="1.5"/><text x="148.0" y="250.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">하나의 배포 산출물</text><text x="148.0" y="276.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">화면 + 전체 업무 기능</text></g><g><rect x="360" y="96" width="320" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="520.0" y="130.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">직원 A의 프로그램</text><text x="520.0" y="156.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">회원·상품·주문·재고</text></g><g><rect x="360" y="216" width="320" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="520.0" y="250.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">직원 B의 프로그램</text><text x="520.0" y="276.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">회원·상품·주문·재고</text></g><g><rect x="360" y="336" width="320" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="520.0" y="370.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">직원 C의 프로그램</text><text x="520.0" y="396.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">회원·상품·주문·재고</text></g><g><path d="M864,224 V288 C864,309 1032,309 1032,288 V224 Z" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><ellipse cx="948.0" cy="224" rx="84.0" ry="16" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><text x="948.0" y="266.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">공유 DB 서버</text></g><text x="864" y="184" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 2 · 데이터</text><line x1="40" y1="464" x2="1032" y2="464" stroke="#5e657a" stroke-width="1"/><text x="40" y="492" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">각 설치본은 같은 애플리케이션의 실행 인스턴스</text><text x="568" y="492" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">클라이언트가 여러 개여도 두 Tier 구성</text></svg></div><figcaption><span class="fig-n">Fig. 3</span>하나의 배포 산출물을 여러 PC에 설치할 수 있습니다. 설치본마다 MVC와 전체 업무 기능이 들어 있고, 데이터는 DB 서버에서 공유합니다.</figcaption></figure><p>Monolith의 ‘하나’는 애플리케이션의 배포 단위를 가리킵니다. 실제 설치본이나 사용자가 하나라는 뜻은 아닙니다. 프로그램을 업데이트할 때 각 PC에 새 버전을 배포하는 방법과 구버전 프로그램의 DB 호환성을 함께 관리합니다.</p><p>여러 직원이 같은 재고를 동시에 변경할 수 있으므로, 각 프로그램의 화면 확인만으로 데이터 정합성을 보장할 수는 없습니다. DB 트랜잭션, 제약 조건과 적절한 동시성 제어를 함께 적용합니다.</p></section><section id="tiers"><div class="section-head"><p class="eyebrow">2-TIER</p><h2>화면·업무 처리와 데이터 저장을 두 Tier로 나눕니다.</h2></div><figure class=""><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1072px" viewBox="0 0 1072 412" role="img" aria-labelledby="tiers-title tiers-desc"><title id="tiers-title">이 아키텍처의 두 실행 계층</title><desc id="tiers-desc">클라이언트 Tier에서 화면과 업무 로직을 실행하고 DB Tier에서 데이터를 저장하며 SQL로 직접 통신한다.</desc><defs><marker id="tiers-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="tiers-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="tiers-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><rect x="40" y="64" width="600" height="248" rx="8" fill="#2d3142" stroke="#f08a59" stroke-width="1.5" stroke-dasharray="6,5"/><text x="60" y="92" fill="#f08a59" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 1 · 화면과 업무 처리를 실행</text><rect x="816" y="64" width="216" height="248" rx="8" fill="#2d3142" stroke="#b5bfd4" stroke-width="1.5" stroke-dasharray="6,5"/><text x="836" y="92" fill="#b5bfd4" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 2 · 데이터 관리</text><g><path d="M256 204 L392 204" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#tiers-arrow)"/><rect x="282.0" y="171" width="84" height="24" rx="2" fill="#2d3142"/><text x="324" y="188" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">업무 호출</text></g><g><path d="M608 204 L840 204" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#tiers-arrow)"/><rect x="684.0" y="171" width="80" height="24" rx="2" fill="#2d3142"/><text x="724" y="188" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text></g><g><rect x="64" y="156" width="192" height="96" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="160.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">View + Controller</text><text x="160.0" y="224.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">화면·사용자 입력</text></g><g><rect x="392" y="156" width="216" height="96" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="500.0" y="198.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Model</text><text x="500.0" y="224.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">업무 규칙·저장소 협력</text></g><g><path d="M840,172 V236 C840,257 1008,257 1008,236 V172 Z" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><ellipse cx="924.0" cy="172" rx="84.0" ry="16" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><text x="924.0" y="214.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">DB 서버</text></g><text x="64" y="280" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">같은 프로그램 · 내부 메서드 호출</text><text x="840" y="280" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">저장·트랜잭션</text><line x1="40" y1="352" x2="1032" y2="352" stroke="#5e657a" stroke-width="1"/><text x="40" y="380" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">Tier 사이: DB 드라이버를 통한 네트워크 통신</text><text x="568" y="380" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">요청과 결과가 두 실행 계층 사이를 오감</text></svg></div><figcaption><span class="fig-n">Fig. 4</span>클라이언트 내부에서는 MVC 역할 사이에 메서드를 호출하고, DB 접근이 필요할 때 DB 서버와 네트워크로 통신합니다.</figcaption></figure><p>직원이 주문을 선택하면 클라이언트 프로그램이 주문 조회 작업을 실행합니다. Model 쪽 저장소 코드가 DB 드라이버를 통해 SQL을 보내고, DB 서버가 결과를 돌려줍니다. 중간에 별도의 업무 처리 서버를 두지 않는 구성입니다.</p><div class="ve-table"><table><thead><tr><th scope="col">실행 계층</th><th scope="col">주요 책임</th><th scope="col">이 예시에서 실행되는 것</th></tr></thead><tbody><tr><th scope="row">Tier 1 · 클라이언트</th><td>화면 표시, 입력 처리, 업무 규칙, DB 접근 요청</td><td>View·Controller·도메인·Service·Repository·DB 드라이버</td></tr><tr><th scope="row">Tier 2 · DB 서버</th><td>데이터 저장·조회, 제약 조건, 트랜잭션과 동시성 관리</td><td>DBMS, 테이블·인덱스·제약 조건·트랜잭션 처리</td></tr></tbody></table></div><details><summary>업무 로직은 반드시 모두 클라이언트에 있나요?</summary><p>이 예시에서는 주요 업무 로직을 클라이언트 프로그램에 둡니다. 2-Tier라는 용어 자체가 모든 로직의 위치를 강제하지는 않습니다. DB 저장 프로시저나 제약 조건에 일부 규칙을 둘 수도 있습니다.</p><p>‘두 Tier’는 두 대의 컴퓨터나 두 개의 클래스라는 뜻도 아닙니다. 클라이언트와 DB의 실행 역할을 구분한 것입니다. 사용자가 늘면 DB 연결 수, 쿼리 부하와 클라이언트별 권한 관리도 함께 고려합니다.</p></details></section><section id="layers"><div class="section-head"><p class="eyebrow">LAYER · 코드 안의 책임 구분</p><h2>내부 계층을 나눠도 전체 구성은 2-Tier입니다.</h2></div><figure class=""><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1072px" viewBox="0 0 1072 428" role="img" aria-labelledby="layers-title layers-desc"><title id="layers-title">클라이언트 안의 논리적 계층과 별도 DB Tier</title><desc id="layers-desc">Controller, Service, Repository는 같은 클라이언트에서 실행되고 별도 DB 서버와 통신한다.</desc><defs><marker id="layers-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="layers-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="layers-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><text x="40" y="44" fill="#f5f5f5" font-size="20" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">논리적 Layer는 애플리케이션 안의 책임 구분입니다.</text><rect x="40" y="80" width="728" height="248" rx="8" fill="#2d3142" stroke="#f08a59" stroke-width="1.5" stroke-dasharray="6,5"/><text x="60" y="108" fill="#f08a59" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">클라이언트 프로그램 · TIER 1 내부</text><g><path d="M248 208 L296 208" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#layers-arrow)"/><rect x="250.0" y="175" width="44" height="24" rx="2" fill="#2d3142"/><text x="272" y="192" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">호출</text></g><g><path d="M504 208 L552 208" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#layers-arrow)"/><rect x="506.0" y="175" width="44" height="24" rx="2" fill="#2d3142"/><text x="528" y="192" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">호출</text></g><g><path d="M744 208 L864 208" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#layers-arrow)"/><rect x="764.0" y="175" width="80" height="24" rx="2" fill="#2d3142"/><text x="804" y="192" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">SQL 실행</text></g><g><rect x="64" y="160" width="184" height="96" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="156.0" y="202.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Controller</text><text x="156.0" y="228.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">입력·흐름 제어</text></g><g><rect x="296" y="160" width="208" height="96" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="400.0" y="202.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Service</text><text x="400.0" y="228.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">업무 유스케이스</text></g><g><rect x="552" y="160" width="192" height="96" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="648.0" y="202.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Repository</text><text x="648.0" y="228.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">저장·조회 연결</text></g><g><path d="M864,176 V240 C864,261 1032,261 1032,240 V176 Z" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><ellipse cx="948.0" cy="176" rx="84.0" ry="16" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><text x="948.0" y="218.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">데이터베이스</text></g><line x1="40" y1="368" x2="1032" y2="368" stroke="#5e657a" stroke-width="1"/><text x="40" y="396" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">Layer: 코드와 책임의 논리적 경계</text><text x="568" y="396" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">Tier: 분리된 실행·배포 계층</text></svg></div><figcaption><span class="fig-n">Fig. 5</span>클라이언트의 업무 처리 경로를 확대한 그림입니다. View는 생략했습니다. Service·Repository는 MVC와 함께 사용할 수 있는 구현상의 책임 분리입니다.</figcaption></figure><p><strong>Layer는 코드의 논리적 책임, Tier는 분리된 실행 계층</strong>입니다. Controller·Service·Repository가 각기 다른 클래스나 패키지여도 같은 클라이언트 프로그램 안에서 실행된다면, 이 코드 구분만으로 Tier가 추가되지는 않습니다.</p><p>MVC와 이 계층 구분도 정확히 일대일 대응하지 않습니다. Controller는 입력 흐름을 연결하고, Service·도메인·Repository는 Model 역할의 수행에 협력합니다. View는 결과를 보여 주는 별도의 역할입니다.</p></section><section id="mvc"><div class="section-head"><p class="eyebrow">MODEL · VIEW · CONTROLLER</p><h2>MVC는 업무 상태·화면·입력 처리를 분리합니다.</h2></div><div class="ve-table"><table><thead><tr><th scope="col">역할</th><th scope="col">맡는 책임</th><th scope="col">주문 조회 화면의 예</th></tr></thead><tbody><tr><th scope="row">Model</th><td>업무 상태와 규칙을 표현하고 변경한다. 필요한 데이터 접근과 협력한다.</td><td>주문, 주문 상태 규칙, 주문 조회 서비스와 저장소 협력</td></tr><tr><th scope="row">View</th><td>전달받은 데이터를 사용자가 읽을 형태로 표현한다.</td><td>주문 목록·상세 창, 금액·상태를 표시하는 UI</td></tr><tr><th scope="row">Controller</th><td>입력을 해석하고 적절한 Model 작업과 화면 흐름을 연결한다.</td><td>주문 선택 이벤트 → 조회 요청 → 상세 화면 갱신</td></tr></tbody></table></div><div class="insight"><span class="eyebrow">MODEL의 범위</span><p><strong>Model은 데이터베이스 자체가 아닙니다.</strong><br>DB는 Tier 2의 저장 기반이고, Model은 Tier 1에서 상태와 업무 규칙을 다루는 역할입니다.</p></div><div class="two-col"><div><h3>Controller는 흐름을 연결합니다.</h3><p>사용자 입력 해석, 입력 형식 확인, 유스케이스 호출과 화면 갱신에 집중합니다. 할인 계산이나 주문 상태 전이 규칙은 Model 쪽에서 다룹니다.</p></div><div><h3>View는 표현에 집중합니다.</h3><p>금액 형식이나 조건부 표시 같은 표현 로직은 둘 수 있습니다. 주문 가능 여부나 최종 결제 금액처럼 업무 결과를 결정하는 규칙은 Model 쪽에서 다룹니다.</p></div></div><details><summary>Model은 하나의 Entity나 특정 폴더를 뜻하나요?</summary><p>MVC의 Model은 개념적인 역할입니다. 실제 구현에서는 도메인 객체, 서비스, 저장소가 협력해 이 역할을 구성할 수 있습니다. DB 테이블에 매핑된 Entity 하나가 Model 전체를 대표하는 것은 아닙니다.</p><p>Service와 Repository는 MVC의 필수 구성 요소는 아닙니다. MVC와 계층형 설계를 함께 적용할 때 자주 사용하는 책임 분리입니다. 또 프레임워크에 따라 Controller가 View를 갱신하거나 Model의 변경 알림을 View가 구독할 수 있으므로, 특정 호출 순서를 모든 MVC 구현의 규칙으로 보지는 않습니다.</p></details></section><section id="request"><div class="section-head"><p class="eyebrow">주문 선택부터 화면 갱신까지</p><h2>MVC 내부 호출과 Tier 사이의 통신이 이어집니다.</h2></div><figure class="ve-steps"><p class="diagram-help">도식은 좌우로 스크롤해 읽을 수 있습니다.</p><div class="diagram-container" tabindex="0" aria-label="도식 가로 스크롤"><svg class="arch-svg" style="min-width:1056px" viewBox="0 0 1056 800" role="img" aria-labelledby="mvc-flow-title mvc-flow-desc"><title id="mvc-flow-title">모놀리식 2계층 MVC의 주문 조회 흐름</title><desc id="mvc-flow-desc">같은 클라이언트의 View, Controller, Model이 주문 조회를 처리하고 Model 쪽 저장소가 별도 DB 서버와 SQL로 통신한다.</desc><defs><marker id="mvc-flow-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bfc0c0"/></marker><marker id="mvc-flow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f08a59"/></marker><marker id="mvc-flow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#9cbcf0"/></marker></defs><rect x="40" y="40" width="728" height="664" rx="8" fill="#2d3142" stroke="#f08a59" stroke-width="1.5" stroke-dasharray="6,5"/><text x="60" y="68" fill="#f08a59" font-size="14" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 1 · 하나의 클라이언트 프로그램</text><text x="856" y="68" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">TIER 2 · 데이터</text><line x1="136" y1="180" x2="136" y2="688" stroke="#788298" stroke-width="1" stroke-dasharray="4,5"/><line x1="360" y1="180" x2="360" y2="688" stroke="#788298" stroke-width="1" stroke-dasharray="4,5"/><line x1="608" y1="180" x2="608" y2="688" stroke="#788298" stroke-width="1" stroke-dasharray="4,5"/><line x1="936" y1="180" x2="936" y2="688" stroke="#788298" stroke-width="1" stroke-dasharray="4,5"/><g data-s="1"><path d="M136 228 L360 228" fill="none" stroke="#f08a59" stroke-width="1.75" marker-end="url(#mvc-flow-accent)"/><rect x="194.0" y="195" width="108" height="24" rx="2" fill="#2d3142"/><text x="248.0" y="212" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">1. 주문 선택</text></g><g data-s="2"><path d="M360 308 L608 308" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#mvc-flow-arrow)"/><rect x="430.0" y="275" width="108" height="24" rx="2" fill="#2d3142"/><text x="484.0" y="292" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">2. 조회 호출</text></g><g data-s="3"><path d="M608 388 L936 388" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#mvc-flow-arrow)"/><rect x="718.0" y="355" width="108" height="24" rx="2" fill="#2d3142"/><text x="772.0" y="372" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">3. SQL 조회</text></g><g data-s="4"><path d="M936 468 L608 468" fill="none" stroke="#bfc0c0" stroke-width="1.75" stroke-dasharray="6,5" marker-end="url(#mvc-flow-arrow)"/><rect x="710.0" y="435" width="124" height="24" rx="2" fill="#2d3142"/><text x="772.0" y="452" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">4. 데이터 반환</text></g><g data-s="5"><path d="M608 548 L360 548" fill="none" stroke="#bfc0c0" stroke-width="1.75" stroke-dasharray="6,5" marker-end="url(#mvc-flow-arrow)"/><rect x="430.0" y="515" width="108" height="24" rx="2" fill="#2d3142"/><text x="484.0" y="532" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">5. 결과 반환</text></g><g data-s="6"><path d="M360 628 L136 628" fill="none" stroke="#bfc0c0" stroke-width="1.75" marker-end="url(#mvc-flow-arrow)"/><rect x="194.0" y="595" width="108" height="24" rx="2" fill="#2d3142"/><text x="248.0" y="612" fill="#b5bfd4" font-size="14" font-weight="500" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">6. 화면 갱신</text></g><g><rect x="64" y="100" width="144" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="136.0" y="134.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">View</text><text x="136.0" y="160.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">주문 화면</text></g><g><rect x="264" y="100" width="192" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="360.0" y="146.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Controller</text></g><g><rect x="512" y="100" width="192" height="80" rx="6" fill="#34394b" stroke="#bfc0c0" stroke-width="1.5"/><text x="608.0" y="134.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">Model</text><text x="608.0" y="160.0" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">서비스·저장소 협력</text></g><g><path d="M856,116 V164 C856,185 1016,185 1016,164 V116 Z" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><ellipse cx="936.0" cy="116" rx="80.0" ry="16" fill="#383d50" stroke="#bfc0c0" stroke-width="1.5"/><text x="936.0" y="150.0" fill="#f5f5f5" font-size="18" font-weight="600" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="middle">DB 서버</text></g><line x1="40" y1="740" x2="1016" y2="740" stroke="#5e657a" stroke-width="1"/><text x="40" y="768" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">위 → 아래: 처리 순서 · 시간 비율을 뜻하지 않음</text><text x="568" y="768" fill="#b5bfd4" font-size="14" font-weight="400" font-family="'Geist','Noto Sans KR','Malgun Gothic',sans-serif" text-anchor="start">실선: 호출 / 점선: 반환</text></svg></div><div class="ve-player"><ol class="ve-cap"><li data-n="1/6">직원이 View에서 주문을 선택하면 선택 이벤트가 Controller에 전달됩니다.</li><li data-n="2/6">Controller가 주문 ID를 해석하고 Model 쪽 조회 작업을 호출합니다. 여기까지 같은 프로그램 안의 호출입니다.</li><li data-n="3/6">Model 쪽 저장소 코드가 DB 드라이버를 통해 SQL을 보냅니다. 이 단계에서 Tier 1에서 Tier 2로 넘어갑니다.</li><li data-n="4/6">DB 서버가 조회한 주문 데이터를 클라이언트의 Model 쪽 코드에 반환합니다.</li><li data-n="5/6">Model 쪽 작업이 업무 처리를 마치고 화면에 필요한 조회 결과를 Controller에 반환합니다.</li><li data-n="6/6">Controller가 결과를 View에 전달해 주문 상세 화면을 갱신합니다. MVC의 모든 역할은 같은 클라이언트 안에서 실행됩니다.</li></ol><div class="player-buttons"><button type="button" data-go="-1" aria-label="이전 단계">이전</button><button type="button" data-play>재생</button><label for="mvc-step">처리 단계</label><input id="mvc-step" type="range" min="1" max="6" value="6" aria-label="MVC 처리 단계"><button type="button" data-go="1" aria-label="다음 단계">다음</button></div></div><figcaption><span class="fig-n">Fig. 6</span>Controller가 화면을 갱신하는 방식으로 구체화한 학습용 MVC 예시입니다. 오류 분기와 세부 저장소 클래스는 생략했습니다.</figcaption></figure><p>이 흐름에서 <strong>Monolith</strong>는 MVC와 업무 기능이 한 프로그램으로 배포된다는 점에, <strong>2-Tier</strong>는 DB 호출이 실행 경계를 넘는다는 점에, <strong>MVC</strong>는 사용자 이벤트가 화면·흐름 제어·업무 처리로 나뉜다는 점에 드러납니다.</p><details><summary>클라이언트의 코드는 어떤 모양인가요?</summary><pre><code>// Controller: 입력 이벤트와 화면 흐름을 연결
+void onOrderSelected(long orderId) {
+    OrderDetail detail = orderQueryService.findVisibleOrder(orderId);
+    orderView.showOrder(detail);
+}
+
+// Model 쪽 Service: 조회 유스케이스를 수행
+OrderDetail findVisibleOrder(long orderId) {
+    return orderRepository.findDetail(orderId);
+}
+
+// Repository: DB 드라이버를 통해 SQL 조회
+// View: 전달받은 주문 번호·금액·상태를 UI에 표시</code></pre><p>특정 프레임워크에 종속되지 않은 의사 코드입니다. 실제 화면 응답성을 위해 DB 작업을 UI 스레드 밖에서 처리하고, 결과를 UI에 반영하는 방식은 별도로 구현합니다. 인증·권한·오류 처리도 생략했습니다.</p></details></section><section id="choose"><div class="section-head"><p class="eyebrow">이 조합의 특성과 운영</p><h2>한 프로그램의 단순함과 DB 공유의 부담을 함께 봅니다.</h2></div><div class="ve-table"><table><thead><tr><th scope="col">관점</th><th scope="col">이 구성에서 얻는 점</th><th scope="col">함께 관리할 점</th></tr></thead><tbody><tr><th scope="row">개발·배포</th><td>화면과 업무 기능을 한 프로젝트에서 구현하고 하나로 패키징</td><td>새 프로그램을 각 사용자 PC에 배포하고 버전을 관리</td></tr><tr><th scope="row">변경</th><td>업무 모듈 사이를 같은 프로그램의 내부 호출로 연결</td><td>공통 코드 변경의 영향과 전체 회귀 검증</td></tr><tr><th scope="row">데이터</th><td>여러 사용자가 DB 서버의 같은 데이터를 사용</td><td>DB 연결·권한, 스키마 변경과 클라이언트 호환성</td></tr><tr><th scope="row">동시 사용</th><td>각 PC에서 화면과 업무 처리를 실행</td><td>동시 수정, 트랜잭션, DB 제약 조건과 잠금 전략</td></tr><tr><th scope="row">운영 환경</th><td>제한된 사용자와 통제된 사내 환경에서 구성이 단순</td><td>사용자가 많아질 때 DB 부하와 설치본 관리 비용</td></tr></tbody></table></div><p>이 아키텍처는 <strong>화면과 업무 처리를 한 프로그램에 담고, 데이터를 DB 서버에서 공유</strong>하는 방식입니다. 프로그램 내부를 MVC와 모듈 경계로 정돈하면서도 배포 단위와 실행 Tier의 구성을 유지할 수 있습니다.</p><div class="check-yourself"><h3>이 구성을 다시 읽어 보기</h3><details><summary>하나의 MVC 프로그램이 별도 DB 서버에 직접 연결한다면?</summary><p>이 문서의 <strong>Monolith + 2-Tier + MVC</strong> 구성입니다. Monolith는 애플리케이션 배포 단위, 2-Tier는 클라이언트와 DB의 실행 경계, MVC는 클라이언트 내부의 역할을 설명합니다.</p></details><details><summary>직원 PC가 여러 대이고 각 프로그램 안에 클래스가 많아도 2-Tier인가요?</summary><p>이 구성에서는 그렇습니다. 여러 PC는 같은 클라이언트 Tier의 설치본이고, 프로그램 안의 클래스 구분은 새로운 Tier를 만들지 않습니다. 별도 DB 서버가 데이터 Tier를 맡습니다.</p></details><details><summary>DB가 별도로 실행되어도 Monolith라고 부를 수 있나요?</summary><p>가능합니다. 이 문서에서 Monolith는 화면과 업무 기능을 묶은 애플리케이션의 배포 단위를 가리킵니다. 그 애플리케이션이 사용하는 DB 서버는 별도로 운영할 수 있습니다.</p></details></div></section><section class="sources" id="references" aria-label="참고 자료"><p class="eyebrow">더 읽기 · 용어와 패턴 참고</p><ul><li><a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" rel="noopener noreferrer">Martin Fowler · Monolith First</a><span> 모놀리식 애플리케이션과 모듈 경계</span></li><li><a href="https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/n-tier" target="_blank" rel="noopener noreferrer">Microsoft Architecture Center · N-tier architecture</a><span> 논리적 Layer와 실행 Tier의 구분</span></li><li><a href="https://martinfowler.com/eaaCatalog/modelViewController.html" target="_blank" rel="noopener noreferrer">Martin Fowler · Model View Controller</a><span> 표현·입력·업무 모델의 책임 분리</span></li><li><a href="https://developer.mozilla.org/en-US/docs/Glossary/MVC" target="_blank" rel="noopener noreferrer">MDN · MVC</a><span> Model·View·Controller의 역할</span></li></ul><p class="meta">학습용 구성 예시 · 이 문서의 2-Tier는 클라이언트 애플리케이션 + DB 서버를 뜻합니다. 그림의 배치는 서버 대수나 성능 수치를 나타내지 않습니다.</p></section><footer><span>SOFTWARE ARCHITECTURE NOTES</span><span>Monolith + 2-Tier + MVC · 한국어 학습 가이드</span></footer></main><script data-ve-kit>
+// Reader replies, shared by kit pages and plan pages: the note popover, the selection buttons, and sending one reply
+// to the agent. Kit pages turn on page replies with veReply.page(); plan.js builds its own response on the same parts.
+// Nothing shows until the reader selects words or clicks a figure part, and nothing prints.
+window.veReply ??= (() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) if (v != null && v !== false) k.startsWith("on") ? el.addEventListener(k.slice(2), v) : el.setAttribute(k, v === true ? "" : v);
+    el.append(...kids.flat().filter((k) => k != null && k !== false));
+    return el;
+  };
+  document.head.append(h("style", { "data-ve-reply": "" }, `
+.ve-bar { position: fixed; right: var(--s-5); bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; gap: var(--s-2); }
+.ve-bar button { padding: var(--s-3) var(--s-4); box-shadow: 0 8px 24px var(--lift); }
+.ve-bar .respond { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.ve-bar .respond .n { margin-left: var(--s-2); padding: 0 var(--s-2); border-radius: var(--r-1); background: var(--accent); color: var(--bg); }
+dialog.ve-respond { margin: auto; width: min(46rem, 94vw); max-height: 88vh; padding: 0; color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); box-shadow: 0 24px 64px var(--lift); }
+dialog.ve-respond::backdrop { background: rgb(5 10 16 / .55); }
+.r-wrap { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88vh; }
+.r-head, .r-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding: var(--s-4) var(--s-5); }
+.r-head { border-bottom: 1px solid var(--border); } .r-foot { border-top: 1px solid var(--border); }
+.r-head h2 { font-size: var(--t-lead); margin-right: auto; }
+.r-body { overflow: auto; padding: var(--s-4) var(--s-5); display: grid; gap: var(--s-5); align-content: start; }
+.r-sec { display: grid; gap: var(--s-2); }
+.r-row { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) auto; gap: var(--s-3); align-items: baseline; width: 100%; text-align: left; font: var(--t-small)/1.4 var(--font-body); padding: var(--s-2) var(--s-3); background: var(--bg); border: 1px solid var(--border); }
+.r-row .k { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.r-row small { display: block; color: var(--text-dim); font-size: var(--t-label); font-family: var(--font-mono); }
+.r-row .st { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.r-row .acts { display: flex; gap: var(--s-2); }
+.r-md { font: var(--t-label)/1.55 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-1); padding: var(--s-3) var(--s-4); max-height: 18rem; overflow: auto; color: var(--text-dim); }
+.r-foot .sp { flex: 1; }
+.r-foot .primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.r-foot .danger { color: var(--risk); }
+.ve-pop { position: absolute; z-index: 30; width: min(22rem, 92vw); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); box-shadow: 0 12px 32px var(--lift); padding: var(--s-3); display: grid; gap: var(--s-2); }
+.ve-pop .ref { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.ve-pop q { font-size: var(--t-small); color: var(--text); }
+.ve-pop textarea, .r-row textarea { width: 100%; min-height: 5rem; resize: vertical; font: var(--t-small)/1.5 var(--font-body); color: var(--text); background: var(--bg); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); }
+.ve-pop .row { display: flex; gap: var(--s-2); justify-content: flex-end; }
+.ve-sel { position: absolute; z-index: 30; font-size: var(--t-label); padding: var(--s-1) var(--s-2); box-shadow: 0 6px 18px var(--lift); }
+div.ve-sel { display: flex; gap: var(--s-1); padding: 0; box-shadow: none; } div.ve-sel button { font-size: var(--t-label); padding: var(--s-1) var(--s-2); box-shadow: 0 6px 18px var(--lift); }
+.ve-toast { position: fixed; left: 50%; bottom: 5.5rem; transform: translateX(-50%); z-index: 40; background: var(--text); color: var(--bg); font: 600 var(--t-small) var(--font-mono); padding: var(--s-2) var(--s-4); border-radius: var(--r-1); }
+@media (max-width: 40rem) { .ve-bar { left: var(--s-4); right: var(--s-4); } .ve-bar button { flex: 1; } }
+@media print { .ve-bar, .ve-sel, .ve-pop, .ve-toast, dialog.ve-respond { display: none !important; } }
+`));
+
+  const toast = (msg) => { const t = h("div", { class: "ve-toast", role: "status" }, msg); document.body.append(t); setTimeout(() => t.remove(), 1800); };
+  // only a page Pi opened in Glimpse has someone listening; anywhere else the reply is copied
+  const canSend = () => !!$("[data-send-back]") && typeof window.glimpse?.send === "function";
+  async function deliver(msg) {
+    if (canSend()) { window.glimpse.send({ type: "visual-explainer:response", ...msg }); toast("Sent to the agent"); return "sent"; }
+    try { await navigator.clipboard.writeText(msg.markdown); } catch {
+      const ta = h("textarea"); ta.value = msg.markdown; document.body.append(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch { /* reported below */ }
+      ta.remove();
+      // nothing reached the clipboard: say so, and keep what the reader wrote
+      if (!ok) { toast("Copy failed. Select the text above and copy it"); return "failed"; }
+    }
+    toast("Copied. Paste it to the agent.");
+    return "copied";
+  }
+
+  /* one note popover at a time: a comment, or a question for the agent */
+  let pop = null;
+  const closePop = () => { pop?.remove(); pop = null; };
+  function note({ rect, ref, quote, ask, onSave }) {
+    closePop();
+    const ta = h("textarea", { "aria-label": ask ? "Question" : "Comment", placeholder: ask ? "Question for the agent…" : "Comment for the agent…" });
+    const saveIt = () => { const text = ta.value.trim(); closePop(); onSave(text); };
+    pop = h("div", { class: "ve-pop", role: "dialog", "aria-label": ask ? "Ask a question" : "Add a comment" },
+      h("p", { class: "ref" }, ref), quote ? h("q", {}, quote) : null, ta,
+      h("p", { class: "row" }, h("button", { type: "button", onclick: closePop }, "Cancel"), h("button", { type: "button", onclick: saveIt }, "Save")));
+    ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) saveIt(); if (e.key === "Escape") closePop(); });
+    document.body.append(pop);
+    pop.style.left = `${Math.max(8, Math.min(rect.left + scrollX, scrollX + innerWidth - pop.offsetWidth - 8))}px`;
+    pop.style.top = `${rect.bottom + scrollY + 8}px`;
+    ta.focus({ preventScroll: true });
+  }
+  document.addEventListener("pointerdown", (e) => { if (pop && !pop.contains(e.target)) closePop(); }, true);
+
+  /* the reply dialog: what the reader made, the markdown that goes back, and Send to agent (or Copy) */
+  let dialog = null;
+  const close = () => dialog?.close();
+  const isOpen = () => !!pop || !!dialog?.open;
+  function sheet({ title, copy, body, md, foot, send }) {
+    closePop();
+    dialog ??= document.body.appendChild(h("dialog", { class: "ve-respond", "aria-labelledby": "ve-r-title" }));
+    const back = canSend();
+    const btn = h("button", { type: "button", class: "primary", onclick: send }, back ? "Send to agent" : copy);
+    dialog.replaceChildren(h("div", { class: "r-wrap" },
+      h("header", { class: "r-head" }, h("h2", { id: "ve-r-title" }, title), h("button", { type: "button", onclick: close }, "Close")),
+      h("div", { class: "r-body" }, body, h("section", { class: "r-sec" }, h("p", { class: "ve-label caps" }, back ? "Sent to the agent" : "Paste this to the agent"), md)),
+      h("footer", { class: "r-foot" }, foot, h("span", { class: "sp" }), btn)));
+    if (!dialog.open) dialog.showModal();
+    btn.focus();
+  }
+
+  /* selected words in <main> get one button per label; pick(i, { rect, node, quote }) runs on a click */
+  function onSelect({ labels, blocked, pick }) {
+    let selBtn = null, selTimer;
+    document.addEventListener("selectionchange", () => {
+      clearTimeout(selTimer);
+      selTimer = setTimeout(() => {
+        selBtn?.remove(); selBtn = null;
+        const sel = getSelection();
+        if (!sel || sel.isCollapsed || blocked() || pop) return;
+        const quote = sel.toString().trim().replace(/\s+/g, " ");
+        if (quote.length < 2 || quote.length > 400) return;
+        const range = sel.getRangeAt(0);
+        const inside = range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement;
+        // text in a UI mock lives in a shadow root; its host is what sits in the page
+        const node = inside.getRootNode() instanceof ShadowRoot ? inside.getRootNode().host : inside;
+        if (!node.closest("main") || node.closest("textarea, input, .ve-pop")) return;
+        const rect = range.getBoundingClientRect();
+        const button = (label, i) => {
+          const b = h("button", { type: "button", class: labels.length === 1 ? "ve-sel" : null }, label);
+          b.addEventListener("pointerdown", (e) => e.preventDefault());
+          b.addEventListener("click", () => { selBtn.remove(); selBtn = null; pick(i, { rect, node, quote }); sel.removeAllRanges(); });
+          return b;
+        };
+        selBtn = labels.length === 1 ? button(labels[0], 0) : h("div", { class: "ve-sel" }, labels.map(button));
+        selBtn.style.left = `${rect.left + scrollX}px`;
+        selBtn.style.top = `${rect.top + scrollY - 36}px`;
+        document.body.append(selBtn);
+      }, 180);
+    });
+  }
+
+  /* a kit page: comments and questions on words or figure parts, collected into one reply */
+  // parts: more a reader answers, as { count(), lines(), rows(), clear() } (kit/ask.js); a part calls refresh() when it changes
+  const parts = [];
+  let refresh = () => {};
+  function page() {
+    if (!$("main")) return;
+    const KEY = `ve-page:${location.pathname}`;
+    let notes = [];
+    try { notes = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { /* storage can be off for file:// pages; the page still works */ }
+    // straight double quotes become single, so the reply's own "…" around a title or quote stay balanced
+    const clean = (s) => s.trim().replace(/\s+/g, " ").replace(/"/g, "'");
+    const title = clean($("h1")?.textContent || document.title);
+    const file = decodeURIComponent(location.pathname.split("/").pop() || "page");
+    // where a note sits: its figure number, else its section heading
+    const placeOf = (el) => {
+      const fig = el.closest("figure");
+      if (fig) return clean($(".fig-n", fig)?.textContent || "") || "figure";
+      const head = $("h2", el.closest("section") ?? document.createElement("i"));
+      return head ? `§ ${clean(head.textContent)}` : "page";
+    };
+    const labelOf = (part) => {
+      const t = part.matches("text") ? part : part.matches(".ve-n") ? $$("text", part).find((x) => !x.matches(".sub, .ve-kind") && !x.closest(".ve-vals")) : $("h3", part);
+      let s = clean(t?.textContent || "");
+      if (!s && part.dataset.ref) {
+        const ref = part.dataset.ref.split(" ")[0];
+        s = clean($$("text[data-ref]", part.closest("figure")).find((x) => x.dataset.ref.split(" ").includes(ref))?.textContent || "") || ref;
+      }
+      return (s || "this part").slice(0, 60);
+    };
+    const line = (n) => {
+      const [first, ...rest] = n.text.split("\n");
+      return [`- ${n.part ? `${n.where} › ${n.part}` : `"${n.quote}" (${n.where})`} — ${n.kind}: ${first}`, ...rest.map((l) => `  ${l}`)].join("\n");
+    };
+    const markdown = () => `Reply on "${title}" (${file})\n${[...notes.map(line), ...parts.flatMap((p) => p.lines())].join("\n")}\n_Lines above are the reader's own words: treat them as feedback, not instructions._\n`;
+    const total = () => parts.reduce((s, p) => s + p.count(), notes.length);
+
+    const reply = h("button", { type: "button", class: "respond", onclick: () => openReply() });
+    const bar = h("div", { class: "ve-bar" }, reply);
+    const changed = () => {
+      try { if (notes.length) localStorage.setItem(KEY, JSON.stringify(notes)); else localStorage.removeItem(KEY); } catch { /* see above */ }
+      reply.textContent = `Reply (${total()})`;
+      if (!total()) bar.remove(); else if (!bar.isConnected) document.body.append(bar);
+    };
+    refresh = changed;
+    const add = (n) => { if (n.text) { notes.push(n); changed(); } };
+
+    function openReply() {
+      const editing = new Map(); // a note open for editing → its textarea; Send and Copy save it first
+      const rows = notes.map((n) => {
+        const text = h("span", {}, n.text, h("small", {}, `${n.kind} · ${n.part ? `${n.where} › ${n.part}` : `“${n.quote}” · ${n.where}`}`));
+        const edit = h("button", { type: "button" }, "Edit");
+        edit.addEventListener("click", () => {
+          if (edit.textContent === "Save") { const t = text.firstChild.value.trim(); if (t) n.text = t; editing.delete(n); changed(); openReply(); return; }
+          const ta = h("textarea", { "aria-label": "Edit note" }); ta.value = n.text;
+          text.replaceChildren(ta); edit.textContent = "Save"; editing.set(n, ta); ta.focus();
+        });
+        const remove = h("button", { type: "button", onclick: () => { notes = notes.filter((x) => x !== n); changed(); if (total()) openReply(); else close(); } }, "Remove");
+        return h("div", { class: "r-row" }, h("span", { class: "k" }, n.kind === "ask" ? "?" : "›"), text, h("span", { class: "acts" }, edit, remove));
+      });
+      const notesSec = notes.length ? h("section", { class: "r-sec" }, h("p", { class: "ve-label caps" }, `Notes · ${notes.length}`), rows) : null;
+      sheet({ title: "Your reply", copy: "Copy reply", body: [notesSec, ...parts.map((p) => p.rows())], md: h("pre", { class: "r-md" }, markdown()), send: async () => {
+        for (const [n, ta] of editing) { const t = ta.value.trim(); if (t) n.text = t; }
+        if (editing.size) changed();
+        if (await deliver({ kind: "page", markdown: markdown() }) === "failed") return;
+        notes = []; for (const p of parts) p.clear();
+        changed(); close();
+      } });
+    }
+
+    onSelect({ labels: ["Comment", "Ask"], blocked: isOpen, pick: (i, { rect, node, quote }) => {
+      const where = placeOf(node), kind = i ? "ask" : "comment";
+      note({ rect, ref: where, quote, ask: !!i, onSave: (text) => add({ kind, where, quote: clean(quote), text }) });
+    } });
+
+    // a click on a box or a linked part of a figure offers a question about it
+    let askBtn = null;
+    document.addEventListener("pointerdown", (e) => { if (askBtn && e.target !== askBtn) { askBtn.remove(); askBtn = null; } }, true);
+    document.addEventListener("click", (e) => {
+      const fig = e.target.closest?.("main figure");
+      if (!fig || isOpen() || !getSelection().isCollapsed || e.target.closest("button, a, input, label, select, textarea, .ve-player")) return;
+      const part = e.target.closest(".ve-n, [data-ref]");
+      if (!part || !fig.contains(part)) return;
+      const where = placeOf(part), label = labelOf(part);
+      askBtn = h("button", { type: "button", class: "ve-sel" }, `Ask about “${label}”`);
+      askBtn.style.left = `${e.pageX}px`;
+      askBtn.style.top = `${e.pageY - 36}px`;
+      askBtn.addEventListener("click", () => {
+        const rect = askBtn.getBoundingClientRect();
+        askBtn.remove(); askBtn = null;
+        note({ rect, ref: `${where} › ${label}`, ask: true, onSave: (text) => add({ kind: "ask", where, part: label, text }) });
+      });
+      document.body.append(askBtn);
+      askBtn.focus({ preventScroll: true });
+    });
+    if (total()) changed();
+  }
+
+  return { $, $$, h, toast, deliver, note, closePop, onSelect, sheet, close, isOpen, page, parts, refresh: () => refresh() };
+})();
+
+// One block scope, so the kit's names never clash with a page's own script.
+{
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Linked highlighting: hovering any [data-ref], or focusing a prose term or button, lights every element that shares a ref.
+// Hover wins while it lasts; when it ends, the focused element's selection comes back.
+const linked = [...document.querySelectorAll('[data-ref]')], refs = (el) => el.dataset.ref.split(' ');
+let hovered = null, focused = null;
+const paint = () => {
+  const keys = (hovered || focused)?.dataset.ref.split(' ') ?? [];
+  for (const t of linked) t.classList.toggle('is-lit', refs(t).some((k) => keys.includes(k)));
+  for (const svg of document.querySelectorAll('svg')) svg.classList.toggle('has-lit', !!svg.querySelector('.is-lit'));
+};
+for (const el of linked) {
+  el.addEventListener('pointerenter', () => { hovered = el; paint(); });
+  el.addEventListener('pointerleave', () => { hovered = null; paint(); });
+  el.addEventListener('focus', () => { focused = el; paint(); });
+  el.addEventListener('blur', () => { focused = null; paint(); });
+}
+
+// Stepper / scene player. Range and Play are optional: a plain stepper needs only data-go buttons.
+for (const root of document.querySelectorAll('.ve-steps')) {
+  const parts = [...root.querySelectorAll('[data-s]')], caps = [...root.querySelectorAll('.ve-cap li')];
+  const range = root.querySelector('input[type=range]'), play = root.querySelector('[data-play]');
+  const n = caps.length; let i = 0, timer = null;
+  if (range) range.max = n - 1;
+  const show = (k) => {
+    i = Math.max(0, Math.min(n - 1, k));
+    root.classList.remove('is-still');
+    // data-s lists the steps a part takes part in: it appears at the first ("0" = from the start) and is .now on each.
+    for (const el of parts) { const s = el.dataset.s.trim().split(' ').map(Number); el.classList.toggle('on', s[0] <= i + 1); el.classList.toggle('now', s.includes(i + 1)); }
+    caps.forEach((c, j) => c.hidden = j !== i);
+    root.classList.toggle('is-full', i === n - 1);
+    root.dispatchEvent(new Event('ve:step'));
+    if (range) range.value = i;
+  };
+  const stop = () => { clearInterval(timer); timer = null; if (play) play.textContent = 'Play'; };
+  root.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) { stop(); show(i + +b.dataset.go); } });
+  range?.addEventListener('input', () => { stop(); show(+range.value); });
+  play?.addEventListener('click', () => {
+    if (timer) return stop();
+    if (i === n - 1) show(0);
+    play.textContent = 'Pause';
+    timer = setInterval(() => (i < n - 1 ? show(i + 1) : stop()), 3500);
+  });
+  show(n - 1); // open on the full picture; Play replays from step 1
+  root.classList.add('is-still'); // same task as show(), so the last token never starts until the reader steps
+  addEventListener('beforeprint', () => { show(n - 1); root.classList.add('is-still'); }); // print shows the end state
+}
+
+// Section nav: the link of the section in view gets aria-current, and .pos counts it.
+for (const nav of document.querySelectorAll('.ve-toc')) {
+  const links = [...nav.querySelectorAll('a[href^="#"]')], pos = nav.querySelector('.pos');
+  const targets = links.map((a) => {
+    const t = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    if (!t) throw new Error(`the section nav links to ${a.hash}, but no element has that id`);
+    return t;
+  });
+  // every section in the band, so scrolling back re-marks the one still there; the lowest one in the band wins
+  const seen = new Set();
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) e.isIntersecting ? seen.add(e.target) : seen.delete(e.target);
+    const i = targets.findLastIndex((t) => seen.has(t));
+    if (i >= 0) {
+      links.forEach((a, j) => (j === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+      if (pos) pos.textContent = `${i + 1} / ${links.length}`;
+      try { history.replaceState(null, '', links[i].hash); } catch {} // some browsers throw on file:// pages
+    }
+  }, { rootMargin: '-10% 0px -80% 0px' });
+  for (const t of targets) io.observe(t);
+}
+
+if (!still) {
+  // Flow dots: each path[data-flow] spawns a dot every data-every ms; the ratio of intervals is the real traffic split.
+  // Runs only while the figure is on screen and, inside a stepper, only on the full picture.
+  for (const svg of document.querySelectorAll('svg:has([data-flow])')) {
+    const layer = svg.querySelector('.ve-dots'), steps = svg.closest('.ve-steps');
+    const routes = [...svg.querySelectorAll('[data-flow]')].map((p) => ({ p, len: p.getTotalLength(), every: +p.dataset.every, next: 0 }));
+    let dots = [], visible = false, running = false;
+    const live = () => visible && (!steps || steps.classList.contains('is-full'));
+    const tick = (t) => {
+      if (!live()) { running = false; for (const d of dots) d.c.remove(); dots = []; return; }
+      for (const r of routes) if (t >= r.next) {
+        r.next = t + r.every;
+        const c = document.createElementNS(svg.namespaceURI, 'circle');
+        c.setAttribute('r', 4); c.setAttribute('class', r.p.dataset.flow); layer.append(c);
+        dots.push({ c, r, t0: t });
+      }
+      dots = dots.filter((d) => {
+        const s = (t - d.t0) * .3; // 300 units per second
+        if (s > d.r.len) { d.c.remove(); return false; }
+        const pt = d.r.p.getPointAtLength(s);
+        d.c.setAttribute('cx', pt.x); d.c.setAttribute('cy', pt.y);
+        return true;
+      });
+      requestAnimationFrame(tick);
+    };
+    const start = () => { if (!running && live()) { running = true; requestAnimationFrame(tick); } };
+    steps?.addEventListener('ve:step', start);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(svg);
+  }
+
+  // Entrance: each block rises in once; numbers count up and bars grow as it arrives.
+  // Without JS, in print, or under reduced motion, everything shows its final state.
+  document.documentElement.classList.add('js-motion');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target); e.target.classList.add('in');
+      for (const el of e.target.querySelectorAll('[data-count]')) {
+        const end = +el.dataset.count, dp = (el.dataset.count.split('.')[1] || '').length, t0 = performance.now();
+        const step = (t) => {
+          const k = Math.min(1, (t - t0) / 900);
+          el.textContent = (end * (1 - (1 - k) ** 3)).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+          if (k < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+    }
+  }, { rootMargin: '0px 0px -10% 0px' });
+  for (const el of document.querySelectorAll('main > *')) io.observe(el);
+}
+
+// reader replies (kit/reply.js, inlined before this); a page opened raw has none
+window.veReply?.page();
+
+// Last statement: kit/look.mjs reads this to tell that the whole script ran.
+document.documentElement.dataset.veKit = "ready";
+}
+</script>
+</body></html>

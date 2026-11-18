@@ -6,9 +6,10 @@
 
 ## 저장소의 성격
 
-- 코드를 관리하는 저장소가 아니라 **문서와 assets(이미지, 첨부 파일 등 문서에 딸린 자료)** 를 보관하는 저장소입니다.
-- 현재 문서는 외부 의존성 없이 브라우저에서 바로 열 수 있는 단일 HTML 파일이며, 한국어로 작성되어 있습니다.
-- 빌드, 테스트, 배포 과정은 없습니다.
+- 기술 참고 자료, 학습 가이드와 기획 문서를 모아 두는 저장소입니다. 문서에는 구조도, 비교표, 명령어·설정·의사 코드 예제가 포함됩니다.
+- 현재 자료는 한국어로 작성된 **HTML 가이드 17개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
+- HTML의 스타일, 스크립트와 SVG 도식은 각 파일 안에 포함되어 있습니다. 글꼴은 외부 Google Fonts를 사용하며, 일부 문서에는 단계별 도식 재생·검색·복사 같은 상호작용이 있습니다.
+- 문서를 열기 위한 빌드나 서버는 필요하지 않습니다. 별도의 빌드 설정, 자동 테스트나 배포 스크립트는 없습니다.
 
 ## 자료 목록
 
@@ -18,6 +19,20 @@
 | [offline-stt-guide.html](./offline-stt-guide.html) | 오프라인 STT 선택 | 저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트 |
 | [offline-tts-guide.html](./offline-tts-guide.html) | 오프라인 TTS 선택 | 작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트 |
 | [cctv-camera-guide.html](./cctv-camera-guide.html) | CCTV 카메라 선택 | ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트 |
+| [architecture-guide.html](./architecture-guide.html) | Monolith + 2-Tier + MVC | 화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드 |
+| [monolith-3-tier-spa-api.html](./monolith-3-tier-spa-api.html) | Monolith + 3-Tier · SPA + API | 브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드 |
+| [modular-monolith.html](./modular-monolith.html) | Modular Monolith | 업무 모듈의 공개 계약·데이터 소유권·의존성 경계를 유지하면서 하나의 애플리케이션으로 배포하는 구조 |
+| [microservices.html](./microservices.html) | Microservices | 독립 배포하는 업무 서비스의 계약, 데이터 소유권, 분산 트랜잭션과 장애 대응을 설명한 가이드 |
+| [micro-frontends.html](./micro-frontends.html) | Micro-frontends | 업무별 프런트엔드를 Shell과 조합하고 팀별 배포·라우팅·상태·스타일의 경계를 관리하는 방법 |
+| [event-driven-architecture.html](./event-driven-architecture.html) | 이벤트 기반 아키텍처(EDA) | 이벤트 발행·구독, Outbox, 중복·순서·실패 처리와 업무 완료 기준을 설명한 가이드 |
+| [hexagonal-architecture.html](./hexagonal-architecture.html) | Hexagonal Architecture | Port와 Adapter로 업무 핵심을 UI·DB·메시지 등 외부 기술과 연결하는 구조 |
+| [onion-architecture.html](./onion-architecture.html) | Onion Architecture | 도메인 모델을 중심에 두고 바깥 기술이 안쪽 정책에 의존하도록 설계하는 구조 |
+| [clean-architecture.html](./clean-architecture.html) | Clean Architecture | Dependency Rule과 Use Case 경계로 핵심 업무 규칙을 외부 기술에서 보호하는 구조 |
+| [cqrs.html](./cqrs.html) | CQRS | 명령과 조회의 모델·책임을 분리하고 읽기 모델의 갱신·지연·복구를 설계하는 패턴 |
+| [reverse-tunnel.html](./reverse-tunnel.html) | SSH 역방향 터널 | 내부 웹 서비스를 클라우드 VM의 Nginx와 SSH 역방향 터널로 공개하는 구성·보안·운영 노트 |
+| [cloud-internal-vpn.html](./cloud-internal-vpn.html) | 클라우드 ↔ 내부망 VPN | WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트 |
+| [opentelemetry-jaeger.html](./opentelemetry-jaeger.html) | OpenTelemetry + Jaeger | 계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드 |
+| [linux-command-game-experience-plan.ko.md](./linux-command-game-experience-plan.ko.md) | 리눅스 명령어 학습 게임 기획 | 기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서 |
 
 ## 자료별 설명
 
@@ -68,18 +83,170 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 
 주요 내용: 사양·카메라·압축 방식 비교표, 두 구성의 구조도, 순환 버퍼 녹화와 상시 녹화 + 이벤트 태깅의 차이, 하루 저장 용량 대략치, Wi-Fi·전원·발열·단일 장애점 등 운영 문제, 상황별 선택 기준과 만드는 순서. 가격과 속도, 용량 수치는 대략치입니다.
 
+### Monolith + 2-Tier + MVC
+
+`architecture-guide.html`
+
+직원 PC의 주문·재고 관리 프로그램이 별도 DB 서버와 직접 통신하는 예시로, 배포 단위·실행 계층·내부 책임을 구분합니다.
+
+- Monolith는 화면과 업무 기능을 묶은 배포 단위, 2-Tier는 클라이언트와 DB의 실행 경계, MVC는 클라이언트 내부의 역할을 뜻합니다.
+- Layer와 Tier, Model과 DB의 차이, 주문 조회부터 화면 갱신까지의 흐름을 설명합니다.
+- 여러 PC의 설치본·버전 호환성, DB 권한·연결·트랜잭션·동시성 등 운영할 항목을 다룹니다.
+
+### Monolith + 3-Tier · SPA + API
+
+`monolith-3-tier-spa-api.html`
+
+브라우저 SPA → API 백엔드 → DB로 표현·업무·데이터의 실행 책임을 나눈 주문·재고 서비스 예시입니다. 여기서 Monolith는 여러 업무 기능을 함께 배포하는 API 백엔드를 가리킵니다.
+
+- SPA의 정적 파일 로딩·화면 전환과 API의 인증·권한·업무 처리를 구분합니다.
+- 주문 생성의 HTTP·JSON 요청과 DB 트랜잭션, 응답 유실과 중복 요청 처리를 설명합니다.
+- SPA와 API의 별도 배포, 구버전 호환성, API 복제·확장, CORS·인증과 사용자 경험을 다룹니다.
+
+### Modular Monolith
+
+`modular-monolith.html`
+
+업무별 모듈의 책임과 데이터 소유권을 분명히 하면서 애플리케이션은 하나로 배포하는 구조입니다.
+
+- 공개 인터페이스와 내부 구현, 모듈 간 의존 방향과 순환 참조 방지를 설명합니다.
+- 공유 DB에서도 데이터의 소유자를 구분하는 방법, 모듈 간 조회와 트랜잭션 참여 계약을 다룹니다.
+- 내부 이벤트·Outbox의 적용 조건, 경계를 유지하는 코드 접근 제한과 의존성 검증, 배포·자원 공유의 비용을 정리합니다.
+
+### Microservices
+
+`microservices.html`
+
+주문·재고·결제 서비스를 예로, 업무 경계에 맞춘 독립 실행·배포와 데이터 소유권을 설명합니다.
+
+- 동기 API와 비동기 이벤트, 계약 호환성과 서비스별 저장소 접근 원칙을 비교합니다.
+- 여러 로컬 트랜잭션으로 이어지는 주문 처리, Saga와 보상, Outbox와 멱등성을 다룹니다.
+- 타임아웃의 결과 불명 상태, 재시도·상태 대사·장애 전파 제어와 서비스별 관측·운영 책임을 정리합니다.
+
+### Micro-frontends
+
+`micro-frontends.html`
+
+업무별 프런트엔드의 변경·배포 책임을 나누고 하나의 제품으로 조합하는 구조입니다. 주요 예시는 Shell이 경로에 따라 업무 앱을 로드하는 브라우저 런타임 조합입니다.
+
+- 경로·페이지, 브라우저, 서버·엣지, iframe, 빌드 시 조합 방식을 비교합니다.
+- 앱 로딩·종료, 라우팅·이벤트·상태·인증 연계와 구버전 자원의 호환성을 다룹니다.
+- 같은 페이지에서 공유하는 CSS·라이브러리·실행 환경의 영향과 제품 전체의 성능·접근성·검증·관측을 설명합니다.
+
+### 이벤트 기반 아키텍처(EDA)
+
+`event-driven-architecture.html`
+
+주문 확정이라는 사실에 배송·알림·분석이 반응하는 예시로 이벤트 기반 협력을 설명합니다. 모놀리스 내부에도 적용할 수 있으며, 주요 예시는 브로커를 사용하는 비동기 분산 구성입니다.
+
+- Command·Event·Query, 독립 구독과 같은 구독 안의 작업 분담을 구분합니다.
+- 브로커 수락과 업무 완료의 차이, Transactional Outbox, 멱등 소비자, 재시도·DLQ·순서·재처리를 다룹니다.
+- 이벤트 계약·버전, 최종적 일관성, Choreography·Orchestration·Saga와 Event Sourcing·CQRS의 관계를 정리합니다.
+
+### Hexagonal Architecture
+
+`hexagonal-architecture.html`
+
+Ports & Adapters 구조로 애플리케이션의 업무 핵심과 외부 기술의 경계를 설명합니다.
+
+- 입력·출력 Port와 Driving·Driven Adapter, 실행 흐름과 소스 코드 의존성의 차이를 다룹니다.
+- 의존성 역전(DIP)과 의존성 주입(DI), 주문 생성 유스케이스와 외부 구현의 조립을 설명합니다.
+- DB 없이 핵심을 검증하는 방법과 실제 Adapter의 통합 검증, 자료형·오류·트랜잭션 경계의 설계 비용을 정리합니다.
+
+### Onion Architecture
+
+`onion-architecture.html`
+
+도메인 모델을 중심에 두고 UI·인프라 등 바깥 코드가 안쪽 정책에 의존하도록 구성하는 구조입니다.
+
+- Domain Model·Domain Services·Application Services·Infrastructure의 책임을 주문 생성·취소로 설명합니다.
+- 안쪽이 소유하는 Repository 계약과 바깥 구현, DB Row·업무 모델·표현 데이터의 경계를 다룹니다.
+- 계층별 검증과 적용 판단, Hexagonal·Clean 및 배포·협력 방식과의 관계를 정리합니다.
+
+### Clean Architecture
+
+`clean-architecture.html`
+
+소스 코드 의존성이 안쪽 정책을 향해야 한다는 Dependency Rule을 중심으로 업무 규칙과 유스케이스를 보호하는 구조입니다.
+
+- Entities·Use Cases·Interface Adapters·Frameworks & Drivers의 책임을 구분합니다.
+- Input·Output Boundary, Persistence Gateway와 Presenter를 사용하는 주문 생성 흐름을 설명합니다.
+- 요청·응답·영속성·화면 모델의 차이, 외부 조립 지점(Composition Root), 경계별 검증과 적용 판단을 다룹니다.
+
+### CQRS
+
+`cqrs.html`
+
+상태를 변경하는 명령 모델과 정보를 읽는 조회 모델을 목적에 맞게 분리하는 패턴입니다. 같은 프로세스·같은 DB에서도 적용할 수 있습니다.
+
+- CQS와 CQRS의 차이, 쓰기 모델의 업무 규칙과 전용 조회·읽기 모델의 책임을 설명합니다.
+- 저장소 분리의 선택지, 비동기 Projection의 갱신 지연과 명령 성공 직후의 화면 처리를 다룹니다.
+- 중복·동시성·순서·조회 권한·재구축 정책을 정리하고, CQRS·EDA·Event Sourcing을 구분합니다.
+
+### SSH 역방향 터널
+
+`reverse-tunnel.html`
+
+내부 서버가 클라우드 VM으로 SSH 연결을 먼저 맺고, VM의 Nginx가 HTTPS 요청을 터널을 통해 내부 웹 서비스에 전달하는 구성입니다.
+
+- 연결 경로 확인부터 전용 계정·키, `ssh -R`, Nginx·TLS, DNS 전환까지의 순서를 설명합니다.
+- VM의 터널 포트를 `127.0.0.1`에 한정하고 `PermitListen`·`GatewayPorts`·방화벽으로 제한하는 방법을 다룹니다.
+- 프록시 헤더·내부 HTTP 구간·키 유출의 위험, 연결 단절·자동 재접속·인증서·WebSocket·업로드 검증을 정리합니다.
+
+### 클라우드 ↔ 내부망 VPN
+
+`cloud-internal-vpn.html`
+
+WireGuard로 클라우드 VM과 내부망 게이트웨이 사이에 암호화된 IP 경로를 만들고, VM의 Nginx가 내부 웹 서버에 접근하는 예시입니다.
+
+- 단일 포트 전달인 SSH 역방향 터널과 VPN 라우팅의 차이, 요청·응답 경로와 IP 포워딩·SNAT을 설명합니다.
+- 피어·주소·`AllowedIPs`·NAT keepalive 설정과, 별도 방화벽으로 내부 접근을 필요한 주소·포트에 제한하는 방법을 다룹니다.
+- 키·VM 침해, UDP·MTU·반환 경로·단일 장애점과 실제 외부 웹 요청의 검증 순서를 정리합니다.
+
+### OpenTelemetry + Jaeger
+
+`opentelemetry-jaeger.html`
+
+OpenTelemetry의 계측·수집·전송과 Jaeger v2의 Trace 저장·조회 역할을 연결해 설명하는 관측 가이드입니다.
+
+- Metric·Log·Trace, Trace·Span·Resource와 W3C Trace Context의 문맥 전파를 구분합니다.
+- OTLP, 선택적인 별도 Collector의 파이프라인, Jaeger 수집·저장·Query·UI 경로와 타임라인 읽기를 설명합니다.
+- EDA의 비동기 추적과 Span Link, 샘플링·누락·보관·민감 정보·비용 및 도입·문제 해결 순서를 다룹니다. 실행 가능한 배포 설정은 포함하지 않습니다.
+
+### 리눅스 명령어 학습 게임 경험 기획서
+
+`linux-command-game-experience-plan.ko.md`
+
+가제 **기록 정거장**, 기획 제안 v0.1입니다. 정거장을 복구하는 탐험과 부탁을 통해 리눅스 입문자가 상황을 관찰하고, 명령을 고르고, 결과를 확인하도록 설계한 문서입니다.
+
+- 파일·폴더·현재 경로를 세계의 기록·방·위치에 연결하고, 입력 → 탐색 → 읽기 → 검색 → 정리 → 독립 해결의 성장 여정을 제안합니다.
+- 대표 미션, 단계별 힌트, 오류 설명, 게임 차원의 복구 기능, 화면·접근성·회고와 실제 터미널로의 전이를 다룹니다.
+- 첫 버전은 약 15분의 도입과 짧은 독립 미션에서 탐색·읽기·복사·이동을 확인하는 범위입니다. 구현된 게임이나 검증된 학습 효과를 보고하는 문서는 아니며, 사용자 관찰로 확인할 가설을 제시합니다.
+
 ## 보는 방법
 
-저장소를 클론하거나 파일을 내려받아 브라우저로 열면 됩니다. 별도의 빌드나 서버는 필요하지 않습니다.
+저장소를 클론하거나 파일을 내려받으면 됩니다. HTML은 최신 브라우저에서 직접 열고, Markdown 기획서는 GitHub 또는 Markdown 미리보기를 지원하는 편집기에서 읽습니다. 별도의 패키지 설치, 빌드나 서버 실행은 필요하지 않습니다.
 
 ```bash
 git clone https://github.com/neosdc/kyujanggak.git
 cd kyujanggak
-# 예: 파일을 브라우저로 열기
-xdg-open offline-stt-guide.html   # macOS: open, Windows: start
 ```
+
+예를 들어 Windows PowerShell에서는 다음과 같이 HTML을 기본 브라우저로 엽니다.
+
+```powershell
+Start-Process .\offline-stt-guide.html
+```
+
+macOS에서는 `open offline-stt-guide.html`, Linux 데스크톱에서는 `xdg-open offline-stt-guide.html`을 사용할 수 있습니다.
+
+Google Fonts와 외부 참고 링크에는 인터넷 연결이 필요합니다. 네트워크가 없어도 HTML 본문과 내장 도식은 읽을 수 있으며, 웹 글꼴을 받지 못하면 시스템 글꼴로 표시됩니다. 아키텍처 문서의 넓은 도식은 작은 화면에서 좌우로 스크롤해 볼 수 있습니다.
+
+일부 HTML은 도식 재생, 텍스트 선택 후 댓글·질문 작성과 답변 복사를 지원합니다. 메모 저장은 브라우저의 `localStorage`를 사용하므로 로컬 파일 접근 정책에 따라 유지되지 않을 수 있습니다. 인쇄용 스타일이 있는 문서는 브라우저의 인쇄 기능으로 PDF로 저장할 수 있습니다.
 
 ## 참고
 
-- 모델 크기, 성능 수치, 라이선스 등은 작성 시점 기준이며 변할 수 있습니다. 각 문서 하단의 출처를 확인하세요.
-- 새 문서나 assets를 추가할 때는 위 표와 "자료별 설명"에 항목을 함께 추가합니다.
+- 모델 크기·성능·라이선스, 도구 버전과 설정은 작성 시점 기준이며 변할 수 있습니다. 문서에 기재된 작성 기준과 출처·참고 링크를 확인하세요.
+- STT·TTS 가이드는 공식 자료를 정리한 선택 노트이며 실제 보드의 실측 결과는 포함하지 않습니다. CCTV의 가격·속도·용량도 대략치입니다.
+- 구조도와 명령어·설정·의사 코드 예제의 생략 사항과 검증 범위는 각 문서의 안내를 따릅니다. 실제 적용 시에는 사용하는 버전과 환경에서 확인하세요.
+- 새 자료를 추가하거나 내용을 바꿀 때는 위 표와 "자료별 설명"도 함께 갱신합니다.

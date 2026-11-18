@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>규장각 — 기술 참고 자료 모음</title>
+<meta name="description" content="나중에 다시 찾아볼 기술 참고 자료와 학습 가이드를 모아 둔 서가.">
+<style>
+:root{color-scheme:light dark;--bg:#f6f4ef;--surface:#fff;--border:#ddd8cc;--text:#1d1b17;--dim:#5c574c;--accent:#8a3b12}
+@media (prefers-color-scheme:dark){:root{--bg:#14120f;--surface:#1c1a16;--border:#34302a;--text:#ece8de;--dim:#a39d8e;--accent:#e0a36b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+main{max-width:960px;margin:0 auto;padding:48px 16px 64px}
+header{margin-bottom:32px}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--accent);margin:0 0 8px}
+h1{font-size:clamp(2rem,6vw,3rem);line-height:1.2;margin:0 0 12px}
+header p{color:var(--dim);margin:0;max-width:60ch}
+ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+li a{display:flex;flex-direction:column;gap:6px;height:100%;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:inherit;text-decoration:none;transition:border-color .15s}
+li a:hover,li a:focus-visible{border-color:var(--accent);outline:none}
+.tag{font-size:.7rem;letter-spacing:.06em;color:var(--accent)}
+strong{font-size:1.05rem}
+.sum{font-size:.875rem;color:var(--dim)}
+footer{margin-top:40px;font-size:.875rem;color:var(--dim)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">KYUJANGGAK · 奎章閣</p>
+    <h1>규장각</h1>
+    <p>나중에 다시 찾아볼 기술 참고 자료와 학습 가이드를 모아 둔 서가입니다. 카드를 눌러 문서를 엽니다.</p>
+  </header>
+  <ul>
+    <li><a href="Pi-%EC%BD%94%EB%94%A9-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8-%EA%B0%80%EC%9D%B4%EB%93%9C.html">
+      <span class="tag">HTML</span>
+      <strong>Pi 코딩 에이전트</strong>
+      <span class="sum">터미널에서 파일을 읽고 코드를 수정하고 명령을 실행하는 코딩 에이전트 Pi의 구조부터 첫 실행까지 정리한 사용 가이드</span>
+    </a></li>
+    <li><a href="offline-stt-guide.html">
+      <span class="tag">HTML</span>
+      <strong>오프라인 STT 선택</strong>
+      <span class="sum">저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트</span>
+    </a></li>
+    <li><a href="offline-tts-guide.html">
+      <span class="tag">HTML</span>
+      <strong>오프라인 TTS 선택</strong>
+      <span class="sum">작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트</span>
+    </a></li>
+    <li><a href="cctv-camera-guide.html">
+      <span class="tag">HTML</span>
+      <strong>CCTV 카메라 선택</strong>
+      <span class="sum">ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트</span>
+    </a></li>
+    <li><a href="architecture-guide.html">
+      <span class="tag">HTML</span>
+      <strong>Monolith + 2-Tier + MVC</strong>
+      <span class="sum">화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드</span>
+    </a></li>
+    <li><a href="monolith-3-tier-spa-api.html">
+      <span class="tag">HTML</span>
+      <strong>Monolith + 3-Tier · SPA + API</strong>
+      <span class="sum">브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드</span>
+    </a></li>
+    <li><a href="modular-monolith.html">
+      <span class="tag">HTML</span>
+      <strong>Modular Monolith</strong>
+      <span class="sum">업무 모듈의 공개 계약·데이터 소유권·의존성 경계를 유지하면서 하나의 애플리케이션으로 배포하는 구조</span>
+    </a></li>
+    <li><a href="microservices.html">
+      <span class="tag">HTML</span>
+      <strong>Microservices</strong>
+      <span class="sum">독립 배포하는 업무 서비스의 계약, 데이터 소유권, 분산 트랜잭션과 장애 대응을 설명한 가이드</span>
+    </a></li>
+    <li><a href="micro-frontends.html">
+      <span class="tag">HTML</span>
+      <strong>Micro-frontends</strong>
+      <span class="sum">업무별 프런트엔드를 Shell과 조합하고 팀별 배포·라우팅·상태·스타일의 경계를 관리하는 방법</span>
+    </a></li>
+    <li><a href="event-driven-architecture.html">
+      <span class="tag">HTML</span>
+      <strong>이벤트 기반 아키텍처(EDA)</strong>
+      <span class="sum">이벤트 발행·구독, Outbox, 중복·순서·실패 처리와 업무 완료 기준을 설명한 가이드</span>
+    </a></li>
+    <li><a href="hexagonal-architecture.html">
+      <span class="tag">HTML</span>
+      <strong>Hexagonal Architecture</strong>
+      <span class="sum">Port와 Adapter로 업무 핵심을 UI·DB·메시지 등 외부 기술과 연결하는 구조</span>
+    </a></li>
+    <li><a href="onion-architecture.html">
+      <span class="tag">HTML</span>
+      <strong>Onion Architecture</strong>
+      <span class="sum">도메인 모델을 중심에 두고 바깥 기술이 안쪽 정책에 의존하도록 설계하는 구조</span>
+    </a></li>
+    <li><a href="clean-architecture.html">
+      <span class="tag">HTML</span>
+      <strong>Clean Architecture</strong>
+      <span class="sum">Dependency Rule과 Use Case 경계로 핵심 업무 규칙을 외부 기술에서 보호하는 구조</span>
+    </a></li>
+    <li><a href="cqrs.html">
+      <span class="tag">HTML</span>
+      <strong>CQRS</strong>
+      <span class="sum">명령과 조회의 모델·책임을 분리하고 읽기 모델의 갱신·지연·복구를 설계하는 패턴</span>
+    </a></li>
+    <li><a href="reverse-tunnel.html">
+      <span class="tag">HTML</span>
+      <strong>SSH 역방향 터널</strong>
+      <span class="sum">내부 웹 서비스를 클라우드 VM의 Nginx와 SSH 역방향 터널로 공개하는 구성·보안·운영 노트</span>
+    </a></li>
+    <li><a href="cloud-internal-vpn.html">
+      <span class="tag">HTML</span>
+      <strong>클라우드 ↔ 내부망 VPN</strong>
+      <span class="sum">WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트</span>
+    </a></li>
+    <li><a href="opentelemetry-jaeger.html">
+      <span class="tag">HTML</span>
+      <strong>OpenTelemetry + Jaeger</strong>
+      <span class="sum">계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드</span>
+    </a></li>
+    <li><a href="https://github.com/neosdc/kyujanggak/blob/main/linux-command-game-experience-plan.ko.md">
+      <span class="tag">MD · GitHub</span>
+      <strong>리눅스 명령어 학습 게임 기획</strong>
+      <span class="sum">기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서</span>
+    </a></li>
+  </ul>
+  <footer>소스와 자료 설명은 <a href="https://github.com/neosdc/kyujanggak">GitHub 저장소</a>에서 볼 수 있습니다.</footer>
+</main>
+</body>
+</html>

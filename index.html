@@ -11,10 +11,14 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif}
 main{max-width:960px;margin:0 auto;padding:48px 16px 64px}
-header{margin-bottom:32px}
+header{margin-bottom:8px}
 .eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--accent);margin:0 0 8px}
 h1{font-size:clamp(2rem,6vw,3rem);line-height:1.2;margin:0 0 12px}
 header p{color:var(--dim);margin:0;max-width:60ch}
+section{margin-top:36px}
+h2{font-size:1.25rem;margin:0 0 4px}
+.count{font-size:.8rem;color:var(--dim);font-weight:400;margin-left:6px}
+.desc{margin:0 0 14px;font-size:.875rem;color:var(--dim)}
 ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 li a{display:flex;flex-direction:column;gap:6px;height:100%;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:inherit;text-decoration:none;transition:border-color .15s}
 li a:hover,li a:focus-visible{border-color:var(--accent);outline:none}
@@ -32,7 +36,10 @@ footer a{color:var(--accent)}
     <h1>규장각</h1>
     <p>나중에 다시 찾아볼 기술 참고 자료와 학습 가이드를 모아 둔 서가입니다. 카드를 눌러 문서를 엽니다.</p>
   </header>
-  <ul>
+  <section>
+    <h2>AI <span class="count">3</span></h2>
+    <p class="desc">AI 도구와 모델</p>
+    <ul>
     <li><a href="ai/Pi-%EC%BD%94%EB%94%A9-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8-%EA%B0%80%EC%9D%B4%EB%93%9C.html">
       <span class="tag">HTML</span>
       <strong>Pi 코딩 에이전트</strong>
@@ -48,11 +55,12 @@ footer a{color:var(--accent)}
       <strong>오프라인 TTS 선택</strong>
       <span class="sum">작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트</span>
     </a></li>
-    <li><a href="hardware/cctv-camera-guide.html">
-      <span class="tag">HTML</span>
-      <strong>CCTV 카메라 선택</strong>
-      <span class="sum">ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트</span>
-    </a></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Computer Science <span class="count">13</span></h2>
+    <p class="desc">소프트웨어 아키텍처, 네트워크·인프라, 관측성</p>
+    <ul>
     <li><a href="computer_science/architecture-guide.html">
       <span class="tag">HTML</span>
       <strong>Monolith + 2-Tier + MVC</strong>
@@ -118,12 +126,30 @@ footer a{color:var(--accent)}
       <strong>OpenTelemetry + Jaeger</strong>
       <span class="sum">계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드</span>
     </a></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Hardware <span class="count">1</span></h2>
+    <p class="desc">보드·카메라 등 하드웨어 선택과 구성</p>
+    <ul>
+    <li><a href="hardware/cctv-camera-guide.html">
+      <span class="tag">HTML</span>
+      <strong>CCTV 카메라 선택</strong>
+      <span class="sum">ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트</span>
+    </a></li>
+    </ul>
+  </section>
+  <section>
+    <h2>기획 문서 <span class="count">1</span></h2>
+    <p class="desc">HTML이 아닌 Markdown 문서</p>
+    <ul>
     <li><a href="https://github.com/neosdc/kyujanggak/blob/main/linux-command-game-experience-plan.ko.md">
       <span class="tag">MD · GitHub</span>
       <strong>리눅스 명령어 학습 게임 기획</strong>
       <span class="sum">기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서</span>
     </a></li>
-  </ul>
+    </ul>
+  </section>
   <footer>소스와 자료 설명은 <a href="https://github.com/neosdc/kyujanggak">GitHub 저장소</a>에서 볼 수 있습니다.</footer>
 </main>
 </body>

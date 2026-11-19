@@ -28,7 +28,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 ## 저장소의 성격
 
 - 기술 참고 자료, 학습 가이드와 기획 문서를 모아 두는 저장소입니다. 문서에는 구조도, 비교표, 명령어·설정·의사 코드 예제가 포함됩니다.
-- 현재 자료는 한국어로 작성된 **HTML 가이드 17개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
+- 현재 자료는 한국어로 작성된 **HTML 가이드 18개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
 - HTML의 스타일, 스크립트와 SVG 도식은 각 파일 안에 포함되어 있습니다. 글꼴은 외부 Google Fonts를 사용하며, 일부 문서에는 단계별 도식 재생·검색·복사 같은 상호작용이 있습니다.
 - 문서를 열기 위한 빌드나 서버는 필요하지 않습니다. 별도의 빌드 설정, 자동 테스트나 배포 스크립트는 없습니다.
 
@@ -39,6 +39,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 | [ai/Pi-코딩-에이전트-가이드.html](./ai/Pi-코딩-에이전트-가이드.html) | Pi 코딩 에이전트 | 터미널에서 파일을 읽고 코드를 수정하고 명령을 실행하는 코딩 에이전트 Pi의 구조부터 첫 실행까지 정리한 사용 가이드 |
 | [ai/offline-stt-guide.html](./ai/offline-stt-guide.html) | 오프라인 STT 선택 | 저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트 |
 | [ai/offline-tts-guide.html](./ai/offline-tts-guide.html) | 오프라인 TTS 선택 | 작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트 |
+| [ai/local-ai-guide.html](./ai/local-ai-guide.html) | 로컬 AI 모델 선택 | Ollama·ComfyUI·Qwen3-TTS의 역할, 목적별 모델과 벤치마크, RAM 64GB·RTX 5070 Laptop 8GB 노트북의 실행 후보를 정리한 다크 테마 가이드 |
 | [hardware/cctv-camera-guide.html](./hardware/cctv-camera-guide.html) | CCTV 카메라 선택 | ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트 |
 | [computer_science/architecture-guide.html](./computer_science/architecture-guide.html) | Monolith + 2-Tier + MVC | 화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드 |
 | [computer_science/monolith-3-tier-spa-api.html](./computer_science/monolith-3-tier-spa-api.html) | Monolith + 3-Tier · SPA + API | 브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드 |
@@ -92,6 +93,18 @@ Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐�
 - **MeloTTS**: 자연스러운 가변 발화용 비교 검증 대상 (대안: Supertonic 3 INT8)
 
 주요 내용: 한국어 지원과 배포 조건(라이선스) 선별, 반복 문구는 캐시하고 새 문장은 모델로 생성하는 전략, 숫자·단위·한영 혼합·약어가 뜻대로 읽히는지 확인하는 방법, 첫 소리까지의 시간과 지속 속도를 분리해 측정하는 방법, 언어·라이선스·배포 경로의 출처.
+
+### 로컬 AI 모델 선택 가이드
+
+`ai/local-ai-guide.html`
+
+Ollama와 ComfyUI, 특수 목적 모델의 실행 환경을 구분하고 내 노트북에서 사용할 모델을 고르기 위한 가이드입니다.
+
+- Ollama의 모델 실행·관리, ComfyUI의 노드 워크플로, Qwen3-TTS의 별도 실행 환경과 연결 흐름
+- 코딩·수학·범용 모델의 목적별 비교와 벤치마크 해석, 문서 검색용 임베딩·음성 모델의 역할
+- ROG Strix G16 G614PP-S5036, Ryzen 9 8940HX, RAM 64GB·RTX 5070 Laptop VRAM 8GB 구성을 기준으로 한 주력·조건부·RAM 분산 실행 후보
+- 모델 용도·실행 범위 필터, 평가 지표 전환, 실행 명령 복사와 다크 테마
+- 공식 배포 용량·공개 평가와 하드웨어 실행 예상을 구분하며, 해당 노트북의 속도 실측은 포함하지 않음
 
 ### CCTV 카메라 선택 노트
 

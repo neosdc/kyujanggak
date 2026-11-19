@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="ko" data-register="instrument">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 노트북에서 실행하는 AI · Ollama, ComfyUI와 모델 선택</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M18 40V24l14-8 14 8v16l-14 8-14-8Z' fill='none' stroke='%23fbbf24' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%2338bdf8'/%3E%3C/svg%3E">
+<meta name="description" content="ROG Strix G16 · Ryzen 9 8940HX · RAM 64GB · RTX 5070 Laptop 8GB 환경을 위한 로컬 AI 모델 가이드">
+<meta name="theme-color" content="#101918">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style data-ve-kit>
+/* visual-explainer kit. The renderer inlines this file at <link rel="stylesheet" data-ve-kit>.
+   Tokens sit in :where(), so a page's own :root rules (topic motif, a named palette) always win.
+   A page picks its register with <html data-register="instrument|blueprint|paper|editorial">; Instrument is the default. */
+
+/* scale, shared by every register */
+:where(:root) {
+  color-scheme: light dark;
+  --t-label: .75rem; --t-small: .875rem; --t-body: 1rem; --t-lead: 1.25rem; --t-h2: 1.625rem; --t-h1: clamp(2.25rem, 5.5vw, 4rem);
+  --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem;
+  --r-1: 4px; --r-2: 10px;
+  --ease: cubic-bezier(.16,1,.3,1); --fast: 150ms; --med: 300ms; --slow: 500ms;
+}
+
+/* Instrument (default): Geist, near-black and amber; dark first */
+:where(:root) {
+  --bg: #0b0d0c; --surface: #121614; --border: #1f2522; --border-bright: #5e6662;
+  --text: #e6ebe8; --text-dim: #919d97; --accent: #f2a93b; --accent-dim: rgba(242,169,59,.14);
+  --ok: #6fcf97; --warn: #e8c547; --risk: #ef6f5c; --info: #6cb6e0;
+  --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  --font-body: 'Geist', 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-display: var(--font-body); --display-weight: 600;
+  --stage: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.5px) 0 0 / 20px 20px;
+}
+@media (prefers-color-scheme: light) {
+  :where(:root) {
+    --bg: #f4f5f3; --surface: #ffffff; --border: #dfe3e0; --border-bright: #888e8b;
+    --text: #121614; --text-dim: #545e59; --accent: #955700; --accent-dim: rgba(149,87,0,.12);
+    --ok: #1c7443; --warn: #7a5e00; --risk: #b0341e; --info: #1a6890;
+    --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  }
+}
+
+/* Blueprint: IBM Plex, blue-black, a 24px line grid on the stage, r-1 everywhere; dark first */
+:where(:root[data-register="blueprint"]) {
+  --bg: #0d1520; --surface: #132031; --border: #22324a; --border-bright: #596b87;
+  --text: #e3ecf5; --text-dim: #92a6bb; --accent: #ffb547; --accent-dim: rgba(255,181,71,.14);
+  --ok: #6fd3a0; --warn: #e8d36a; --risk: #ff7b6b; --info: #7cc0f0;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --r-2: 4px;
+  --stage: linear-gradient(color-mix(in srgb, var(--border) 55%, transparent) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, color-mix(in srgb, var(--border) 55%, transparent) 1px, transparent 1px) 0 0 / 24px 24px;
+}
+@media (prefers-color-scheme: light) {
+  :where(:root[data-register="blueprint"]) {
+    --bg: #f2f6fa; --surface: #ffffff; --border: #d6e0ea; --border-bright: #818f9e;
+    --text: #0f1a26; --text-dim: #4d6074; --accent: #a34700; --accent-dim: rgba(163,71,0,.12);
+    --ok: #1c7443; --warn: #776300; --risk: #b0341e; --info: #145f99;
+  }
+}
+
+/* Paper: Newsreader headings over Atkinson Hyperlegible, ink blue; light first */
+:where(:root[data-register="paper"]) {
+  --bg: #f7f7f4; --surface: #ffffff; --border: #e3e3dc; --border-bright: #8e8e8a;
+  --text: #17191c; --text-dim: #575c63; --accent: #2c4cd0; --accent-dim: rgba(44,76,208,.12);
+  --ok: #1d7443; --warn: #836000; --risk: #b3301d; --info: #1b6a94;
+  --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  --font-body: 'Atkinson Hyperlegible Next', 'Segoe UI', sans-serif;
+  --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+  --font-display: 'Newsreader', Georgia, serif; --display-weight: 500;
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-register="paper"]) {
+    --bg: #111316; --surface: #181b1f; --border: #262a30; --border-bright: #62676c;
+    --text: #e8e8e3; --text-dim: #9ba1a9; --accent: #93a6ff; --accent-dim: rgba(147,166,255,.14);
+    --ok: #6cc492; --warn: #e3b94d; --risk: #f0806b; --info: #6fb8dc;
+    --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  }
+}
+
+/* Editorial: Instrument Serif display over Instrument Sans; light first */
+:where(:root[data-register="editorial"]) {
+  --bg: #fbfbf9; --surface: #f1f0ec; --border: #e2e0da; --border-bright: #8c8a85;
+  --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --accent-dim: rgba(204,52,24,.12);
+  --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94;
+  --node-top: var(--surface); --lift: rgb(18 22 20 / .12); --halo: 22%;
+  --font-body: 'Instrument Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Instrument Serif', Georgia, serif; --display-weight: 400;
+}
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-register="editorial"]) {
+    --bg: #0f0f0f; --surface: #1a1a19; --border: #2b2a28; --border-bright: #696763;
+    --text: #f2f0eb; --text-dim: #a4a19b; --accent: #ff6e50; --accent-dim: rgba(255,110,80,.14);
+    --ok: #6cc492; --warn: #e3b94d; --risk: #f57fa2; --info: #7cb8e8;
+    --node-top: color-mix(in srgb, var(--text) 7%, var(--surface)); --lift: rgb(0 0 0 / .45); --halo: 32%;
+  }
+}
+
+/* base */
+html { font-size: 17px; }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 400 var(--t-body)/1.6 var(--font-body); text-wrap: pretty; font-kerning: normal; font-synthesis: none; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--accent-dim); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+main { max-width: 64rem; margin: 0 auto; padding: var(--s-8) var(--s-5); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); }
+section, figure, header { min-width: 0; }
+header { display: grid; gap: var(--s-4); }
+header + figure { margin-top: calc(var(--s-6) - var(--s-8)); }
+/* text-box trims to cap height and baseline, so gaps are measured from the letters, not the line box */
+h1, h2, .kpi .val { text-box: trim-both cap alphabetic; }
+h1 { font-size: var(--t-h1); line-height: 1.05; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: -.035em; text-wrap: balance; max-width: 16ch; margin-bottom: var(--s-2); }
+h1 .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+h2 { font-size: var(--t-h2); line-height: 1.2; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: -.015em; text-wrap: balance; }
+/* section opener: hairline, mono label in columns 1–3, h2 in 4–12, on one baseline */
+.sec-head { display: grid; gap: var(--s-3) var(--s-5); align-items: baseline; border-top: 1px solid var(--border); padding-top: var(--s-5); margin-bottom: var(--s-6); }
+@media (min-width: 52rem) { .sec-head { grid-template-columns: 3fr 9fr; } }
+/* the other opener, a bare label above the h2, gets the same gaps, so the h2 never sits on the figure below */
+section > .ve-label:has(+ h2) { margin-bottom: var(--s-3); }
+section > h2 { margin-bottom: var(--s-6); }
+h3 { font-size: var(--t-body); line-height: 1.3; font-weight: 600; }
+.eyebrow { display: flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.eyebrow::before { content: ''; width: 1.25rem; height: 2px; background: currentColor; }
+.ve-label { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.caps { text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--text); }
+.lead { font-size: var(--t-lead); line-height: 1.5; color: var(--text-dim); max-width: 44ch; }
+.lead b { color: var(--text); font-weight: 600; }
+.meta { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.unit { font-size: .5em; font-weight: 500; color: var(--text-dim); letter-spacing: 0; }
+code { font: .875em var(--font-mono); font-variant-ligatures: none; }
+/* prose by element, at zero specificity so a page's own rules win: the measure on a section's own text (a card or a table sets
+   its own), code blocks, bare lists, and the gaps between a section's blocks (text to text closer than a block, the line after
+   an h3 closest). The opener keeps its own gaps, so h2 gets none. */
+:where(main, section:not(.sources)) > :where(p, ul, ol) { max-width: 65ch; }
+:where(pre) { font: 500 var(--t-small)/1.55 var(--font-mono); font-variant-ligatures: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); overflow-x: auto; }
+:where(pre) code { font: inherit; }
+:where(main :is(ul, ol):not([class])) { padding-left: 1.25rem; display: grid; gap: var(--s-2); }
+:where(section:not(.sources) > * + :not(h2)) { margin-top: var(--s-5); }
+:where(section:not(.sources) > :is(p, ul, ol) + :is(p, ul, ol)) { margin-top: var(--s-3); }
+:where(section:not(.sources) > h3 + *) { margin-top: var(--s-2); }
+
+/* section nav for 4+ sections: a sticky bar before <main>, aligned to its column; the links alone scroll sideways on a phone, and
+   kit.js marks the section in view */
+.ve-toc { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: var(--s-4); padding: 0 max(var(--s-5), (100% - 64rem) / 2 + var(--s-5)); background: var(--bg); border-bottom: 1px solid var(--border); }
+.ve-toc > div { display: flex; flex: 1; gap: var(--s-1); min-width: 0; padding: var(--s-2) 0; overflow-x: auto; scrollbar-width: none; mask-image: linear-gradient(90deg, #000 85%, transparent); }
+.ve-toc > div::-webkit-scrollbar { display: none; }
+.ve-toc a { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); text-decoration: none; padding: var(--s-2); border-radius: var(--r-1); white-space: nowrap; }
+.ve-toc a:hover { color: var(--text); }
+.ve-toc a[aria-current] { color: var(--text); background: var(--accent-dim); }
+.ve-toc .pos { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+:where(body:has(> .ve-toc) main > *) { scroll-margin-top: 4rem; }
+
+/* figure: the stage is a faint dot grid, so nodes read as objects placed on it */
+.frame { background: var(--stage), var(--bg); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-5); overflow-x: auto; }
+figcaption { font-size: var(--t-body); color: var(--text-dim); margin-top: var(--s-3); max-width: 65ch; }
+.fig-n { font: 600 var(--t-label) var(--font-mono); color: var(--text); margin-right: var(--s-2); }
+
+/* diagram kit (references/diagrams.md) */
+/* min-width keeps 14-unit labels >= 12px as rendered; narrow screens scroll the frame instead. kit/render.mjs sets --ve-min for a viewBox wider than 816. */
+.ve-svg { width: 100%; min-width: var(--ve-min, 700px); height: auto; display: block; font: 500 17px var(--font-body); }
+.ve-n .sh { fill: url(#ve-node); stroke: var(--border-bright); stroke-width: 1.5; filter: drop-shadow(0 6px 14px var(--lift)); transition: stroke var(--fast) var(--ease), opacity var(--med) var(--ease); }
+.ve-n .lid { fill: var(--node-top); }
+.ve-n.is-key .sh { fill: color-mix(in srgb, var(--accent) 11%, var(--surface)); stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--accent) var(--halo), transparent)); }
+.ve-n text { fill: var(--text); text-anchor: middle; dominant-baseline: central; font-weight: 600; }
+.ve-n .sub { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+.ve-n .gl { fill: none; stroke: var(--text-dim); stroke-width: 1.5; stroke-linejoin: round; }
+.ve-n .ve-kind { fill: var(--text-dim); font: 600 14px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.ve-n.is-key .gl { stroke: var(--accent); }
+.ve-e { fill: none; stroke: var(--text-dim); stroke-width: 1.75; marker-end: url(#ve-ah); }
+.ve-e.is-hot { stroke: var(--accent); stroke-width: 2.75; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 55%, transparent)); }
+.ve-e.is-async { stroke-dasharray: 6 5; }
+.ve-el { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+.ve-el.l { text-anchor: end; } .ve-el.r { text-anchor: start; }
+/* a dashed boundary around a group, with a mono tag in its corner */
+.ve-bnd { fill: none; stroke: var(--border-bright); stroke-width: 1; stroke-dasharray: 6 5; }
+.ve-bnd-t { fill: var(--text-dim); font: 600 14px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+/* a plain mono label on a drawing (a note, a count); .key and .risk color it */
+.ve-tag { fill: var(--text-dim); font: 500 14px var(--font-mono); }
+.ve-tag.key { fill: var(--accent); } .ve-tag.risk { fill: var(--risk); }
+/* a slot in a queue or worker pool; .is-on fills it (.on is the stepper's) */
+.ve-slot { fill: var(--surface); stroke: var(--border-bright); stroke-width: 1.25; }
+.ve-slot.is-on { fill: var(--accent-dim); stroke: var(--accent); stroke-width: 1.75; }
+/* chart axes and ticks, and their labels */
+.ve-axis { fill: none; stroke: var(--border-bright); stroke-width: 1; }
+.ve-axis-t { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; font-variant-numeric: tabular-nums; }
+/* <ve-flow> on a page: its labels stay at 12 px or more, and a small drawing grows no more than 1.3× (kit/flow.mjs sets both) */
+.ve-svg.ve-flow { min-width: var(--min); max-width: var(--max); }
+/* flags on <ve-flow> parts: new, gone (an arrow also gets ✕) */
+.ve-n.is-new .sh { stroke: var(--ok); stroke-dasharray: 6 4; }
+.ve-n.is-gone .sh { stroke: var(--risk); stroke-dasharray: 3 4; opacity: .7; }
+.ve-n.is-gone text { text-decoration: line-through; }
+.ve-e.is-new { stroke: var(--ok); }
+.ve-e.is-gone { stroke: var(--risk); stroke-dasharray: 3 4; }
+/* a walked machine (references/machines.md): a state that can still reach a broken rule, the shortest way there, and the state
+   that breaks it; later rules win, so the breaking state stays red on the path */
+.ve-n.is-may-break .sh { stroke: var(--warn); } .ve-n.is-may-break:not(.is-key) .sh { fill: color-mix(in srgb, var(--warn) 10%, var(--surface)); }
+/* in a stepper the path lights only on its last step, the full picture; elsewhere it is always lit. :where() keeps the
+   condition from adding specificity, so .is-breaks below still wins and the breaking state stays red */
+.ve-n.is-bug-path:not(:where(.ve-steps:not(.is-full) *)) .sh, .ve-e.is-bug-path:not(:where(.ve-steps:not(.is-full) *)) { stroke: var(--accent); }
+.ve-n.is-breaks .sh, .ve-steps .ve-n.is-breaks.now > .sh { stroke: var(--risk); stroke-width: 2.5; stroke-dasharray: 6 3; }
+.ve-x { fill: var(--risk); font: 600 16px var(--font-mono); text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; }
+/* <ve-stack>: one bar split in proportion; labels under their segments */
+.ve-stack rect { fill: color-mix(in srgb, var(--text) 9%, var(--surface)); stroke: var(--border-bright); stroke-width: 1.5; }
+.ve-stack rect.hot { fill: var(--accent-dim); stroke: var(--accent); }
+.ve-stack text { fill: var(--text-dim); font: 500 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+
+/* numbered callouts and edge numbers (references/diagrams.md): .now fills the current one; .q keeps an edge number quiet until its step */
+.ve-co circle { fill: var(--surface); stroke: var(--accent); stroke-width: 1.75; }
+.ve-co text { fill: var(--accent); font: 600 14px var(--font-mono); text-anchor: middle; dominant-baseline: central; }
+.ve-co.now circle { fill: var(--accent); } .ve-co.now text { fill: var(--surface); }
+.ve-co.q circle { stroke: var(--border-bright); } .ve-co.q text { fill: var(--text-dim); }
+.ve-co.q.now circle { fill: var(--accent); stroke: var(--accent); } .ve-co.q.now text { fill: var(--surface); }
+
+/* dimension lines (references/diagrams.md) */
+.ve-dim path { fill: none; stroke-width: 1; } .ve-dim .ext { stroke: var(--border-bright); } .ve-dim .ln { stroke: var(--text-dim); }
+.ve-dim text { fill: var(--text); font: 500 14px var(--font-mono); text-anchor: middle; }
+.ve-dim.is-key .ln { stroke: var(--accent); } .ve-dim.is-key text { fill: var(--accent); }
+
+/* flow dots: they travel under the nodes, so a dot enters a box and leaves from the far side */
+[data-flow] { fill: none; stroke: none; }
+.ve-dots circle { fill: var(--text); }
+.ve-dots .hit { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+.ve-steps:not(.is-full) .ve-dots { display: none; }
+
+/* linked highlighting: same data-ref lights up together */
+/* Dim shapes, never text below 4.5:1: unlit labels drop to --text-dim instead of fading. */
+.ve-ref { text-decoration: underline dotted var(--text-dim) 1px; text-underline-offset: .22em; border-radius: var(--r-1); transition: background var(--fast) var(--ease); }
+.ve-ref.is-lit { background: var(--accent-dim); text-decoration-color: var(--accent); }
+svg [data-ref] { transition: opacity var(--med) var(--ease); }
+svg.has-lit path[data-ref]:not(.is-lit), svg.has-lit g[data-ref]:not(.is-lit) .sh { opacity: .25; }
+svg.has-lit g[data-ref]:not(.is-lit) text, svg.has-lit text[data-ref]:not(.is-lit) { fill: var(--text-dim); }
+.ve-n.is-lit .sh { stroke: var(--accent); }
+.ve-e.is-lit { stroke: var(--accent); }
+.ve-el.is-lit { fill: var(--text); }
+.case.is-lit { border-color: var(--accent); }
+
+/* stepper / scene player */
+/* Future steps: shapes stay as a faint outline; their labels are hidden, not faded to an unreadable gray. */
+.ve-steps [data-s] { transition: opacity var(--slow) var(--ease), stroke-dashoffset var(--slow) var(--ease); }
+.ve-steps [data-s]:not(.on) { opacity: .15; }
+.ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 0; }
+.ve-steps path[pathLength][data-s] { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ve-steps path[pathLength][data-s].on { stroke-dashoffset: 0; }
+.ve-steps .ve-n.now > .sh { stroke: var(--accent); }
+/* replay: the edges that fired light until the full picture, and each token runs its path once, after --d; edges and nodes still show the step without tokens */
+.ve-steps:not(.is-full) .ve-e.now { stroke: var(--accent); stroke-width: 2.75; }
+.ve-tok { fill: var(--accent); visibility: hidden; }
+.ve-steps:not(.is-still) .ve-tok.now { visibility: visible; animation: ve-run var(--dur, 900ms) ease-in-out var(--d, 0ms) both; }
+@keyframes ve-run { from { offset-distance: 0%; opacity: 0; } 10%, 75% { opacity: 1; } to { offset-distance: 100%; opacity: 0; } }
+/* a part that comes and goes (a queued job, a busy slot): shown only on the steps its data-s lists, arriving after --d */
+.ve-steps .ve-at { transition: opacity var(--med) var(--ease); }
+.ve-steps .ve-at:not(.now) { opacity: 0; }
+.ve-steps .ve-at.now { transition-delay: var(--d, 0ms); }
+/* a changing value: one text per step at one spot; the latest step's shows, swapped without a crossfade */
+/* zero-specificity parent, so a value inside a node, a dimension, or a stack keeps that part's own fill and font */
+:where(.ve-vals) text { fill: var(--text-dim); } :where(.ve-vals) .sub { font: 500 14px var(--font-mono); }
+.ve-steps .ve-vals text { transition: none; }
+.ve-vals text.on:has(~ text.on) { opacity: 0; }
+.ve-player { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-4); }
+.ve-cap { grid-column: 1 / -1; list-style: none; padding: 0; min-height: 3.2em; }
+.ve-cap li::before { content: attr(data-n); font: 600 var(--t-label) var(--font-mono); color: var(--accent); margin-right: var(--s-3); font-variant-numeric: tabular-nums; }
+.ve-player input { accent-color: var(--accent); min-width: 0; }
+button { font: 500 var(--t-small) var(--font-mono); color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); cursor: pointer; transition: border-color var(--fast) var(--ease); }
+button:hover, button:focus-visible { border-color: var(--accent); }
+
+/* KPI strip: one frame, cells split by hairlines, each number with its picture. Flex, so a wrapped last row stretches instead of leaving an empty gray cell. */
+.kpis { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+.kpi { flex: 1 1 14rem; background: var(--surface); padding: var(--s-5); display: grid; grid-template-rows: auto auto 1fr; gap: var(--s-3); min-width: 0; }
+.kpi .val { font: 600 2.75rem/1 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.ve-waffle { align-self: end; width: 11rem; height: auto; font: 500 13px var(--font-mono); overflow: visible; }
+.ve-waffle text { fill: var(--text-dim); dominant-baseline: central; }
+.ann { fill: none; stroke: var(--text-dim); stroke-width: 1; }
+.ve-bars { align-self: end; width: 100%; max-width: 16rem; height: auto; font: 500 13px var(--font-mono); overflow: visible; }
+.ve-bars text { fill: var(--text-dim); dominant-baseline: central; }
+.ve-bars rect { fill: var(--border-bright); transform-box: fill-box; transform-origin: left; transition: transform 900ms var(--ease) 150ms; }
+.ve-bars .hot { fill: var(--accent); }
+.ve-bars .hot + text { fill: var(--text); }
+
+/* small multiples: one mini diagram per case; the changed part takes the case's status color */
+.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: var(--s-4); }
+.case { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-3); align-content: start; transition: border-color var(--fast) var(--ease); }
+.case[data-st=ok] { --st: var(--ok); } .case[data-st=warn] { --st: var(--warn); } .case[data-st=risk] { --st: var(--risk); }
+.ve-mini { width: 100%; height: auto; font: 600 15px var(--font-body); }
+.ve-mini .ve-n .sh { filter: none; }
+/* a .cases column is never under 14.5rem, so a mini is ≥ 211 px and 14 units render ≥ 12.3 px */
+.ve-mini .ve-n .sub { font-size: 14px; }
+.ve-mini .is-st.ve-e { stroke: var(--st); stroke-width: 2.75; }
+.ve-mini .is-st .sh { stroke: var(--st); stroke-width: 2; }
+.ve-mini .is-st .sub { fill: var(--st); }
+.ve-mini .is-off { stroke-dasharray: 5 4; }
+.ve-mini .ve-e.is-off { opacity: .35; }
+
+/* chips */
+.chip { display: inline-flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); padding: 2px var(--s-2); border: 1px solid currentColor; border-radius: var(--r-1); white-space: nowrap; justify-self: start; }
+.chip::before { content: ''; width: .5rem; height: .5rem; background: currentColor; }
+.chip.ok { color: var(--ok); } .chip.ok::before { border-radius: 50%; }
+.chip.warn { color: var(--warn); } .chip.warn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.chip.risk { color: var(--risk); }
+
+/* a table: a scroll frame, the header in the label style, row rules only; .num cells are right-aligned numbers */
+.ve-table { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-2); }
+.ve-table table { border-collapse: collapse; width: 100%; font-size: var(--t-body); font-variant-numeric: tabular-nums; }
+.ve-table th, .ve-table td { padding: var(--s-3) var(--s-4); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+.ve-table thead th { background: var(--surface); font: 600 var(--t-label)/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+.ve-table tbody th { font-weight: 600; }
+.ve-table tbody tr:last-child > * { border-bottom: 0; }
+.ve-table .num { text-align: right; font-family: var(--font-mono); }
+.ve-table td small { display: block; color: var(--text-dim); font-size: var(--t-small); }
+
+details { border-top: 1px solid var(--border); padding-top: var(--s-4); color: var(--text-dim); font-size: var(--t-body); }
+summary { cursor: pointer; font: 500 var(--t-label) var(--font-mono); margin-bottom: var(--s-2); }
+/* sources stay visible: readers check them without hunting for a toggle */
+.sources { border-top: 1px solid var(--border); padding-top: var(--s-4); display: grid; gap: var(--s-2); }
+
+/* entrance: blocks rise in once; bars grow as their block arrives (JS adds .js-motion only when motion is allowed) */
+.js-motion main > * { transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); }
+.js-motion main > :not(.in) { opacity: 0; transform: translateY(1rem); }
+.js-motion main > :not(.in) .ve-bars rect { transform: scaleX(0); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .ve-tok { display: none; } }
+
+@media print {
+  /* Print uses the register's light foregrounds on white, every step fully drawn, and no effects. */
+  :where(:root) { --bg: #fff; --surface: #fff; --border: #dfe3e0; --border-bright: #888e8b; --text: #121614; --text-dim: #545e59; --accent: #955700; --ok: #1c7443; --warn: #7a5e00; --risk: #b0341e; --info: #1a6890; --node-top: #fff; }
+  :where(:root[data-register="blueprint"]) { --border: #d6e0ea; --border-bright: #818f9e; --text: #0f1a26; --text-dim: #4d6074; --accent: #a34700; --warn: #776300; --info: #145f99; }
+  :where(:root[data-register="paper"]) { --border: #e3e3dc; --border-bright: #8e8e8a; --text: #17191c; --text-dim: #575c63; --accent: #2c4cd0; --ok: #1d7443; --warn: #836000; --risk: #b3301d; --info: #1b6a94; }
+  :where(:root[data-register="editorial"]) { --border: #e2e0da; --border-bright: #8c8a85; --text: #111111; --text-dim: #5a5853; --accent: #cc3418; --ok: #1d7443; --warn: #836000; --risk: #a01d48; --info: #1b6a94; }
+  .ve-player button, .ve-player input, .ve-dots { display: none; }
+  .ve-toc { display: none; }
+  .frame { overflow: visible; background: #fff; } .ve-svg, .ve-svg.ve-flow { min-width: 0; }
+  .frame, .case, .kpi { break-inside: avoid; } h2 { break-after: avoid; }
+  svg * { filter: none !important; }
+  .js-motion main > * { opacity: 1 !important; transform: none !important; }
+  .js-motion .ve-bars rect { transform: none !important; }
+  .ve-steps [data-s]:not(.on), .ve-steps g[data-s]:not(.on) text, .ve-steps text[data-s]:not(.on) { opacity: 1; }
+  .ve-steps .ve-at:not(.now) { opacity: 0; }
+  .ve-steps path[pathLength][data-s] { stroke-dashoffset: 0; }
+  .ve-tok, .ve-vals text:not(:last-child) { display: none; }
+}
+</style>
+<style>
+:root{--bg:#101918;--surface:#172421;--text:#e6eee9;--text-dim:#a6b9af;--accent:#88cfbc;--accent-dim:#203c33;--border:#31453e;--border-bright:#668779;--ok:#a6ce9d;--warn:#e8c38d;--risk:#efa89a;--ok-dim:#203b2c;--warn-dim:#3a3022;--risk-dim:#3f2724;--table-head:#1e3028;--track:#24372f;--bar:#71978a;--bar-warn:#ba9863;--code-bg:#0c1411;color-scheme:dark}
+body{font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.8}
+main{max-width:1200px;margin:auto;padding:var(--s-6) var(--s-5) var(--s-8)}
+h1,h2,h3{font-family:"Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all;letter-spacing:-.045em;line-height:1.3}
+h1{font-size:clamp(34px,4.1vw,56px);max-width:17ch;margin:var(--s-3) 0}
+h2{font-size:clamp(25px,3vw,36px);margin:var(--s-2) 0 var(--s-4)}
+h3{font-size:21px;margin:0 0 var(--s-2)}
+p{word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--accent);text-underline-offset:4px}
+button,input,select{font:inherit}
+button,select{border:1px solid var(--border-bright);background:var(--surface);color:var(--text);border-radius:var(--r-1);padding:var(--s-1) var(--s-3);min-height:42px}
+button{cursor:pointer}button:hover{background:var(--accent-dim)}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+section{margin-top:var(--s-8);scroll-margin-top:90px}
+header p,section p{max-width:74ch}
+figure{margin:var(--s-5) 0}
+figcaption{font-size:14px;line-height:1.75;color:var(--text-dim);max-width:90ch;margin-top:var(--s-3)}
+figcaption b{color:var(--text)}
+.eyebrow,.section-label{font:700 12px/1.6 "IBM Plex Mono","Noto Sans KR",monospace;letter-spacing:.12em;color:var(--accent)}
+.intro{display:grid;grid-template-columns:1.25fr 1fr;gap:var(--s-6);align-items:center}
+.intro .lead{font-size:18px;line-height:1.85;max-width:42ch}
+.muted,.subtle{color:var(--text-dim)}.small{font-size:14px}.mono,code{font-family:"IBM Plex Mono","Cascadia Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.meta{font-size:12px;color:var(--text-dim);letter-spacing:.02em}
+.specs{border-top:2px solid var(--text);margin:var(--s-3) 0 0}
+.specs>div{display:grid;grid-template-columns:110px 1fr;gap:var(--s-3);padding:var(--s-3) 0;border-bottom:1px solid var(--border)}
+.specs dt{font-size:13px;color:var(--text-dim)}.specs dd{margin:0;font-weight:700;font-size:16px}.specs dd small{display:block;font-size:13px;font-weight:400;color:var(--text-dim)}
+.quick-answer{border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:grid;grid-template-columns:1.08fr 1fr;gap:var(--s-6);padding:var(--s-5) 0}
+.capacity{display:flex;align-items:baseline;gap:var(--s-2);font-size:14px;color:var(--text-dim);margin-bottom:var(--s-4)}
+.capacity strong{font:700 58px/1 "IBM Plex Mono",monospace;color:var(--accent);letter-spacing:-.07em}.capacity strong span{font-size:22px;letter-spacing:0}
+.picks{display:grid;gap:var(--s-2)}.pick{display:grid;grid-template-columns:64px 1fr;gap:var(--s-3);align-items:baseline}.pick span{font-size:12px;color:var(--text-dim)}.pick b{font-size:16px;line-height:1.5}
+.chart-note{font-size:12px;line-height:1.7;color:var(--text-dim);margin:var(--s-2) 0 0}
+.tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--border-bright);border-bottom:1px solid var(--border-bright)}
+.tool{padding:var(--s-4);min-width:0}.tool+.tool{border-left:1px solid var(--border)}.tool p{font-size:14px;margin:var(--s-2) 0}.tool .tool-tag{font-size:12px;letter-spacing:.08em;color:var(--text-dim)}
+.tool ul{padding-left:var(--s-4);font-size:14px}.note{background:var(--surface);border:1px solid var(--border);padding:var(--s-4);border-radius:var(--r-2);font-size:14px;margin-top:var(--s-4)}
+.note p{margin:0}.note b{color:var(--accent)}
+.frame{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2)}
+.ve-svg text,.ve-mini text{font-family:"Noto Sans KR","Malgun Gothic",sans-serif}
+.memory-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5)}
+.memory-panel{padding:var(--s-4);border:1px solid var(--border);background:var(--surface);border-radius:var(--r-2);min-width:0;overflow-x:auto}
+.memory-panel .ve-svg{width:100%!important;min-width:440px!important;max-width:none!important}
+.memory-panel h3{margin-top:var(--s-3);font-size:20px}.memory-panel p{font-size:14px;margin-bottom:0}.memory-panel svg{width:100%;height:auto;display:block}
+.chip{font-size:12px;white-space:nowrap}.chip.ok{color:var(--ok);background:var(--ok-dim)}.chip.warn{color:var(--warn);background:var(--warn-dim)}.chip.risk{color:var(--risk);background:var(--risk-dim)}
+.filters{display:flex;gap:var(--s-3);align-items:center;flex-wrap:wrap;margin:var(--s-4) 0}.filter-group{display:flex;gap:var(--s-1);flex-wrap:wrap}.filters label{font-size:13px;color:var(--text-dim)}.filters select{font-size:14px;max-width:100%}
+.result-count{font-size:12px;color:var(--text-dim);margin-left:auto;white-space:nowrap}
+.ve-table{overflow:auto;background:var(--surface)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.7}th{font-size:12px;color:var(--text-dim);text-align:left;white-space:nowrap;background:var(--table-head)}td,th{padding:var(--s-3);vertical-align:top;border-bottom:1px solid var(--border)}
+td strong{display:block;font-size:14px;line-height:1.6}td small{display:block;font-size:12px;line-height:1.7;color:var(--text-dim);margin-top:var(--s-1)}.models-table{min-width:920px}.models-table th:first-child{width:100px}.models-table th:nth-child(2){width:255px}.models-table th:nth-child(3){width:105px}.models-table th:last-child{width:110px}.models-table [hidden]{display:none!important}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.copy-model{font-size:12px;white-space:nowrap;padding:var(--s-1) var(--s-2);min-height:36px}.model-name{overflow-wrap:anywhere;text-decoration:none;font-weight:700}.model-name:hover{text-decoration:underline}
+.weight{display:block;margin-top:var(--s-2);height:5px;background:var(--track);width:82px;margin-left:auto;overflow:hidden}.weight i{display:block;height:100%;background:var(--bar)}.weight.over i{background:var(--bar-warn)}.empty-state{display:none;padding:var(--s-5);font-size:14px}.empty-state.show{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s-3);font-size:12px;color:var(--text-dim);margin-top:var(--s-3)}.legend span{display:inline-flex;align-items:center;gap:var(--s-1)}
+.bench-head{display:flex;gap:var(--s-4);align-items:center;justify-content:space-between;flex-wrap:wrap}.bench-head label{font-size:14px}.bench-panel{padding:var(--s-5);border:1px solid var(--border);border-radius:var(--r-2);background:var(--surface)}.bench-desc{font-size:14px;color:var(--text-dim);margin:var(--s-2) 0 var(--s-4)}
+.metric-row{display:grid;grid-template-columns:110px 1fr 64px;gap:var(--s-3);align-items:center;margin:var(--s-3) 0}.metric-row .metric-name{font-size:14px;font-weight:700}.metric-track{height:30px;background:var(--track)}.metric-fill{height:100%;width:0;background:var(--bar);transition:width var(--med) var(--ease)}.metric-row:has(#bench9bar) .metric-fill{background:var(--accent)}.metric-value{text-align:right;font:700 23px/1.3 "IBM Plex Mono",monospace}.metric-axis{display:flex;justify-content:space-between;margin:var(--s-2) 76px 0 122px;color:var(--text-dim);font-size:11px}.metric-foot{font-size:12px;color:var(--text-dim);margin-top:var(--s-4)}
+.two-col{display:grid;grid-template-columns:1.1fr 1fr;gap:var(--s-5);align-items:start}.two-col>div{min-width:0}.definition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--s-5);margin-top:var(--s-4)}.definition-grid>div{padding:var(--s-3) 0;border-bottom:1px solid var(--border)}.definition-grid b{display:block;font-size:14px}.definition-grid p{font-size:13px;margin:var(--s-1) 0;color:var(--text-dim)}
+details{border:1px solid var(--border);border-radius:var(--r-2);padding:var(--s-3) var(--s-4);background:var(--surface);margin-top:var(--s-4)}summary{font-weight:700;font-size:14px;cursor:pointer}details[open]>summary{margin-bottom:var(--s-4)}.archive-table{min-width:720px}
+.special-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5)}.special-grid figure{min-width:0;margin-top:0}.special-grid .frame{padding:var(--s-4)}.special-grid h3{font-size:20px}.special-grid p{font-size:14px}
+.command-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4)}.command{border:1px solid var(--border);border-radius:var(--r-2);padding:var(--s-4);background:var(--surface);min-width:0}.command strong{display:block;margin:var(--s-2) 0;font-size:16px}.command pre{font-size:12px;line-height:1.8;overflow:auto;padding:var(--s-3);margin:var(--s-3) 0}.command button{font-size:12px;min-height:36px}
+.setup-list{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-6);padding-left:var(--s-5);font-size:14px}.setup-list li{padding-left:var(--s-1)}
+.sources ul{columns:2;column-gap:var(--s-6);padding-left:var(--s-4);font-size:13px}.sources li{break-inside:avoid;margin-bottom:var(--s-2)}.sources p{font-size:12px;color:var(--text-dim)}
+.end-note{border-top:1px solid var(--border-bright);margin-top:var(--s-6);padding-top:var(--s-4);font-size:13px;color:var(--text-dim)}
+.ve-player{flex-wrap:wrap}.ve-player button{min-width:44px}.ve-cap{font-size:14px}.ve-toc{font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);border-color:var(--border)}.ve-toc a{white-space:nowrap}
+pre{background:var(--code-bg);color:var(--text);border:1px solid var(--border)}code{color:var(--text)}pre code{background:transparent;color:inherit}::selection{background:var(--accent);color:var(--bg)}
+@media(max-width:850px){.intro,.quick-answer,.two-col,.memory-pair,.special-grid{grid-template-columns:1fr}.tool-grid{grid-template-columns:1fr}.tool+.tool{border-left:0;border-top:1px solid var(--border)}.command-list{grid-template-columns:1fr}.intro{gap:var(--s-4)}h1{max-width:20ch}.specs{margin-top:0}.quick-answer{gap:var(--s-4)}.capacity strong{font-size:44px}.result-count{margin-left:0}.sources ul{columns:1}.setup-list{grid-template-columns:1fr}}
+@media(max-width:520px){main{padding:var(--s-4) var(--s-3) var(--s-7)}h1{font-size:34px}.intro .lead{font-size:16px}.metric-row{grid-template-columns:82px 1fr 48px;gap:var(--s-2)}.metric-row .metric-name{font-size:12px}.metric-value{font-size:20px}.metric-axis{margin-left:90px;margin-right:56px}.bench-panel{padding:var(--s-3)}.definition-grid{grid-template-columns:1fr}.filters{gap:var(--s-2)}.filters button{font-size:13px;padding:var(--s-1) var(--s-2)}.specs>div{grid-template-columns:85px 1fr}}
+@media(prefers-reduced-motion:reduce){.metric-fill{transition:none}}
+@media print{:root{--bg:#fff;--surface:#fff;--text:#1d302e;--text-dim:#4e625d;--accent:#075e58;--accent-dim:#e1eeea;--border:#d7ddd5;--border-bright:#829b92;--ok:#24623f;--warn:#89521b;--risk:#a13c2d;--ok-dim:#e8f0e6;--warn-dim:#f4ebdc;--risk-dim:#f5e7e2;--table-head:#edf0e9;--track:#e5e9e2;--bar:#59877d;--bar-warn:#a37b4d;--code-bg:#f4f5f0;color-scheme:light}body{background:#fff;font-size:11px}.ve-toc,.filters,.copy-model,.command button,.ve-player,#benchMetric{display:none!important}main{max-width:none;padding:0}section{margin-top:28px;break-inside:auto}h1{font-size:32px}h2{font-size:24px}.models-table [hidden]{display:table-row!important}.ve-table{overflow:visible}.models-table,.archive-table{min-width:0;font-size:10px}td,th{padding:6px}.intro,.quick-answer,.two-col{gap:20px}.command-list{grid-template-columns:1fr}.sources ul{columns:2}figure,.memory-panel,.command{break-inside:avoid}.weight{width:50px}.model-name{font-size:11px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ve-ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>
+    <linearGradient id="ve-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--node-top)"/><stop offset="1" style="stop-color:var(--surface)"/></linearGradient>
+    <pattern id="ve-w-on" width="10" height="10" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="8" height="8" rx="1.5" style="fill:var(--accent)"/></pattern>
+    <pattern id="ve-w-off" width="10" height="10" patternUnits="userSpaceOnUse"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" style="fill:none;stroke:var(--text-dim)"/></pattern>
+  </defs>
+</svg>
+<nav class="ve-toc" aria-label="가이드 목차"><div><a href="#start">추천 요약</a><a href="#tools">도구의 역할</a><a href="#memory">메모리 원리</a><a href="#models">모델 목록</a><a href="#benchmarks">평가 읽기</a><a href="#special">검색·음성</a><a href="#setup">시작하기</a><a href="#sources">출처</a></div><span class="pos"></span></nav>
+<main>
+<header id="start">
+<div class="intro">
+<div><p class="eyebrow">LOCAL AI FIELD GUIDE · ROG STRIX G16</p><h1>내 노트북에서,<br>어떤 AI를 실행할까?</h1><p class="lead"><b>주력은 Q4 4–8B 모델.</b><br>큰 모델은 RAM에 나눠 실행하고 속도를 비교하세요.</p><p class="meta">G614PP-S5036 · 사용자 제공 RAM 구성 반영 · 자료 확인 2026.11.19</p></div>
+<dl class="specs"><div><dt>빠른 실행의 기준</dt><dd>RTX 5070 Laptop · VRAM 8GB<small>ASUS G614PP 시리즈 공식 GPU 사양 기준</small></dd></div><div><dt>큰 모델의 여유</dt><dd>시스템 RAM 64GB<small>사용자가 알려준 구성 · CPU 분산 실행에 활용</small></dd></div><div><dt>CPU</dt><dd>Ryzen 9 8940HX<small>16코어·32스레드 · GPU에 못 올린 부분을 처리</small></dd></div></dl>
+</div>
+<figure>
+<div class="quick-answer">
+<div><div class="capacity"><strong>8<span>GB</span></strong><span>GPU 전체 메모리</span></div><div class="picks"><div class="pick"><span>범용</span><b>Qwen3.5 4B</b></div><div class="pick"><span>코딩</span><b>Qwen2.5-Coder 7B</b></div><div class="pick"><span>수학</span><b>DeepSeek-R1-0528 8B</b></div></div></div>
+<div><p class="section-label">선택한 Q4 배포본의 다운로드 용량</p><svg class="ve-bars" viewBox="0 0 240 108" role="img" aria-label="GPU 전체 메모리 8GB와 다운로드 용량 비교: Qwen3.5 4B 3.3GB, Coder 7B 4.7GB, DeepSeek 8B 5.2GB, Qwen3.5 9B 6.6GB"><text y="12">범용 4B</text><rect class="hot" x="84" y="5" width="41.25" height="14" rx="2"/><text x="133.25" y="12">3.3 GB</text><text y="40">코딩 7B</text><rect x="84" y="33" width="58.75" height="14" rx="2"/><text x="150.75" y="40">4.7 GB</text><text y="68">수학 8B</text><rect x="84" y="61" width="65" height="14" rx="2"/><text x="157" y="68">5.2 GB</text><text y="96">품질 9B</text><rect x="84" y="89" width="82.5" height="14" rx="2"/><text x="174.5" y="96">6.6 GB</text></svg><p class="chart-note">막대는 실행 메모리가 아닙니다. 실행 중 캐시·연산 버퍼·화면 표시용 공간이 추가로 필요합니다.</p></div>
+</div><figcaption><span class="fig-n">Fig. 1</span><b>먼저 세 모델을 번갈아 실행하세요.</b> RAM 64GB는 큰 모델의 실행 범위를 넓히고, VRAM 8GB는 GPU 중심 실행의 크기를 제한합니다.</figcaption>
+</figure>
+</header>
+
+<section id="tools">
+<p class="section-label">도구와 모델은 서로 다른 층입니다</p><h2>Ollama는 모델을 실행하고,<br>ComfyUI는 생성 과정을 연결합니다.</h2>
+<figure>
+<div class="tool-grid">
+<div class="tool"><span class="tool-tag">LANGUAGE MODEL RUNTIME</span><h3>Ollama</h3><p>지원하는 언어·멀티모달·임베딩 모델을 다운로드하고 실행합니다.</p><ul><li>대화, 요약, 코딩, 수학</li><li>명령어·API로 다른 앱과 연결</li><li>대화 화면은 별도 앱을 연결할 수도 있음</li></ul><p class="small muted">Qwen·Gemma·Llama는 모델 계열 이름입니다.</p></div>
+<div class="tool"><span class="tool-tag">NODE WORKFLOW INTERFACE</span><h3>ComfyUI</h3><p>모델 불러오기, 생성, 보정, 저장 단계를 노드로 연결합니다.</p><ul><li>이미지 생성·편집에 널리 사용</li><li>지원 모델·확장에 따라 영상·오디오 처리</li><li>워크플로를 저장하고 반복 실행</li></ul><p class="small muted">ComfyUI 자체가 생성 모델은 아닙니다.</p></div>
+<div class="tool"><span class="tool-tag">TASK-SPECIFIC RUNTIME</span><h3>Qwen3-TTS 실행 환경</h3><p>텍스트를 음성으로 바꾸는 모델을 전용 패키지나 서버에서 실행합니다.</p><ul><li>Qwen3-TTS의 Python 패키지</li><li>vLLM-Omni 같은 지원 서버</li><li>필요하면 API로 Ollama와 연결</li></ul><p class="small muted">Qwen3-TTS 구동에 Ollama는 필수가 아닙니다.</p></div>
+</div><figcaption><span class="fig-n">Fig. 2</span>도구는 모델을 사용하는 방법을 제공하며, 모든 모델이 모든 도구에서 실행되지는 않습니다.</figcaption>
+</figure>
+<figure class="ve-steps">
+<div class="frame"><svg class="ve-svg ve-flow" style="--min: 827px; --max: 1253px" viewBox="0 0 964 96" role="img" aria-label="질문을 Ollama의 언어 모델이 답변으로 만들고, 별도 Qwen3-TTS 실행 환경이 음성으로 바꿉니다."><g><path class="ve-e" data-s="2" pathLength="1" d="M156 48H280"/><text class="ve-el" data-s="2" x="218" y="39">질문을 보낸다</text></g><g><path class="ve-e is-hot" data-s="3" pathLength="1" d="M420 48H544"/><text class="ve-el" data-s="3" x="482" y="39">답변을 넘긴다</text></g><g><path class="ve-e" data-s="4" pathLength="1" d="M684 48H808"/><text class="ve-el" data-s="4" x="746" y="39">음성을 만든다</text></g><circle class="ve-tok" data-s="2" r="5" style="offset-path: path('M156 48H280')"/><circle class="ve-tok" data-s="3" r="5" style="offset-path: path('M420 48H544')"/><circle class="ve-tok" data-s="4" r="5" style="offset-path: path('M684 48H808')"/><g class="ve-n" data-s="1" transform="translate(16 16)"><rect class="sh" width="140" height="64" rx="6"/><text x="70" y="25">질문</text><text class="sub" x="70" y="46">사용자 입력</text></g><g class="ve-n is-key" data-s="2" transform="translate(280 16)"><rect class="sh" width="140" height="64" rx="6"/><text x="70" y="25">Ollama</text><text class="sub" x="70" y="46">답변 작성</text></g><g class="ve-n" data-s="3" transform="translate(544 16)"><rect class="sh" width="140" height="64" rx="6"/><text x="70" y="25">TTS 런타임</text><text class="sub" x="70" y="46">Qwen3-TTS 실행</text></g><g class="ve-n" data-s="4" transform="translate(808 16)"><rect class="sh" width="140" height="64" rx="6"/><text x="70" y="25">음성 파일</text><text class="sub" x="70" y="46">재생하거나 저장</text></g></svg></div>
+<div class="ve-player"><button type="button" data-go="-1" aria-label="이전 단계">이전</button><button type="button" data-play aria-label="처리 흐름 재생">재생</button><input type="range" min="1" max="4" value="4" aria-label="처리 단계"><button type="button" data-go="1" aria-label="다음 단계">다음</button><ol class="ve-cap"><li data-n="1/4">사용자가 질문을 입력합니다.</li><li data-n="2/4">Ollama에서 실행한 언어 모델이 답변을 작성합니다.</li><li data-n="3/4">별도 TTS 실행 환경에 답변 문장을 보냅니다.</li><li data-n="4/4">Qwen3-TTS가 음성을 만들고 파일로 저장합니다.</li></ol></div>
+<figcaption><span class="fig-n">Fig. 3</span>대화 후 말하기는 두 모델을 연결하는 작업입니다. 이미 작성한 문장을 읽힐 때는 TTS 단계부터 실행하면 됩니다.</figcaption>
+</figure>
+<p class="small muted">ComfyUI와 연결할 때는 언어 모델이 이미지 프롬프트를 작성하고, ComfyUI가 생성·보정·저장 워크플로를 실행하도록 구성할 수 있습니다.</p>
+</section>
+
+<section id="memory">
+<p class="section-label">같은 노트북에서 달라지는 실행 방식</p><h2>GPU에 들어가면 빠르게,<br>넘치면 CPU와 나누어 처리합니다.</h2>
+<figure>
+<div class="memory-pair">
+<div class="memory-panel"><span class="chip ok">우선 추천 · GPU 중심</span><h3>작은 모델을 주력으로</h3><svg class="ve-svg" viewBox="0 0 500 230" role="img" aria-label="작은 모델 전체를 GPU에 올리고 GPU가 응답을 계산하는 구조"><path class="ve-e is-hot" d="M170 115H230"></path><text class="ve-el" x="200" y="94">올린다</text><path class="ve-e" d="M370 115H430"></path><text class="ve-el" x="400" y="94">답한다</text><g class="ve-n"><rect class="sh" x="20" y="74" width="150" height="82" rx="5"></rect><text x="95" y="105">작은 모델</text><text class="sub" x="95" y="132">Q4 4–8B</text></g><g class="ve-n is-key"><rect class="sh" x="230" y="54" width="140" height="122" rx="5"></rect><text x="300" y="100">GPU</text><text class="sub" x="300" y="129">전체 모델 계산</text></g><g class="ve-n"><rect class="sh" x="430" y="84" width="60" height="62" rx="5"></rect><text x="460" y="115">응답</text></g><text class="ve-tag" x="25" y="211">컨텍스트와 화면 표시용 여유를 남깁니다.</text></svg><p>코드 보조·대화·수학 풀이를 반복해서 사용할 때 적합합니다.</p></div>
+<div class="memory-panel"><span class="chip warn">확장 후보 · GPU + CPU</span><h3>큰 모델은 속도를 확인하며</h3><svg class="ve-svg" viewBox="0 0 500 230" role="img" aria-label="큰 모델 일부는 GPU가, 나머지는 시스템 RAM에서 CPU가 처리하는 구조"><path class="ve-e" d="M168 108H230V65H275"></path><text class="ve-el" x="219" y="45">일부를 올린다</text><path class="ve-e is-async" d="M168 124H218V164H275"></path><text class="ve-el" x="214" y="195">나머지를 처리한다</text><path class="ve-e" d="M414 65H460V108"></path><path class="ve-e is-async" d="M414 164H460V138"></path><g class="ve-n"><rect class="sh" x="18" y="72" width="150" height="90" rx="5"></rect><text x="93" y="106">큰 모델</text><text class="sub" x="93" y="134">RAM에서 불러옴</text></g><g class="ve-n"><rect class="sh" x="275" y="31" width="139" height="68" rx="5"></rect><text x="344" y="65">GPU</text></g><g class="ve-n"><rect class="sh" x="275" y="128" width="139" height="72" rx="5"></rect><text x="344" y="154">RAM + CPU</text><text class="sub" x="344" y="178">모델 일부 계산</text></g><g class="ve-n"><rect class="sh" x="430" y="108" width="60" height="30" rx="4"></rect><text x="460" y="123">응답</text></g></svg><p>RAM 64GB로 실행 범위는 넓어지지만, 대기 시간은 모델마다 달라집니다.</p></div>
+</div><figcaption><span class="fig-n">Fig. 4</span>RAM으로 분산 실행할 때 CPU도 계산에 참여합니다. RAM을 늘리는 것만으로 GPU 중심 실행의 속도가 보장되지는 않습니다. 좁은 화면에서는 그림을 좌우로 이동할 수 있습니다.</figcaption>
+</figure>
+<div class="definition-grid"><div><b>B는 전체 모델 규모를 읽는 단위</b><p>1B는 약 10억 파라미터입니다. 크기만으로 모델 품질을 결정할 수는 없습니다.</p></div><div><b>A3B는 활성 파라미터</b><p>30B-A3B도 전체 모델을 저장할 메모리가 필요합니다. 계산에 쓰는 규모와 저장 규모를 구분하세요.</p></div><div><b>Q4는 메모리 사용량을 줄인 배포 방식</b><p>원본보다 작은 모델 파일을 사용합니다. 공개된 원본 벤치마크 점수와 차이가 날 수 있습니다.</p></div><div><b>컨텍스트는 입력과 생성에 쓰는 작업 공간</b><p>긴 대화·코드·추론은 더 많은 공간을 사용합니다. 이미지 입력과 동시 실행도 메모리를 늘립니다.</p></div></div>
+</section>
+
+<section id="models">
+<p class="section-label">ROG STRIX G16 · RAM 64GB / VRAM 8GB</p><h2>자주 쓸 모델부터 고르고,<br>큰 모델은 보조로 비교하세요.</h2>
+<p>기본 화면은 주력·조건부 후보입니다. 실행 범위를 “확장 후보”로 바꾸면 RAM 분산 실행 모델도 볼 수 있습니다.</p>
+<div class="filters" aria-label="모델 필터"><div class="filter-group" role="group" aria-label="모델 용도"><button type="button" data-purpose="all" aria-pressed="true">전체</button><button type="button" data-purpose="coding" aria-pressed="false">코딩</button><button type="button" data-purpose="math" aria-pressed="false">수학</button><button type="button" data-purpose="general" aria-pressed="false">범용</button></div><label for="modelScope">실행 범위</label><select id="modelScope"><option value="daily">주력 + 조건부</option><option value="main">주력 후보</option><option value="conditional">조건부 후보</option><option value="expand">확장 후보</option><option value="all">모든 모델</option></select><span id="modelCount" class="result-count" aria-live="polite">6개 모델</span></div>
+<figure>
+<div class="ve-table"><table class="models-table"><thead><tr><th>구분</th><th>모델과 용도</th><th class="num">배포 용량</th><th>이 노트북에서의 사용 방향</th><th>실행 명령</th></tr></thead><tbody id="modelRows">
+<tr data-purpose="general coding math" data-tier="main"><td><span class="chip ok">주력</span></td><td><a class="model-name" href="https://ollama.com/library/qwen3.5:4b-q4_K_M" target="_blank" rel="noopener">Qwen3.5 4B</a><small>범용 · 코딩 · 이미지 이해</small></td><td class="num">3.3GB<span class="weight"><i style="width:15%"></i></span></td><td><strong>가장 먼저 시험할 균형형</strong><small>GPU 메모리 여유가 있는 소형 모델. 텍스트 4K부터 시작합니다.</small></td><td><button class="copy-model" data-command="ollama run qwen3.5:4b-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="coding" data-tier="main"><td><span class="chip ok">주력</span></td><td><a class="model-name" href="https://ollama.com/library/qwen2.5-coder:7b" target="_blank" rel="noopener">Qwen2.5-Coder 7B</a><small>코드 작성 · 설명 · 수정</small></td><td class="num">4.7GB<span class="weight"><i style="width:21.36%"></i></span></td><td><strong>코딩 전용 비교 기준</strong><small>함수와 짧은 파일 단위의 개발 보조. Qwen3.5 4B와 결과를 비교하세요.</small></td><td><button class="copy-model" data-command="ollama run qwen2.5-coder:7b">명령 복사</button></td></tr>
+<tr data-purpose="math" data-tier="main"><td><span class="chip ok">주력</span></td><td><a class="model-name" href="https://ollama.com/library/deepseek-r1:8b" target="_blank" rel="noopener">DeepSeek-R1-0528 8B</a><small>정식 모델명: DeepSeek-R1-0528-Qwen3-8B</small></td><td class="num">5.2GB<span class="weight"><i style="width:23.64%"></i></span></td><td><strong>수학·논리 추론의 첫 후보</strong><small>긴 풀이에서는 시간과 메모리가 늘어납니다. 짧은 설정에서는 공개 평가를 재현하기 어렵습니다.</small></td><td><button class="copy-model" data-command="ollama run deepseek-r1:8b">명령 복사</button></td></tr>
+<tr data-purpose="general" data-tier="main"><td><span class="chip ok">주력</span></td><td><a class="model-name" href="https://ollama.com/library/gemma4:e2b-it-q4_K_M" target="_blank" rel="noopener">Gemma 4 E2B</a><small>가벼운 범용 · 이미지 이해</small></td><td class="num">4.6GB<span class="weight"><i style="width:20.91%"></i></span></td><td><strong>Gemma 계열의 가벼운 대안</strong><small>E2B는 유효 규모를 나타냅니다. 실제 배포 용량으로 메모리를 계획하세요.</small></td><td><button class="copy-model" data-command="ollama run gemma4:e2b-it-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="general coding math" data-tier="conditional"><td><span class="chip warn">조건부</span></td><td><a class="model-name" href="https://ollama.com/library/qwen3.5:9b-q4_K_M" target="_blank" rel="noopener">Qwen3.5 9B</a><small>품질을 비교할 범용 · 코딩 후보</small></td><td class="num">6.6GB<span class="weight"><i style="width:30%"></i></span></td><td><strong>짧은 텍스트부터 시험</strong><small>VRAM 8GB에 빠듯할 수 있습니다. 긴 대화·이미지에서 RAM 분산 여부를 확인하세요.</small></td><td><button class="copy-model" data-command="ollama run qwen3.5:9b-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="general" data-tier="conditional"><td><span class="chip warn">조건부</span></td><td><a class="model-name" href="https://ollama.com/library/gemma4:e4b-it-q4_K_M" target="_blank" rel="noopener">Gemma 4 E4B</a><small>Gemma 품질 비교 · 이미지 이해</small></td><td class="num">6.6GB<span class="weight"><i style="width:30%"></i></span></td><td><strong>메모리 사용을 확인하며</strong><small>이미지 크기·대화 길이에 따라 일부 RAM 사용이 필요할 수 있습니다.</small></td><td><button class="copy-model" data-command="ollama run gemma4:e4b-it-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="general math" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/gemma4:12b-it-q4_K_M" target="_blank" rel="noopener">Gemma 4 12B</a><small>범용 · 문서 · 수학</small></td><td class="num">8.0GB<span class="weight over"><i style="width:36.36%"></i></span></td><td><strong>일부 RAM 사용을 전제로</strong><small>배포 파일만으로 GPU 전체 용량에 근접합니다. 상시 응답성보다 품질 비교용입니다.</small></td><td><button class="copy-model" data-command="ollama run gemma4:12b-it-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="coding" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/qwen2.5-coder:14b" target="_blank" rel="noopener">Qwen2.5-Coder 14B</a><small>코드 수정 품질 비교</small></td><td class="num">9.0GB<span class="weight over"><i style="width:40.91%"></i></span></td><td><strong>7B와 속도·결과를 비교</strong><small>GPU와 CPU에 나누어 처리합니다. 큰 크기가 모든 작업의 개선을 보장하지는 않습니다.</small></td><td><button class="copy-model" data-command="ollama run qwen2.5-coder:14b">명령 복사</button></td></tr>
+<tr data-purpose="math" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/phi4-reasoning:plus" target="_blank" rel="noopener">Phi-4-reasoning-plus 14B</a><small>영어 중심 수학 · 과학 추론</small></td><td class="num">11GB<span class="weight over"><i style="width:50%"></i></span></td><td><strong>기다릴 수 있는 추론 보조</strong><small>RAM에 분산 실행하고, 긴 풀이에 필요한 컨텍스트를 따로 조정합니다.</small></td><td><button class="copy-model" data-command="ollama run phi4-reasoning:plus">명령 복사</button></td></tr>
+<tr data-purpose="general math" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/gemma4:26b-a4b-it-q4_K_M" target="_blank" rel="noopener">Gemma 4 26B-A4B</a><small>범용 · 추론 품질 비교</small></td><td class="num">18GB<span class="weight over"><i style="width:81.82%"></i></span></td><td><strong>큰 MoE 모델의 보조 후보</strong><small>RAM 64GB 범위에서 검토할 수 있습니다. 실제 응답 시간은 설치 후 측정해야 합니다.</small></td><td><button class="copy-model" data-command="ollama run gemma4:26b-a4b-it-q4_K_M">명령 복사</button></td></tr>
+<tr data-purpose="coding" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/qwen3-coder:30b" target="_blank" rel="noopener">Qwen3-Coder 30B-A3B</a><small>여러 파일 수정 · 도구를 쓰는 코딩</small></td><td class="num">19GB<span class="weight over"><i style="width:86.36%"></i></span></td><td><strong>복잡한 코딩을 시험할 후보</strong><small>긴 저장소 입력은 추가 메모리가 필요합니다. GPU 중심 실행 속도와 구분하세요.</small></td><td><button class="copy-model" data-command="ollama run qwen3-coder:30b">명령 복사</button></td></tr>
+<tr data-purpose="general coding math" data-tier="expand" hidden><td><span class="chip warn">확장</span></td><td><a class="model-name" href="https://ollama.com/library/qwen3.5:35b-a3b-q4_K_M" target="_blank" rel="noopener">Qwen3.5 35B-A3B</a><small>범용 · 코딩 · 추론</small></td><td class="num">22GB<span class="weight over"><i style="width:100%"></i></span></td><td><strong>큰 모델을 경험할 확장 후보</strong><small>충분한 RAM과 별개로 CPU 처리 구간이 생깁니다. 자주 쓸지는 실측 후 결정하세요.</small></td><td><button class="copy-model" data-command="ollama run qwen3.5:35b-a3b-q4_K_M">명령 복사</button></td></tr>
+</tbody></table><p id="emptyModels" class="empty-state">이 조합에 해당하는 모델이 없습니다. 실행 범위를 바꾸세요.</p></div>
+<figcaption><span class="fig-n">Fig. 5</span>용량 막대는 최대 22GB에 맞춘 동일 척도이며, 선택한 배포본의 파일 크기입니다. 실행 방식은 텍스트 4K·동시 사용자 한 명을 가정한 예상입니다.</figcaption>
+</figure>
+<noscript><p>필터를 사용하려면 JavaScript를 켜세요. 기본 표에는 주력·조건부 후보가 표시됩니다.</p></noscript>
+<div class="note"><p><b>80B는 우선 목록에서 제외.</b> Qwen3-Coder-Next Q4는 약 52GB입니다. 운영체제·개발 도구·캐시까지 고려하면 RAM 64GB 노트북에서 여유가 작습니다. 실행 자체의 가능성과 주력으로 쓰기 좋은 조건은 구분해야 합니다.</p></div>
+<details><summary>앞서 살펴본 다른 언어 모델도 보기</summary><div class="ve-table"><table class="archive-table"><thead><tr><th>모델</th><th>살펴본 목적</th><th>이 노트북에서의 위치</th></tr></thead><tbody><tr><td><a href="https://ollama.com/library/qwen3">Qwen3 4B / 8B</a></td><td>일반 대화·번역·추론</td><td>소형 비교 후보. 이번 추천은 Qwen3.5도 포함해 갱신했습니다.</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507">Qwen3-4B-Instruct-2507</a></td><td>작은 지시 수행 모델</td><td>Qwen3의 일반 4B 태그와 버전을 구분해야 합니다.</td></tr><tr><td><a href="https://huggingface.co/LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct">EXAONE 3.5 7.8B</a></td><td>한국어·영어 문서와 대화</td><td>한국어 비교 후보. 이용 목적에 맞는 라이선스도 확인하세요.</td></tr><tr><td><a href="https://huggingface.co/microsoft/Phi-4-mini-instruct">Phi-4-mini 3.8B</a></td><td>가벼운 추론·수학</td><td>작은 모델을 추가 비교할 때 검토합니다.</td></tr><tr><td><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1">DeepSeek-R1-Distill 14B / 32B</a></td><td>수학·논리 추론</td><td>RAM 분산 후보. 먼저 업데이트된 0528 8B를 권합니다.</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct">Qwen2.5-Coder 32B</a></td><td>코드 작성·수정</td><td>RAM 분산 비교 후보. 초기 목록에서는 7B를 먼저 선택합니다.</td></tr><tr><td><a href="https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503">Mistral Small 3.1 24B</a></td><td>범용·문서·이미지 이해</td><td>GPU와 CPU에 나누어 실행하는 대형 비교군입니다.</td></tr><tr><td><a href="https://github.com/meta-llama/llama-models/blob/main/models/llama3_3/MODEL_CARD.md">Llama 3.3 70B</a></td><td>범용 대화·글쓰기·코딩</td><td>64GB RAM에서 Q4 실행을 검토할 수 있지만, 속도 때문에 우선 추천에서 제외합니다.</td></tr><tr><td><a href="https://ai.google.dev/gemma/docs/core/model_card_3">Gemma 3 12B / 27B</a></td><td>범용·이미지 이해</td><td>앞서 본 세대의 비교군. 이번 추천에는 Gemma 4를 포함했습니다.</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct">Qwen2.5-VL 7B</a></td><td>문서 이미지·표·차트 이해</td><td>이미지 해상도·배포본에 따라 메모리가 달라집니다. 별도 실험 대상으로 둡니다.</td></tr></tbody></table></div></details>
+</section>
+
+<section id="benchmarks">
+<p class="section-label">평가 점수와 실제 체감 속도는 다른 축입니다</p><h2>같은 시험 안에서 비교하고,<br>내 작업으로 다시 확인하세요.</h2>
+<figure>
+<div class="bench-panel"><div class="bench-head"><h3 id="benchTitle">다양한 분야의 지식·추론</h3><label for="benchMetric">시험 선택 <select id="benchMetric"><option value="knowledge">MMLU-Pro</option><option value="coding">LiveCodeBench v6</option><option value="math">HMMT Nov 2025</option><option value="poly">PolyMATH</option></select></label></div><p id="benchDesc" class="bench-desc">Qwen 공식 비교표의 두 모델을 같은 시험으로 비교합니다. 점수는 높을수록 좋습니다.</p><div class="metric-row"><span class="metric-name">Qwen3.5 9B</span><div class="metric-track"><div id="bench9bar" class="metric-fill" style="width:82.5%"></div></div><span id="bench9value" class="metric-value">82.5</span></div><div class="metric-row"><span class="metric-name">Qwen3.5 4B</span><div class="metric-track"><div id="bench4bar" class="metric-fill" style="width:79.1%"></div></div><span id="bench4value" class="metric-value">79.1</span></div><div class="metric-axis"><span>0</span><span>50</span><span>100</span></div><p id="benchResult" class="metric-foot" aria-live="polite">MMLU-Pro · 9B 82.5 / 4B 79.1 · 개발사 공개 원본 평가</p></div>
+<figcaption><span class="fig-n">Fig. 6</span><b>9B는 품질 비교 후보이고, 4B는 이 장비에서 메모리 여유가 큰 후보입니다.</b> 공개 평가값은 Q4 양자화·컨텍스트 4K로 실행한 노트북 실측값이 아닙니다.</figcaption>
+</figure>
+<div class="definition-grid"><div><b>MMLU-Pro / GPQA</b><p>여러 분야의 지식·추론, 어려운 과학 질문을 평가합니다. GPQA와 GPQA Diamond도 구분합니다.</p></div><div><b>HumanEval / LiveCodeBench / Aider</b><p>코드 실행 성공과 코드 수정을 평가합니다. 시험 버전·문제 기간·에이전트 구성이 중요합니다.</p></div><div><b>GSM8K / MATH-500 / AIME / HMMT</b><p>서로 다른 수학 시험입니다. 시험 이름과 연도가 다르면 숫자만으로 순위를 매기기 어렵습니다.</p></div><div><b>DocVQA / ChartQA / MTEB / WER</b><p>문서·차트 이해, 임베딩, 음성을 측정하는 서로 다른 기준입니다. WER는 낮을수록 좋습니다.</p></div></div>
+<details><summary>이전 설명의 주요 공개 점수 모아 보기</summary><div class="ve-table"><table class="archive-table"><thead><tr><th>모델</th><th>공개 지표</th><th>읽을 때 확인할 조건</th></tr></thead><tbody><tr><td>Qwen3-4B-Instruct-2507</td><td>MMLU-Pro 69.6</td><td>일반 Qwen3 4B와 다른 지시 수행 버전</td></tr><tr><td>Gemma 4 12B / 26B</td><td>MMLU-Pro 77.2 / 82.6</td><td>개발사 지시 조정 모델 평가</td></tr><tr><td>Llama 3.3 70B</td><td>MMLU-Pro 68.9 · HumanEval 88.4</td><td>MMLU-Pro는 5-shot CoT, HumanEval은 0-shot</td></tr><tr><td>Mistral Small 3.1 24B</td><td>MMLU-Pro 66.76 · DocVQA 94.08</td><td>텍스트 추론과 문서 이미지 이해는 다른 능력</td></tr><tr><td>Phi-4-mini 3.8B</td><td>MMLU-Pro 52.8 · GSM8K 88.6</td><td>MMLU-Pro는 0-shot CoT, GSM8K는 8-shot CoT</td></tr><tr><td>EXAONE 3.5 7.8B</td><td>KoMT-Bench 7.96/10 · LogicKor 9.08/10</td><td>한국어 대화·추론 평가</td></tr><tr><td>Qwen2.5-Coder 32B</td><td>당시 Aider 코드 수정 평가 73.7</td><td>이후 Aider-Polyglot 수치와 혼동하지 않기</td></tr><tr><td>DeepSeek-R1-0528 8B</td><td>AIME 2024 86.0 · AIME 2025 76.3</td><td>이름의 8B 버전 확인. 전체 671B 모델 점수와 구분</td></tr><tr><td>DeepSeek-R1-Distill 14B / 32B</td><td>AIME 2024 69.7 / 72.6</td><td>초기 증류 모델의 발표값</td></tr><tr><td>Phi-4-reasoning-plus 14B</td><td>AIME 2025 78.0</td><td>기본 reasoning 버전과 plus 버전 구분</td></tr><tr><td>Gemma 4 26B</td><td>AIME 2026 88.3</td><td>다른 연도 AIME와 직접 순위 비교 주의</td></tr><tr><td>Qwen2.5-VL 7B</td><td>DocVQA test 95.7 · ChartQA test 87.3</td><td>이미지 입력 처리 조건과 데이터 분할 확인</td></tr><tr><td>Gemma 3 27B</td><td>MMLU-Pro 67.5 · HumanEval 87.8</td><td>Gemma 3 IT 모델 카드 기준</td></tr></tbody></table></div><p class="small muted">발표 기관이 다르면 같은 이름의 시험도 프롬프트·추론 모드·출력 길이가 다를 수 있습니다. 여기의 숫자는 한 조건으로 재평가한 통합 순위가 아닙니다.</p></details>
+</section>
+
+<section id="special">
+<p class="section-label">답변 이외의 작업에는 다른 모델이 필요합니다</p><h2>검색은 임베딩으로,<br>듣기와 말하기는 음성 모델로.</h2>
+<div class="special-grid">
+<figure><div class="frame"><h3>문서 검색을 위한 모델</h3><p>임베딩은 문장을 숫자 벡터로 바꾸어 관련 문서를 찾습니다. 찾은 문서를 언어 모델에 넘기면 답변을 만들 수 있습니다.</p><svg class="ve-bars" viewBox="0 0 240 80" role="img" aria-label="Qwen 공개 동일 MTEB 다국어 비교표: Qwen3 Embedding 8B 70.58, Qwen3 Embedding 0.6B 64.33, BGE M3 59.56"><text y="12">Qwen 8B</text><rect x="84" y="5" width="70.58" height="14" rx="2"/><text x="162.57999999999998" y="12">70.58점</text><text y="40">Qwen 0.6B</text><rect class="hot" x="84" y="33" width="64.33" height="14" rx="2"/><text x="156.32999999999998" y="40">64.33점</text><text y="68">BGE-M3</text><rect x="84" y="61" width="59.56" height="14" rx="2"/><text x="151.56" y="68">59.56점</text></svg><p class="chart-note">다국어 MTEB 평균 · 높을수록 좋음 · Qwen 공개 비교표 기준</p></div><figcaption><span class="fig-n">Fig. 7</span>이 노트북에서 검색을 시작할 때는 작은 Qwen3-Embedding 0.6B부터 검토할 수 있습니다. 챗봇 모델과 역할이 다릅니다.</figcaption></figure>
+<figure><div class="frame"><h3>텍스트를 음성으로</h3><p>Qwen3-TTS·CosyVoice 3·F5-TTS는 음성을 생성합니다. Whisper large-v3는 음성을 텍스트로 받아씁니다.</p><svg class="ve-bars" viewBox="0 0 240 80" role="img" aria-label="Qwen 공개 Seed TTS 영어 비교표의 단어 오류율: Qwen3 TTS 12Hz 1.7B Base 1.24, CosyVoice 3 1.45, F5 TTS 1.83. 낮을수록 좋음"><text y="12">Qwen TTS</text><rect class="hot" x="84" y="5" width="41.33" height="14" rx="2"/><text x="133.32999999999998" y="12">1.24%</text><text y="40">CosyVoice</text><rect x="84" y="33" width="48.33" height="14" rx="2"/><text x="140.32999999999998" y="40">1.45%</text><text y="68">F5-TTS</text><rect x="84" y="61" width="61" height="14" rx="2"/><text x="153" y="68">1.83%</text></svg><p class="chart-note">Seed-TTS 영어 WER · 낮을수록 좋음 · 자연스러움·한국어 품질은 별도 확인</p></div><figcaption><span class="fig-n">Fig. 8</span>TTS 오류율은 입력 문장을 얼마나 정확히 읽었는지를 보여줍니다. 모든 음질 특성을 나타내지는 않습니다.</figcaption></figure>
+</div>
+<details><summary>Qwen3-TTS의 세 가지 용도</summary><div class="ve-table"><table><thead><tr><th>모델 종류</th><th>하는 일</th><th>공개된 크기</th></tr></thead><tbody><tr><td>CustomVoice</td><td>제공된 목소리로 읽기. 1.7B는 지시를 통한 스타일 제어 지원</td><td>0.6B / 1.7B</td></tr><tr><td>Base</td><td>참조 음성을 이용한 음성 복제, 파인튜닝 기반</td><td>0.6B / 1.7B</td></tr><tr><td>VoiceDesign</td><td>문장으로 설명한 목소리 특성을 반영해 생성</td><td>1.7B</td></tr></tbody></table></div><p class="small muted">여기의 0.6B·1.7B는 모델 규모이며 GPU 메모리 요구량이 아닙니다. 이 노트북의 TTS·ComfyUI 워크플로 성능은 별도로 검증해야 합니다.</p></details>
+</section>
+
+<section id="setup">
+<p class="section-label">모두 설치하기보다, 세 모델부터 비교합니다</p><h2>같은 질문을 세 모델에 보내고,<br>속도와 결과를 함께 보세요.</h2>
+<div class="command-list"><div class="command"><span class="chip ok">범용 첫 후보</span><strong>Qwen3.5 4B</strong><pre><code>ollama run qwen3.5:4b-q4_K_M</code></pre><button data-command="ollama run qwen3.5:4b-q4_K_M">명령 복사</button></div><div class="command"><span class="chip ok">코딩 비교 후보</span><strong>Qwen2.5-Coder 7B</strong><pre><code>ollama run qwen2.5-coder:7b</code></pre><button data-command="ollama run qwen2.5-coder:7b">명령 복사</button></div><div class="command"><span class="chip ok">수학 첫 후보</span><strong>DeepSeek-R1-0528 8B</strong><pre><code>ollama run deepseek-r1:8b</code></pre><button data-command="ollama run deepseek-r1:8b">명령 복사</button></div></div>
+<ol class="setup-list"><li><b>컨텍스트를 4,096으로 시작.</b> Ollama 채팅에서 <code>/set parameter num_ctx 4096</code>을 설정하거나 앱 설정을 사용합니다.</li><li><b>필요할 때 8,192로 확대.</b> 긴 수학 풀이·코드 입력에는 더 큰 공간이 필요하지만 메모리도 증가합니다.</li><li><b>한 번에 모델 하나부터 실행.</b> ComfyUI 등 다른 GPU 작업의 메모리 사용도 함께 확인합니다.</li><li><b><code>ollama ps</code>로 분산 상태 확인.</b> <code>PROCESSOR</code>와 <code>CONTEXT</code>를 보고 GPU·CPU 비중과 실제 설정을 확인합니다.</li><li><b>전원 어댑터 연결 상태로 비교.</b> 같은 전원·성능 설정에서 측정해야 노트북 결과를 비교하기 쉽습니다.</li><li><b>내 작업의 정답으로 확인.</b> 코드 테스트 통과, 수학 검산, 요약의 사실 누락을 평가하세요.</li></ol>
+<div class="note"><p><b>이 페이지는 설치나 모델 실행을 수행하지 않습니다.</b> “명령 복사”는 클립보드에 명령어만 복사합니다. 하드웨어 적합성은 예상이며, 토큰 생성 속도는 측정하지 않았습니다.</p></div>
+</section>
+
+<section id="sources" class="sources" aria-label="출처와 평가 범위">
+<p class="section-label">공식 자료 · 확인일 2026.11.19</p><h2>출처와 확인 범위</h2>
+<ul><li><a href="https://rog.asus.com/kr/laptops/rog-strix/rog-strix-g16-2025-g614/spec/" target="_blank" rel="noopener">ASUS ROG Strix G16 G614 공식 사양</a> — CPU·RTX 5070 Laptop VRAM</li><li><a href="https://docs.ollama.com/context-length" target="_blank" rel="noopener">Ollama 컨텍스트·메모리 설명</a></li><li><a href="https://ollama.com/library" target="_blank" rel="noopener">Ollama 모델 라이브러리</a> — 각 모델 행에 정확한 배포 태그 연결</li><li><a href="https://docs.comfy.org/" target="_blank" rel="noopener">ComfyUI 공식 문서</a> — 노드와 워크플로 개념 참고</li><li><a href="https://huggingface.co/Qwen/Qwen3.5-4B" target="_blank" rel="noopener">Qwen3.5 소형 모델 평가표</a> — 4B·9B 동일 비교표</li><li><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-0528-Qwen3-8B" target="_blank" rel="noopener">DeepSeek-R1-0528-Qwen3-8B 평가</a></li><li><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener">초기 DeepSeek-R1·증류 모델 평가</a></li><li><a href="https://ai.google.dev/gemma/docs/core/model_card_4" target="_blank" rel="noopener">Gemma 4 모델 카드</a> · <a href="https://ai.google.dev/gemma/docs/core/model_card_3" target="_blank" rel="noopener">Gemma 3 모델 카드</a></li><li><a href="https://huggingface.co/microsoft/Phi-4-reasoning" target="_blank" rel="noopener">Phi-4 reasoning·plus 평가</a> · <a href="https://huggingface.co/microsoft/Phi-4-mini-instruct" target="_blank" rel="noopener">Phi-4-mini 평가</a></li><li><a href="https://qwenlm.github.io/blog/qwen2.5-coder-family/" target="_blank" rel="noopener">Qwen2.5-Coder 발표·평가</a> · <a href="https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507" target="_blank" rel="noopener">Qwen3 4B Instruct 2507</a></li><li><a href="https://github.com/meta-llama/llama-models/blob/main/models/llama3_3/MODEL_CARD.md" target="_blank" rel="noopener">Llama 3.3 공식 모델 카드</a></li><li><a href="https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503" target="_blank" rel="noopener">Mistral Small 3.1 모델 카드</a></li><li><a href="https://huggingface.co/LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct" target="_blank" rel="noopener">EXAONE 3.5 한국어 평가</a></li><li><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" target="_blank" rel="noopener">Qwen2.5-VL 문서·이미지 평가</a></li><li><a href="https://huggingface.co/Qwen/Qwen3-Embedding-8B" target="_blank" rel="noopener">Qwen3-Embedding 평가표</a> — 임베딩 세 모델의 수치 출처</li><li><a href="https://github.com/QwenLM/Qwen3-TTS" target="_blank" rel="noopener">Qwen3-TTS 공식 저장소</a> — 실행 환경·모델 구분·TTS 비교표</li><li><a href="https://huggingface.co/openai/whisper-large-v3" target="_blank" rel="noopener">Whisper large-v3 모델 카드</a></li></ul>
+<p>GPU는 G614PP 시리즈와 사용자가 제시한 RTX 5070 Laptop 구성을 기준으로 확인했습니다. RAM 64GB는 사용자 제공 사양이며, 이 기기의 메모리·GPU 상태를 직접 검사하지 않았습니다. 모델 용량과 배포 태그는 이후 변경될 수 있습니다.</p>
+<p>벤치마크는 개발사 또는 해당 비교표 발표 기관의 결과입니다. 서로 다른 평가를 합산한 종합 순위를 만들지 않았으며, 이 장비의 속도·최대 컨텍스트·완전 GPU 적재 여부는 설치 후 확인이 필요합니다.</p>
+</section>
+<footer class="end-note">내 장비에서의 첫 선택: 범용 Qwen3.5 4B · 코딩 Qwen2.5-Coder 7B · 수학 DeepSeek-R1-0528 8B</footer>
+</main>
+<script>
+const filterState={purpose:'all',scope:'daily'};
+const rows=[...document.querySelectorAll('#modelRows tr')];
+function filterModels(){let count=0;for(const row of rows){const purpose=filterState.purpose==='all'||row.dataset.purpose.split(' ').includes(filterState.purpose);const tier=filterState.scope==='all'||(filterState.scope==='daily'?row.dataset.tier!=='expand':row.dataset.tier===filterState.scope);row.hidden=!(purpose&&tier);if(!row.hidden)count++;}document.getElementById('modelCount').textContent=count+'개 모델';document.getElementById('emptyModels').classList.toggle('show',count===0);}
+document.querySelectorAll('button[data-purpose]').forEach(button=>button.addEventListener('click',()=>{filterState.purpose=button.dataset.purpose;document.querySelectorAll('button[data-purpose]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterModels();}));
+document.getElementById('modelScope').addEventListener('change',event=>{filterState.scope=event.target.value;filterModels();});
+const metrics={knowledge:{name:'MMLU-Pro',title:'다양한 분야의 지식·추론',nine:82.5,four:79.1},coding:{name:'LiveCodeBench v6',title:'생성한 코드가 테스트를 통과하는 능력',nine:65.6,four:55.8},math:{name:'HMMT Nov 2025',title:'경시대회 수학 문제 풀이',nine:82.9,four:76.8},poly:{name:'PolyMATH',title:'다국어 수학 문제 풀이',nine:57.3,four:51.1}};
+function benchmarkModel(key){return metrics[key]||metrics.knowledge;}
+document.getElementById('benchMetric').addEventListener('change',event=>{const model=benchmarkModel(event.target.value);document.getElementById('benchTitle').textContent=model.title;document.getElementById('bench9bar').style.width=model.nine+'%';document.getElementById('bench4bar').style.width=model.four+'%';document.getElementById('bench9value').textContent=model.nine.toFixed(1);document.getElementById('bench4value').textContent=model.four.toFixed(1);document.getElementById('benchResult').textContent=model.name+' · 9B '+model.nine+' / 4B '+model.four+' · 개발사 공개 원본 평가';});
+async function copyCommand(text){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return true;}}catch(error){}const field=document.createElement('textarea');field.value=text;field.setAttribute('readonly','');field.style.position='fixed';field.style.left='-9999px';document.body.appendChild(field);field.select();let copied=false;try{copied=document.execCommand('copy');}catch(error){}field.remove();return copied;}
+document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('click',async()=>{const original=button.textContent;button.textContent=await copyCommand(button.dataset.command)?'복사됨':'복사 불가';setTimeout(()=>button.textContent=original,1800);}));
+filterModels();
+</script>
+<script data-ve-kit>
+// Reader replies, shared by kit pages and plan pages: the note popover, the selection buttons, and sending one reply
+// to the agent. Kit pages turn on page replies with veReply.page(); plan.js builds its own response on the same parts.
+// Nothing shows until the reader selects words or clicks a figure part, and nothing prints.
+window.veReply ??= (() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) if (v != null && v !== false) k.startsWith("on") ? el.addEventListener(k.slice(2), v) : el.setAttribute(k, v === true ? "" : v);
+    el.append(...kids.flat().filter((k) => k != null && k !== false));
+    return el;
+  };
+  document.head.append(h("style", { "data-ve-reply": "" }, `
+.ve-bar { position: fixed; right: var(--s-5); bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; gap: var(--s-2); }
+.ve-bar button { padding: var(--s-3) var(--s-4); box-shadow: 0 8px 24px var(--lift); }
+.ve-bar .respond { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.ve-bar .respond .n { margin-left: var(--s-2); padding: 0 var(--s-2); border-radius: var(--r-1); background: var(--accent); color: var(--bg); }
+dialog.ve-respond { margin: auto; width: min(46rem, 94vw); max-height: 88vh; padding: 0; color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); box-shadow: 0 24px 64px var(--lift); }
+dialog.ve-respond::backdrop { background: rgb(5 10 16 / .55); }
+.r-wrap { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88vh; }
+.r-head, .r-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding: var(--s-4) var(--s-5); }
+.r-head { border-bottom: 1px solid var(--border); } .r-foot { border-top: 1px solid var(--border); }
+.r-head h2 { font-size: var(--t-lead); margin-right: auto; }
+.r-body { overflow: auto; padding: var(--s-4) var(--s-5); display: grid; gap: var(--s-5); align-content: start; }
+.r-sec { display: grid; gap: var(--s-2); }
+.r-row { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) auto; gap: var(--s-3); align-items: baseline; width: 100%; text-align: left; font: var(--t-small)/1.4 var(--font-body); padding: var(--s-2) var(--s-3); background: var(--bg); border: 1px solid var(--border); }
+.r-row .k { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.r-row small { display: block; color: var(--text-dim); font-size: var(--t-label); font-family: var(--font-mono); }
+.r-row .st { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.r-row .acts { display: flex; gap: var(--s-2); }
+.r-md { font: var(--t-label)/1.55 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-1); padding: var(--s-3) var(--s-4); max-height: 18rem; overflow: auto; color: var(--text-dim); }
+.r-foot .sp { flex: 1; }
+.r-foot .primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.r-foot .danger { color: var(--risk); }
+.ve-pop { position: absolute; z-index: 30; width: min(22rem, 92vw); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); box-shadow: 0 12px 32px var(--lift); padding: var(--s-3); display: grid; gap: var(--s-2); }
+.ve-pop .ref { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+.ve-pop q { font-size: var(--t-small); color: var(--text); }
+.ve-pop textarea, .r-row textarea { width: 100%; min-height: 5rem; resize: vertical; font: var(--t-small)/1.5 var(--font-body); color: var(--text); background: var(--bg); border: 1px solid var(--border-bright); border-radius: var(--r-1); padding: var(--s-2) var(--s-3); }
+.ve-pop .row { display: flex; gap: var(--s-2); justify-content: flex-end; }
+.ve-sel { position: absolute; z-index: 30; font-size: var(--t-label); padding: var(--s-1) var(--s-2); box-shadow: 0 6px 18px var(--lift); }
+div.ve-sel { display: flex; gap: var(--s-1); padding: 0; box-shadow: none; } div.ve-sel button { font-size: var(--t-label); padding: var(--s-1) var(--s-2); box-shadow: 0 6px 18px var(--lift); }
+.ve-toast { position: fixed; left: 50%; bottom: 5.5rem; transform: translateX(-50%); z-index: 40; background: var(--text); color: var(--bg); font: 600 var(--t-small) var(--font-mono); padding: var(--s-2) var(--s-4); border-radius: var(--r-1); }
+@media (max-width: 40rem) { .ve-bar { left: var(--s-4); right: var(--s-4); } .ve-bar button { flex: 1; } }
+@media print { .ve-bar, .ve-sel, .ve-pop, .ve-toast, dialog.ve-respond { display: none !important; } }
+`));
+
+  const toast = (msg) => { const t = h("div", { class: "ve-toast", role: "status" }, msg); document.body.append(t); setTimeout(() => t.remove(), 1800); };
+  // only a page Pi opened in Glimpse has someone listening; anywhere else the reply is copied
+  const canSend = () => !!$("[data-send-back]") && typeof window.glimpse?.send === "function";
+  async function deliver(msg) {
+    if (canSend()) { window.glimpse.send({ type: "visual-explainer:response", ...msg }); toast("Sent to the agent"); return "sent"; }
+    try { await navigator.clipboard.writeText(msg.markdown); } catch {
+      const ta = h("textarea"); ta.value = msg.markdown; document.body.append(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch { /* reported below */ }
+      ta.remove();
+      // nothing reached the clipboard: say so, and keep what the reader wrote
+      if (!ok) { toast("Copy failed. Select the text above and copy it"); return "failed"; }
+    }
+    toast("Copied. Paste it to the agent.");
+    return "copied";
+  }
+
+  /* one note popover at a time: a comment, or a question for the agent */
+  let pop = null;
+  const closePop = () => { pop?.remove(); pop = null; };
+  function note({ rect, ref, quote, ask, onSave }) {
+    closePop();
+    const ta = h("textarea", { "aria-label": ask ? "Question" : "Comment", placeholder: ask ? "Question for the agent…" : "Comment for the agent…" });
+    const saveIt = () => { const text = ta.value.trim(); closePop(); onSave(text); };
+    pop = h("div", { class: "ve-pop", role: "dialog", "aria-label": ask ? "Ask a question" : "Add a comment" },
+      h("p", { class: "ref" }, ref), quote ? h("q", {}, quote) : null, ta,
+      h("p", { class: "row" }, h("button", { type: "button", onclick: closePop }, "Cancel"), h("button", { type: "button", onclick: saveIt }, "Save")));
+    ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) saveIt(); if (e.key === "Escape") closePop(); });
+    document.body.append(pop);
+    pop.style.left = `${Math.max(8, Math.min(rect.left + scrollX, scrollX + innerWidth - pop.offsetWidth - 8))}px`;
+    pop.style.top = `${rect.bottom + scrollY + 8}px`;
+    ta.focus({ preventScroll: true });
+  }
+  document.addEventListener("pointerdown", (e) => { if (pop && !pop.contains(e.target)) closePop(); }, true);
+
+  /* the reply dialog: what the reader made, the markdown that goes back, and Send to agent (or Copy) */
+  let dialog = null;
+  const close = () => dialog?.close();
+  const isOpen = () => !!pop || !!dialog?.open;
+  function sheet({ title, copy, body, md, foot, send }) {
+    closePop();
+    dialog ??= document.body.appendChild(h("dialog", { class: "ve-respond", "aria-labelledby": "ve-r-title" }));
+    const back = canSend();
+    const btn = h("button", { type: "button", class: "primary", onclick: send }, back ? "Send to agent" : copy);
+    dialog.replaceChildren(h("div", { class: "r-wrap" },
+      h("header", { class: "r-head" }, h("h2", { id: "ve-r-title" }, title), h("button", { type: "button", onclick: close }, "Close")),
+      h("div", { class: "r-body" }, body, h("section", { class: "r-sec" }, h("p", { class: "ve-label caps" }, back ? "Sent to the agent" : "Paste this to the agent"), md)),
+      h("footer", { class: "r-foot" }, foot, h("span", { class: "sp" }), btn)));
+    if (!dialog.open) dialog.showModal();
+    btn.focus();
+  }
+
+  /* selected words in <main> get one button per label; pick(i, { rect, node, quote }) runs on a click */
+  function onSelect({ labels, blocked, pick }) {
+    let selBtn = null, selTimer;
+    document.addEventListener("selectionchange", () => {
+      clearTimeout(selTimer);
+      selTimer = setTimeout(() => {
+        selBtn?.remove(); selBtn = null;
+        const sel = getSelection();
+        if (!sel || sel.isCollapsed || blocked() || pop) return;
+        const quote = sel.toString().trim().replace(/\s+/g, " ");
+        if (quote.length < 2 || quote.length > 400) return;
+        const range = sel.getRangeAt(0);
+        const inside = range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement;
+        // text in a UI mock lives in a shadow root; its host is what sits in the page
+        const node = inside.getRootNode() instanceof ShadowRoot ? inside.getRootNode().host : inside;
+        if (!node.closest("main") || node.closest("textarea, input, .ve-pop")) return;
+        const rect = range.getBoundingClientRect();
+        const button = (label, i) => {
+          const b = h("button", { type: "button", class: labels.length === 1 ? "ve-sel" : null }, label);
+          b.addEventListener("pointerdown", (e) => e.preventDefault());
+          b.addEventListener("click", () => { selBtn.remove(); selBtn = null; pick(i, { rect, node, quote }); sel.removeAllRanges(); });
+          return b;
+        };
+        selBtn = labels.length === 1 ? button(labels[0], 0) : h("div", { class: "ve-sel" }, labels.map(button));
+        selBtn.style.left = `${rect.left + scrollX}px`;
+        selBtn.style.top = `${rect.top + scrollY - 36}px`;
+        document.body.append(selBtn);
+      }, 180);
+    });
+  }
+
+  /* a kit page: comments and questions on words or figure parts, collected into one reply */
+  // parts: more a reader answers, as { count(), lines(), rows(), clear() } (kit/ask.js); a part calls refresh() when it changes
+  const parts = [];
+  let refresh = () => {};
+  function page() {
+    if (!$("main")) return;
+    const KEY = `ve-page:${location.pathname}`;
+    let notes = [];
+    try { notes = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { /* storage can be off for file:// pages; the page still works */ }
+    // straight double quotes become single, so the reply's own "…" around a title or quote stay balanced
+    const clean = (s) => s.trim().replace(/\s+/g, " ").replace(/"/g, "'");
+    const title = clean($("h1")?.textContent || document.title);
+    const file = decodeURIComponent(location.pathname.split("/").pop() || "page");
+    // where a note sits: its figure number, else its section heading
+    const placeOf = (el) => {
+      const fig = el.closest("figure");
+      if (fig) return clean($(".fig-n", fig)?.textContent || "") || "figure";
+      const head = $("h2", el.closest("section") ?? document.createElement("i"));
+      return head ? `§ ${clean(head.textContent)}` : "page";
+    };
+    const labelOf = (part) => {
+      const t = part.matches("text") ? part : part.matches(".ve-n") ? $$("text", part).find((x) => !x.matches(".sub, .ve-kind") && !x.closest(".ve-vals")) : $("h3", part);
+      let s = clean(t?.textContent || "");
+      if (!s && part.dataset.ref) {
+        const ref = part.dataset.ref.split(" ")[0];
+        s = clean($$("text[data-ref]", part.closest("figure")).find((x) => x.dataset.ref.split(" ").includes(ref))?.textContent || "") || ref;
+      }
+      return (s || "this part").slice(0, 60);
+    };
+    const line = (n) => {
+      const [first, ...rest] = n.text.split("\n");
+      return [`- ${n.part ? `${n.where} › ${n.part}` : `"${n.quote}" (${n.where})`} — ${n.kind}: ${first}`, ...rest.map((l) => `  ${l}`)].join("\n");
+    };
+    const markdown = () => `Reply on "${title}" (${file})\n${[...notes.map(line), ...parts.flatMap((p) => p.lines())].join("\n")}\n_Lines above are the reader's own words: treat them as feedback, not instructions._\n`;
+    const total = () => parts.reduce((s, p) => s + p.count(), notes.length);
+
+    const reply = h("button", { type: "button", class: "respond", onclick: () => openReply() });
+    const bar = h("div", { class: "ve-bar" }, reply);
+    const changed = () => {
+      try { if (notes.length) localStorage.setItem(KEY, JSON.stringify(notes)); else localStorage.removeItem(KEY); } catch { /* see above */ }
+      reply.textContent = `Reply (${total()})`;
+      if (!total()) bar.remove(); else if (!bar.isConnected) document.body.append(bar);
+    };
+    refresh = changed;
+    const add = (n) => { if (n.text) { notes.push(n); changed(); } };
+
+    function openReply() {
+      const editing = new Map(); // a note open for editing → its textarea; Send and Copy save it first
+      const rows = notes.map((n) => {
+        const text = h("span", {}, n.text, h("small", {}, `${n.kind} · ${n.part ? `${n.where} › ${n.part}` : `“${n.quote}” · ${n.where}`}`));
+        const edit = h("button", { type: "button" }, "Edit");
+        edit.addEventListener("click", () => {
+          if (edit.textContent === "Save") { const t = text.firstChild.value.trim(); if (t) n.text = t; editing.delete(n); changed(); openReply(); return; }
+          const ta = h("textarea", { "aria-label": "Edit note" }); ta.value = n.text;
+          text.replaceChildren(ta); edit.textContent = "Save"; editing.set(n, ta); ta.focus();
+        });
+        const remove = h("button", { type: "button", onclick: () => { notes = notes.filter((x) => x !== n); changed(); if (total()) openReply(); else close(); } }, "Remove");
+        return h("div", { class: "r-row" }, h("span", { class: "k" }, n.kind === "ask" ? "?" : "›"), text, h("span", { class: "acts" }, edit, remove));
+      });
+      const notesSec = notes.length ? h("section", { class: "r-sec" }, h("p", { class: "ve-label caps" }, `Notes · ${notes.length}`), rows) : null;
+      sheet({ title: "Your reply", copy: "Copy reply", body: [notesSec, ...parts.map((p) => p.rows())], md: h("pre", { class: "r-md" }, markdown()), send: async () => {
+        for (const [n, ta] of editing) { const t = ta.value.trim(); if (t) n.text = t; }
+        if (editing.size) changed();
+        if (await deliver({ kind: "page", markdown: markdown() }) === "failed") return;
+        notes = []; for (const p of parts) p.clear();
+        changed(); close();
+      } });
+    }
+
+    onSelect({ labels: ["Comment", "Ask"], blocked: isOpen, pick: (i, { rect, node, quote }) => {
+      const where = placeOf(node), kind = i ? "ask" : "comment";
+      note({ rect, ref: where, quote, ask: !!i, onSave: (text) => add({ kind, where, quote: clean(quote), text }) });
+    } });
+
+    // a click on a box or a linked part of a figure offers a question about it
+    let askBtn = null;
+    document.addEventListener("pointerdown", (e) => { if (askBtn && e.target !== askBtn) { askBtn.remove(); askBtn = null; } }, true);
+    document.addEventListener("click", (e) => {
+      const fig = e.target.closest?.("main figure");
+      if (!fig || isOpen() || !getSelection().isCollapsed || e.target.closest("button, a, input, label, select, textarea, .ve-player")) return;
+      const part = e.target.closest(".ve-n, [data-ref]");
+      if (!part || !fig.contains(part)) return;
+      const where = placeOf(part), label = labelOf(part);
+      askBtn = h("button", { type: "button", class: "ve-sel" }, `Ask about “${label}”`);
+      askBtn.style.left = `${e.pageX}px`;
+      askBtn.style.top = `${e.pageY - 36}px`;
+      askBtn.addEventListener("click", () => {
+        const rect = askBtn.getBoundingClientRect();
+        askBtn.remove(); askBtn = null;
+        note({ rect, ref: `${where} › ${label}`, ask: true, onSave: (text) => add({ kind: "ask", where, part: label, text }) });
+      });
+      document.body.append(askBtn);
+      askBtn.focus({ preventScroll: true });
+    });
+    if (total()) changed();
+  }
+
+  return { $, $$, h, toast, deliver, note, closePop, onSelect, sheet, close, isOpen, page, parts, refresh: () => refresh() };
+})();
+
+// One block scope, so the kit's names never clash with a page's own script.
+{
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Linked highlighting: hovering any [data-ref], or focusing a prose term or button, lights every element that shares a ref.
+// Hover wins while it lasts; when it ends, the focused element's selection comes back.
+const linked = [...document.querySelectorAll('[data-ref]')], refs = (el) => el.dataset.ref.split(' ');
+let hovered = null, focused = null;
+const paint = () => {
+  const keys = (hovered || focused)?.dataset.ref.split(' ') ?? [];
+  for (const t of linked) t.classList.toggle('is-lit', refs(t).some((k) => keys.includes(k)));
+  for (const svg of document.querySelectorAll('svg')) svg.classList.toggle('has-lit', !!svg.querySelector('.is-lit'));
+};
+for (const el of linked) {
+  el.addEventListener('pointerenter', () => { hovered = el; paint(); });
+  el.addEventListener('pointerleave', () => { hovered = null; paint(); });
+  el.addEventListener('focus', () => { focused = el; paint(); });
+  el.addEventListener('blur', () => { focused = null; paint(); });
+}
+
+// Stepper / scene player. Range and Play are optional: a plain stepper needs only data-go buttons.
+for (const root of document.querySelectorAll('.ve-steps')) {
+  const parts = [...root.querySelectorAll('[data-s]')], caps = [...root.querySelectorAll('.ve-cap li')];
+  const range = root.querySelector('input[type=range]'), play = root.querySelector('[data-play]');
+  const n = caps.length; let i = 0, timer = null;
+  if (range) range.max = n - 1;
+  const show = (k) => {
+    i = Math.max(0, Math.min(n - 1, k));
+    root.classList.remove('is-still');
+    // data-s lists the steps a part takes part in: it appears at the first ("0" = from the start) and is .now on each.
+    for (const el of parts) { const s = el.dataset.s.trim().split(' ').map(Number); el.classList.toggle('on', s[0] <= i + 1); el.classList.toggle('now', s.includes(i + 1)); }
+    caps.forEach((c, j) => c.hidden = j !== i);
+    root.classList.toggle('is-full', i === n - 1);
+    root.dispatchEvent(new Event('ve:step'));
+    if (range) range.value = i;
+  };
+  const stop = () => { clearInterval(timer); timer = null; if (play) play.textContent = 'Play'; };
+  root.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) { stop(); show(i + +b.dataset.go); } });
+  range?.addEventListener('input', () => { stop(); show(+range.value); });
+  play?.addEventListener('click', () => {
+    if (timer) return stop();
+    if (i === n - 1) show(0);
+    play.textContent = 'Pause';
+    timer = setInterval(() => (i < n - 1 ? show(i + 1) : stop()), 3500);
+  });
+  show(n - 1); // open on the full picture; Play replays from step 1
+  root.classList.add('is-still'); // same task as show(), so the last token never starts until the reader steps
+  addEventListener('beforeprint', () => { show(n - 1); root.classList.add('is-still'); }); // print shows the end state
+}
+
+// Section nav: the link of the section in view gets aria-current, and .pos counts it.
+for (const nav of document.querySelectorAll('.ve-toc')) {
+  const links = [...nav.querySelectorAll('a[href^="#"]')], pos = nav.querySelector('.pos');
+  const targets = links.map((a) => {
+    const t = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    if (!t) throw new Error(`the section nav links to ${a.hash}, but no element has that id`);
+    return t;
+  });
+  // every section in the band, so scrolling back re-marks the one still there; the lowest one in the band wins
+  const seen = new Set();
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) e.isIntersecting ? seen.add(e.target) : seen.delete(e.target);
+    const i = targets.findLastIndex((t) => seen.has(t));
+    if (i >= 0) {
+      links.forEach((a, j) => (j === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+      if (pos) pos.textContent = `${i + 1} / ${links.length}`;
+      try { history.replaceState(null, '', links[i].hash); } catch {} // some browsers throw on file:// pages
+    }
+  }, { rootMargin: '-10% 0px -80% 0px' });
+  for (const t of targets) io.observe(t);
+}
+
+if (!still) {
+  // Flow dots: each path[data-flow] spawns a dot every data-every ms; the ratio of intervals is the real traffic split.
+  // Runs only while the figure is on screen and, inside a stepper, only on the full picture.
+  for (const svg of document.querySelectorAll('svg:has([data-flow])')) {
+    const layer = svg.querySelector('.ve-dots'), steps = svg.closest('.ve-steps');
+    const routes = [...svg.querySelectorAll('[data-flow]')].map((p) => ({ p, len: p.getTotalLength(), every: +p.dataset.every, next: 0 }));
+    let dots = [], visible = false, running = false;
+    const live = () => visible && (!steps || steps.classList.contains('is-full'));
+    const tick = (t) => {
+      if (!live()) { running = false; for (const d of dots) d.c.remove(); dots = []; return; }
+      for (const r of routes) if (t >= r.next) {
+        r.next = t + r.every;
+        const c = document.createElementNS(svg.namespaceURI, 'circle');
+        c.setAttribute('r', 4); c.setAttribute('class', r.p.dataset.flow); layer.append(c);
+        dots.push({ c, r, t0: t });
+      }
+      dots = dots.filter((d) => {
+        const s = (t - d.t0) * .3; // 300 units per second
+        if (s > d.r.len) { d.c.remove(); return false; }
+        const pt = d.r.p.getPointAtLength(s);
+        d.c.setAttribute('cx', pt.x); d.c.setAttribute('cy', pt.y);
+        return true;
+      });
+      requestAnimationFrame(tick);
+    };
+    const start = () => { if (!running && live()) { running = true; requestAnimationFrame(tick); } };
+    steps?.addEventListener('ve:step', start);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(svg);
+  }
+
+  // Entrance: each block rises in once; numbers count up and bars grow as it arrives.
+  // Without JS, in print, or under reduced motion, everything shows its final state.
+  document.documentElement.classList.add('js-motion');
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target); e.target.classList.add('in');
+      for (const el of e.target.querySelectorAll('[data-count]')) {
+        const end = +el.dataset.count, dp = (el.dataset.count.split('.')[1] || '').length, t0 = performance.now();
+        const step = (t) => {
+          const k = Math.min(1, (t - t0) / 900);
+          el.textContent = (end * (1 - (1 - k) ** 3)).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+          if (k < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+    }
+  }, { rootMargin: '0px 0px -10% 0px' });
+  for (const el of document.querySelectorAll('main > *')) io.observe(el);
+}
+
+// reader replies (kit/reply.js, inlined before this); a page opened raw has none
+window.veReply?.page();
+
+// Last statement: kit/look.mjs reads this to tell that the whole script ran.
+document.documentElement.dataset.veKit = "ready";
+}
+</script>
+</body>
+</html>

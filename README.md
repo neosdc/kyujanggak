@@ -17,9 +17,9 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 
 | 경로 | 내용 |
 | --- | --- |
-| `ai/` | AI 도구와 모델: 코딩 에이전트, 오프라인 음성 인식(STT)·합성(TTS) |
-| `computer_science/` | 소프트웨어 아키텍처, 네트워크·인프라, 관측성 |
-| `hardware/` | 보드·카메라 등 하드웨어 선택과 구성: CCTV |
+| `ai/` | AI 도구와 모델: 코딩 에이전트, 로컬 AI 모델 선택, 오프라인 음성 인식(STT)·합성(TTS) |
+| `computer_science/` | 소프트웨어 아키텍처, 네트워크·인프라, 관측성, 병렬 처리 성능 모델 |
+| `hardware/` | 보드·카메라 등 하드웨어 선택과 구성(CCTV), 제어의 기초(PID) |
 | `index.html` | GitHub Pages 목차 페이지 (루트에 유지) |
 | 루트의 `.md` | HTML이 아닌 기획서 |
 
@@ -28,7 +28,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 ## 저장소의 성격
 
 - 기술 참고 자료, 학습 가이드와 기획 문서를 모아 두는 저장소입니다. 문서에는 구조도, 비교표, 명령어·설정·의사 코드 예제가 포함됩니다.
-- 현재 자료는 한국어로 작성된 **HTML 가이드 18개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
+- 현재 자료는 한국어로 작성된 **HTML 가이드 20개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
 - HTML의 스타일, 스크립트와 SVG 도식은 각 파일 안에 포함되어 있습니다. 글꼴은 외부 Google Fonts를 사용하며, 일부 문서에는 단계별 도식 재생·검색·복사 같은 상호작용이 있습니다.
 - 문서를 열기 위한 빌드나 서버는 필요하지 않습니다. 별도의 빌드 설정, 자동 테스트나 배포 스크립트는 없습니다.
 
@@ -39,8 +39,9 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 | [ai/Pi-코딩-에이전트-가이드.html](./ai/Pi-코딩-에이전트-가이드.html) | Pi 코딩 에이전트 | 터미널에서 파일을 읽고 코드를 수정하고 명령을 실행하는 코딩 에이전트 Pi의 구조부터 첫 실행까지 정리한 사용 가이드 |
 | [ai/offline-stt-guide.html](./ai/offline-stt-guide.html) | 오프라인 STT 선택 | 저사양 보드에서 한국어·영어 짧은 명령을 인식하기 위한 음성 인식(STT) 모델 비교 노트 |
 | [ai/offline-tts-guide.html](./ai/offline-tts-guide.html) | 오프라인 TTS 선택 | 작은 보드에서 네트워크 없이 한국어·영어 음성을 출력하기 위한 음성 합성(TTS) 모델 선택 노트 |
-| [ai/local-ai-guide.html](./ai/local-ai-guide.html) | 로컬 AI 모델 선택 | Ollama·ComfyUI·Qwen3-TTS의 역할, 주력 4종의 벤치마크 15개 점수 비교, RAM 64GB·RTX 5070 Laptop 8GB 노트북의 실행 후보를 정리한 다크 테마 가이드 |
+| [ai/local-ai-guide.html](./ai/local-ai-guide.html) | 로컬 AI 모델 선택 | Ollama·ComfyUI·Qwen3-TTS의 역할, 로컬 테스트에서 응답을 확인한 모델과 확장 후보, 공개 평가 3종·벤치마크 15개 점수 비교를 RAM 64GB·RTX 5070 Laptop 8GB 노트북 기준으로 정리한 가이드 |
 | [hardware/cctv-camera-guide.html](./hardware/cctv-camera-guide.html) | CCTV 카메라 선택 | ESP32-S3와 라즈베리파이 Zero 2 W를 후보로, NAS 녹화·실시간 시청·동작/물체 감지가 되는 저가 CCTV를 구성하는 방법을 비교한 노트 |
+| [hardware/pid-control.html](./hardware/pid-control.html) | PID 제어 | 목표와 현재의 차이를 보고 조작을 고치는 PID 제어에서 P·I·D의 역할을 자동차 정속 주행 비유와 계수 조절 모형으로 설명한 입문 가이드 |
 | [computer_science/architecture-guide.html](./computer_science/architecture-guide.html) | Monolith + 2-Tier + MVC | 화면과 업무 기능을 담은 하나의 클라이언트 프로그램이 별도 DB 서버에 직접 연결하는 구성을 설명한 학습 가이드 |
 | [computer_science/monolith-3-tier-spa-api.html](./computer_science/monolith-3-tier-spa-api.html) | Monolith + 3-Tier · SPA + API | 브라우저 SPA, 모놀리식 API 백엔드, DB의 책임과 요청 흐름을 설명한 학습 가이드 |
 | [computer_science/modular-monolith.html](./computer_science/modular-monolith.html) | Modular Monolith | 업무 모듈의 공개 계약·데이터 소유권·의존성 경계를 유지하면서 하나의 애플리케이션으로 배포하는 구조 |
@@ -54,6 +55,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 | [computer_science/reverse-tunnel.html](./computer_science/reverse-tunnel.html) | SSH 역방향 터널 | 내부 웹 서비스를 클라우드 VM의 Nginx와 SSH 역방향 터널로 공개하는 구성·보안·운영 노트 |
 | [computer_science/cloud-internal-vpn.html](./computer_science/cloud-internal-vpn.html) | 클라우드 ↔ 내부망 VPN | WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트 |
 | [computer_science/opentelemetry-jaeger.html](./computer_science/opentelemetry-jaeger.html) | OpenTelemetry + Jaeger | 계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드 |
+| [computer_science/amdahl-and-gustafson-laws.html](./computer_science/amdahl-and-gustafson-laws.html) | 암달·구스타프손의 법칙 | 작업량을 고정하는 암달의 법칙과 실행 시간을 고정하는 구스타프손의 법칙을 식 유도, 100분 기준 예시, 계산 모형으로 비교한 학습 가이드 |
 | [linux-command-game-experience-plan.ko.md](./linux-command-game-experience-plan.ko.md) | 리눅스 명령어 학습 게임 기획 | 기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서 |
 
 ## 자료별 설명
@@ -101,10 +103,10 @@ Pi를 설치하고 모델을 연결해 실제 작업을 시키기까지의 흐�
 Ollama와 ComfyUI, 특수 목적 모델의 실행 환경을 구분하고 내 노트북에서 사용할 모델을 고르기 위한 가이드입니다.
 
 - Ollama의 모델 실행·관리, ComfyUI의 노드 워크플로, Qwen3-TTS의 별도 실행 환경과 연결 흐름
-- 코딩·수학·범용 모델의 목적별 비교와 주력 후보 4종의 벤치마크 15개 점수표, 문서 검색용 임베딩·음성 모델의 역할
-- ROG Strix G16 G614PP-S5036, Ryzen 9 8940HX, RAM 64GB·RTX 5070 Laptop VRAM 8GB 구성을 기준으로 한 주력·조건부·RAM 분산 실행 후보
-- 모델 용도·실행 범위 필터, 벤치마크별 그래프 전환, 실행 명령 복사와 다크 테마
-- 공식 배포 용량·공개 평가와 하드웨어 실행 예상을 구분하며, 해당 노트북의 속도 실측은 포함하지 않음
+- 코딩·수학·범용 모델의 목적별 비교와 공개 평가 3종 × 벤치마크 15개 점수표, 문서 검색용 임베딩·음성 모델의 역할
+- ROG Strix G16, Ryzen 9 8940HX, RAM 64GB·RTX 5070 Laptop VRAM 8GB 구성을 기준으로 로컬 테스트에서 응답을 확인한 모델(Gemma 4 E4B, Llama 3.1 8B, DeepSeek-R1 8B)과 RAM을 나눠 쓰는 확장 후보
+- 모델 용도·실행 범위 필터, 벤치마크별 그래프 전환, 실행 명령 복사
+- 직접 실행해 응답을 확인한 결과와 개발사·공개 평가 점수를 구분하며, 응답 속도는 실측값이 아님
 
 ### CCTV 카메라 선택 노트
 
@@ -116,6 +118,17 @@ ESP32 카메라 보드나 라즈베리파이로 NAS에 녹화하고 실시간으
 - **Raspberry Pi Zero 2 W**: 하드웨어 H.264 인코딩과 동작 → 물체 2단계 감지를 한 보드에서 처리
 
 주요 내용: 사양·카메라·압축 방식 비교표, 두 구성의 구조도, 순환 버퍼 녹화와 상시 녹화 + 이벤트 태깅의 차이, 하루 저장 용량 대략치, Wi-Fi·전원·발열·단일 장애점 등 운영 문제, 상황별 선택 기준과 만드는 순서. 가격과 속도, 용량 수치는 대략치입니다.
+
+### PID 제어를 그림으로 이해하기
+
+`hardware/pid-control.html`
+
+자동차 정속 주행 장치를 예로, 목표와 현재 값의 차이를 보고 조작량을 계속 고치는 피드백 제어를 설명하는 입문 가이드입니다.
+
+- 설정값·측정값·오차와 측정 → 비교 → 조절 → 재측정의 피드백 고리, 샤워 물 온도를 맞추는 비유
+- P는 현재 차이, I는 쌓인 차이, D는 변화 속도를 본다는 세 항의 역할과 `조작량 = P + I + D`
+- Kp·Ki·Kd를 슬라이더로 바꾸며 속도 곡선과 오르막 방해의 영향을 보는 조절 모형(개념 학습용 가상 자동차이며 실제 차량의 응답과 같지 않음)
+- 오버슈트·진동·정착, 출력 한계와 적분 누적 방지, 센서 잡음, 지연 같은 실제 적용 시 고려 사항
 
 ### Monolith + 2-Tier + MVC
 
@@ -246,6 +259,17 @@ OpenTelemetry의 계측·수집·전송과 Jaeger v2의 Trace 저장·조회 역
 - Metric·Log·Trace, Trace·Span·Resource와 W3C Trace Context의 문맥 전파를 구분합니다.
 - OTLP, 선택적인 별도 Collector의 파이프라인, Jaeger 수집·저장·Query·UI 경로와 타임라인 읽기를 설명합니다.
 - EDA의 비동기 추적과 Span Link, 샘플링·누락·보관·민감 정보·비용 및 도입·문제 해결 순서를 다룹니다. 실행 가능한 배포 설정은 포함하지 않습니다.
+
+### 암달과 구스타프손의 법칙
+
+`computer_science/amdahl-and-gustafson-laws.html`
+
+병렬 처리의 효과를 서로 다른 조건에서 계산하는 두 법칙을 비교하는 학습 가이드입니다. 차이는 무엇을 고정하는가에 있습니다.
+
+- 암달의 법칙은 작업량을 고정하고, 순차 부분이 시간 단축의 상한(`1/s`)을 정한다는 점을 식 유도와 함께 설명합니다.
+- 구스타프손의 법칙은 실행 시간을 고정하고, 같은 시간에 처리할 작업량을 키우는 경우를 설명하며 ‘9.1배’가 뜻하지 않는 것을 짚습니다.
+- 100분짜리 기준 작업에서 두 실험(작업량 고정, 실행 시간 고정)을 비교하고, 같은 작업으로 맞추면 두 식이 같은 답을 낸다는 점을 보입니다.
+- 순차 비율과 코어 수를 바꿔 보는 계산 모형, 작업 분배·동기화, 메모리·입출력, 확장 가능한 작업량 같은 현실의 제약을 다룹니다.
 
 ### 리눅스 명령어 학습 게임 경험 기획서
 

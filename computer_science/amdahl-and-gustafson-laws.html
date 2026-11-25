@@ -339,8 +339,32 @@ summary { cursor: pointer; font: 500 var(--t-label) var(--font-mono); margin-bot
 }
 </style>
 <style>
-:root{--accent:#a35023;--accent-dim:#f6e9df}
+html:root{
+color-scheme:dark;
+--bg:#171c23!important;--surface:#222b36!important;--text:#edf2f7!important;--text-dim:#b8c3d1!important;
+--accent:#f0b47e!important;--accent-dim:#3c302a!important;--border:#3a4655!important;--border-bright:#8292a5!important;
+--node-a:#f0b47e;--node-b:#8bbcca;--node-c:#b5c997;--ok:#b5c997;--warn:#f0b47e;--risk:#ffa4a4;--info:#8bbcca;
+--on-accent:#21170f;--parallel:#8bbcca;
+}
+html,body{background:var(--bg);color:var(--text)}
 body{word-break:keep-all}
+main,section,header{color:var(--text)}
+h1,h2,h3,h4,strong,b,label,summary{color:inherit}
+a{color:var(--accent)}
+.frame{background:var(--surface)!important;color:var(--text);border-color:var(--border)!important}
+figure figcaption{color:var(--text-dim)}
+figure .ve-svg text{fill:var(--text)}
+figure .ve-svg .ve-tag,figure .ve-svg .ve-el,figure .ve-svg .ve-axis-t{fill:var(--text-dim)!important}
+.ve-toc{background:var(--bg)!important;color:var(--text)!important;border-color:var(--border)!important}
+.ve-toc a{color:var(--text-dim)!important;background:transparent!important}
+.ve-toc a:hover,.ve-toc a:focus-visible{color:var(--text)!important;background:var(--surface)!important}
+.ve-toc a[data-current="true"],.ve-toc .pos{background:var(--accent)!important;color:var(--on-accent)!important;border-color:var(--accent)!important}
+.ve-toc .pos{border-radius:var(--r-1);padding:.25em .6em}
+.ve-table,table,tbody,tr,td{background:var(--surface)!important;color:var(--text)!important;border-color:var(--border)!important}
+thead,th{background:var(--bg)!important;color:var(--text)!important;border-color:var(--border-bright)!important}
+input,button,select{color-scheme:dark;accent-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+::selection{background:var(--accent);color:var(--on-accent)}
 main{max-width:1120px}
 .lead{max-width:60ch}
 .figure-title{font-size:var(--t-h3);font-weight:700;margin:0 0 var(--s-3)}
@@ -350,8 +374,8 @@ main{max-width:1120px}
 .hero-panel h3{margin:0 0 var(--s-3);font-size:var(--t-h3)}
 .hero-panel p{margin:var(--s-2) 0 0;max-width:34ch}
 .time-rail{display:flex;height:52px;width:100%;overflow:hidden;border:1px solid var(--border-bright);border-radius:var(--r-1);font-variant-numeric:tabular-nums}
-.time-rail .serial{background:#a35023;color:#fff;display:flex;align-items:center;justify-content:center;min-width:38px;font-weight:700}
-.time-rail .parallel{background:#d7d0c5;color:#25221e;display:flex;align-items:center;justify-content:center;font-weight:700}
+.time-rail .serial{background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;min-width:38px;font-weight:700}
+.time-rail .parallel{background:var(--parallel);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:700}
 .time-rail .void{flex:1;background:repeating-linear-gradient(135deg,transparent 0 7px,var(--border) 7px 8px)}
 .rail-labels{display:flex;justify-content:space-between;gap:var(--s-2);font-size:var(--t-small);color:var(--text-dim);margin-top:var(--s-2)}
 .hero-panel .small-line{margin-top:var(--s-3)}
@@ -374,12 +398,16 @@ main{max-width:1120px}
 .bar-row{display:grid;grid-template-columns:76px minmax(0,1fr) 74px;align-items:center;gap:var(--s-2);margin:var(--s-3) 0;font-variant-numeric:tabular-nums;font-size:var(--t-small)}
 .bar-row .track{height:28px;background:var(--surface);display:flex;border:1px solid var(--border);min-width:0}
 .bar-row .s{height:100%;background:var(--accent)}
-.bar-row .p{height:100%;background:#8f9b9b}
+.bar-row .p{height:100%;background:var(--parallel)}
 .bar-row .value{text-align:right}
 .bar-key{display:flex;gap:var(--s-4);font-size:var(--t-small);color:var(--text-dim)}
 .bar-key i{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:5px}
 .bar-key .k-s{background:var(--accent)}
-.bar-key .k-p{background:#8f9b9b}
+.bar-key .k-p{background:var(--parallel)}
+.segment-bar{display:flex;width:100%;height:26px;border:1px solid var(--border-bright);background:var(--surface);overflow:hidden}
+.segment-bar .s{background:var(--accent);height:100%}
+.segment-bar .p{background:var(--parallel);height:100%}
+.segment-labels{display:flex;justify-content:space-between;gap:var(--s-2);font-size:var(--t-small);color:var(--text-dim);margin-top:var(--s-2)}
 .derivation{border-left:2px solid var(--border-bright);padding-left:var(--s-4);margin-top:var(--s-5)}
 .derivation p{margin:var(--s-2) 0;max-width:70ch}
 .derivation .mathline{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;overflow-x:auto;white-space:nowrap}
@@ -410,8 +438,21 @@ main{max-width:1120px}
 .limits p{margin:0}
 .note-box{background:var(--surface);padding:var(--s-4);border-radius:var(--r-2);max-width:75ch}
 .note-box p:last-child{margin-bottom:0}
+.reading-note{font-size:var(--t-small);color:var(--text-dim);max-width:70ch}
+.reading-note a,.footnote-ref a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.footnote-ref{font-size:.7em;vertical-align:super;line-height:0;margin-left:.1em}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-4)}
+.detail-grid article{border-top:1px solid var(--border-bright);padding-top:var(--s-3)}
+.detail-grid h3{margin:0 0 var(--s-2)}
+.detail-grid p{margin:0}
+.checklist li{margin:var(--s-2) 0}
+.further-list details{border-top:1px solid var(--border-bright);padding:var(--s-3) 0}
+.further-list details:last-child{border-bottom:1px solid var(--border-bright)}
+.further-list summary{cursor:pointer;font-weight:700;color:var(--text)}
+.further-list details p{margin:var(--s-3) 0 0;max-width:72ch}
+.further-list details .formula{font-size:var(--t-body)}
 .source-list{font-size:var(--t-small)}
-@media(max-width:760px){.hero-grid,.question-row,.split-figure,.analogy,.comparison,.demo-output,.demo-controls,.limits{grid-template-columns:1fr}.equation-notes{grid-template-columns:1fr}.hero-panel+.hero-panel{border-top:1px solid var(--border);padding-top:var(--s-4)}.hero-frame{padding:var(--s-3)}}
+@media(max-width:760px){.hero-grid,.question-row,.split-figure,.analogy,.comparison,.demo-output,.demo-controls,.limits,.detail-grid{grid-template-columns:1fr}.equation-notes{grid-template-columns:1fr}.hero-panel+.hero-panel{border-top:1px solid var(--border);padding-top:var(--s-4)}.hero-frame{padding:var(--s-3)}}
 </style>
 </head>
 <body>
@@ -423,7 +464,7 @@ main{max-width:1120px}
     <pattern id="ve-w-off" width="10" height="10" patternUnits="userSpaceOnUse"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" style="fill:none;stroke:var(--text-dim)"/></pattern>
   </defs>
 </svg>
-<nav class="ve-toc" aria-label="목차"><div><a href="#intuition">핵심 직관</a><a href="#amdahl">암달</a><a href="#gustafson">구스타프손</a><a href="#compare">같은 사례</a><a href="#equivalence">두 식의 관계</a><a href="#explore">직접 계산</a><a href="#limits">현실의 제약</a></div><span class="pos"></span></nav>
+<nav class="ve-toc" aria-label="목차"><div><a href="#intuition">핵심 직관</a><a href="#amdahl">암달</a><a href="#gustafson">구스타프손</a><a href="#compare">같은 사례</a><a href="#equivalence">두 식의 관계</a><a href="#metrics">성능 지표</a><a href="#scaling">확장성</a><a href="#explore">직접 계산</a><a href="#limits">현실의 제약</a><a href="#practice">측정 방법</a><a href="#further">더 보기·각주</a></div><span class="pos"></span></nav>
 <main>
 <header>
 <p class="eyebrow">병렬 처리 · 성능 모델</p>
@@ -464,7 +505,7 @@ main{max-width:1120px}
 <text x="119" y="104" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">개점·준비</text>
 <text x="119" y="130" text-anchor="middle" fill="var(--text-dim)" font-size="15">순차 10분</text>
 <path class="ve-e" d="M204 108H278"/>
-<text class="ve-el" x="242" y="88">반죽을 나눈다</text>
+<text class="ve-el" x="242" y="48">나눈다</text>
 <rect x="278" y="65" width="170" height="86" rx="5" fill="var(--surface)" stroke="var(--border-bright)" stroke-width="2"/>
 <text x="363" y="104" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">오븐 1</text>
 <text x="363" y="130" text-anchor="middle" fill="var(--text-dim)" font-size="15">굽기</text>
@@ -477,7 +518,7 @@ main{max-width:1120px}
 <text x="790" y="104" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">마감·검수</text>
 <text x="790" y="130" text-anchor="middle" fill="var(--text-dim)" font-size="15">순차 작업</text>
 <path class="ve-axis" d="M34 205H865"/>
-<text class="ve-axis-t" x="34" y="231">코어를 더해도 개점·마감은 사라지지 않는다</text>
+<text class="ve-axis-t" x="34" y="231" style="text-anchor:start">코어를 더해도 개점·마감은 사라지지 않는다</text>
 </svg>
 </div>
 <figcaption><span class="fig-n">Fig. 2</span>여러 오븐은 굽는 일을 나눌 수 있지만 준비와 검수 시간을 없애지는 못한다.</figcaption>
@@ -507,9 +548,14 @@ main{max-width:1120px}
 <div class="formula" role="math" aria-label="암달 속도 향상률 S N은 1 나누기 괄호 s 더하기 p 나누기 N 괄호">S<sub>A</sub>(N) = T<sub>1</sub> / T<sub>N</sub> = 1 / (s + p/N) = 1 / ((1−p) + p/N)</div>
 <div class="equation-notes"><div><strong>T<sub>1</sub></strong><span>코어 1개로 처리한 원래 작업의 시간</span></div><div><strong>T<sub>N</sub></strong><span>같은 작업을 N개 코어로 처리한 시간</span></div><div><strong>p와 s</strong><span>코어 1개 실행 시간을 기준으로 한 비율</span></div></div>
 <div class="derivation"><h3>식을 유도하면</h3><p>원래 실행 시간을 1로 정규화한다. 순차 부분은 <i>s</i>, 병렬 부분은 <i>p</i>다. 병렬 부분이 N개 코어에 균등하게 분배되면 그 시간은 <i>p/N</i>이 된다.</p><p class="mathline">T<sub>N</sub> = s + p/N</p><p>속도 향상은 원래 시간 1을 새 시간으로 나눈 값이다.</p><p class="mathline">S<sub>A</sub>(N) = 1 / (s + p/N)</p></div>
-<div class="note-box"><p><strong>수치 예시.</strong> s = 0.1, p = 0.9, N = 10이면 새 시간은 원래 시간의 0.1 + 0.9/10 = 0.19다. 따라서 속도 향상은 1/0.19 ≈ <b>5.26배</b>다.</p><p><strong>상한.</strong> N이 무한히 커지면 p/N은 0에 가까워진다. s &gt; 0이면 최대 속도 향상은 <b>1/s = 1/(1−p)</b>다. s = 0인 이상적인 경우에만 이 상한이 사라진다.</p></div>
+<div class="note-box"><p><strong>수치 예시.</strong> s = 0.1, p = 0.9, N = 10이면 새 시간은 원래 시간의 0.1 + 0.9/10 = 0.19다. 따라서 속도 향상은 1/0.19 ≈ <b>5.26배</b>다.</p><p><strong>상한.</strong> N이 무한히 커지면 p/N은 0에 가까워진다. s &gt; 0이면 최대 속도 향상은 <b>1/s = 1/(1−p)</b>다. s = 0인 이상적인 경우에만 이 상한이 사라진다.</p><p><strong>경계값.</strong> N = 1이면 속도 향상은 1배다. 병렬화할 수 있는 부분이 전혀 없으면 p = 0이고 역시 1배다. 모든 작업을 완벽하게 병렬화할 수 있는 이상적인 p = 1에서는 N배다.</p></div>
 <h3>어떻게 해석해야 하나</h3>
 <p>병렬화 비율이 90%라는 말은 코어 1개로 실행했을 때 시간의 90%를 차지한 부분을 나눌 수 있다는 뜻이다. 코어 10개를 쓰면 병렬 부분은 90분에서 9분으로 줄지만 순차 10분은 그대로다. 코어를 추가할수록 새로 절약하는 시간은 작아진다.</p>
+<p>여기서 <i>p</i>는 병렬화할 수 있는 코드의 줄 수가 아니라 <b>기준 실행 시간의 비율</b>이다. 프로그램의 코드 대부분이 병렬이라도, 실제 실행 시간 대부분을 차지하는 순차 구간이 있다면 속도 향상은 작다. 반대로 실행 시간의 대부분을 쓰는 계산 구간을 병렬화하면 효과가 크다.<sup class="footnote-ref"><a href="#note-profile" aria-label="각주 1: 실행 시간 비율과 프로파일링">1</a></sup></p>
+<div class="ve-table"><table><thead><tr><th>코어 수</th><th>순차 시간</th><th>병렬 시간</th><th>전체 시간</th><th>속도 향상</th></tr></thead><tbody><tr><td class="num">1</td><td class="num">10분</td><td class="num">90분</td><td class="num">100분</td><td class="num">1.00배</td></tr><tr><td class="num">2</td><td class="num">10분</td><td class="num">45분</td><td class="num">55분</td><td class="num">1.82배</td></tr><tr><td class="num">4</td><td class="num">10분</td><td class="num">22.5분</td><td class="num">32.5분</td><td class="num">3.08배</td></tr><tr><td class="num">10</td><td class="num">10분</td><td class="num">9분</td><td class="num">19분</td><td class="num">5.26배</td></tr><tr><td class="num">100</td><td class="num">10분</td><td class="num">0.9분</td><td class="num">10.9분</td><td class="num">9.17배</td></tr></tbody></table></div>
+<p class="reading-note">표는 코어 간 분배가 완벽하고 추가 비용이 0인 경우다. 코어 수 10개에서 100개로 10배 늘려도 전체 시간은 19분에서 10.9분으로만 줄어든다.</p>
+<h3>암달의 법칙은 병렬 처리 밖의 최적화에도 적용된다</h3>
+<p>프로그램 시간 중 비율 <i>f</i>를 차지하는 부분을 <i>k</i>배 빠르게 만든다면 전체 속도 향상은 <i>1/((1−f)+f/k)</i>다. 병렬 처리에서는 개선 배수 <i>k</i>를 코어 수 <i>N</i>으로 놓은 형태가 암달의 식이다. 예를 들어 시간의 20%를 차지하는 함수만 10배 빠르게 만들어도 전체 프로그램은 <i>1/(0.8+0.2/10) ≈ 1.22배</i> 빨라진다.<sup class="footnote-ref"><a href="#note-optimization" aria-label="각주 2: 부분 최적화의 일반식">2</a></sup></p>
 </section>
 
 <section id="gustafson">
@@ -532,9 +578,13 @@ main{max-width:1120px}
 <div class="formula" role="math" aria-label="구스타프손 속도 향상률 S N은 알파 더하기 N 곱하기 괄호 1 빼기 알파 괄호, 즉 N 빼기 알파 곱하기 괄호 N 빼기 1 괄호">S<sub>G</sub>(N) = α + N(1−α) = N − α(N−1)</div>
 <div class="equation-notes"><div><strong>α</strong><span>N개 코어에서 확장된 작업을 실행한 시간 중 순차 비율</span></div><div><strong>1−α</strong><span>같은 실행에서 병렬 부분이 차지한 시간 비율</span></div><div><strong>S<sub>G</sub>(N)</strong><span>확장된 동일 작업을 한 코어로 처리한 시간 ÷ N코어 시간</span></div></div>
 <div class="derivation"><h3>식을 유도하면</h3><p>N개 코어에서 순차 작업은 α만큼, 병렬 작업은 1−α만큼 걸린다. 확장된 동일 작업을 코어 1개로 처리하면 병렬 부분에 N배의 시간이 든다.</p><p class="mathline">T<sub>N</sub> = α + (1−α) = 1</p><p class="mathline">T<sub>1</sub> = α + N(1−α)</p><p>따라서 같은 확장된 작업의 속도 향상은 <i>T<sub>1</sub>/T<sub>N</sub></i>이다.</p><p class="mathline">S<sub>G</sub>(N) = α + N(1−α)</p></div>
-<div class="note-box"><p><strong>수치 예시.</strong> N = 10, α = 0.1이면 S<sub>G</sub> = 10 − 0.1×9 = <b>9.1배</b>다. 이는 10개 코어가 100분에 끝낸 확장된 작업을 한 코어로 하면 910분 걸린다는 뜻이다.</p><p><strong>적용 상황.</strong> 더 큰 데이터셋, 더 높은 해상도, 더 촘촘한 시뮬레이션처럼 작업 크기를 늘릴 가치가 있을 때 유용하다. 순차 시간이 거의 일정하고 병렬 작업을 충분히 늘릴 수 있어야 한다.</p></div>
+<div class="note-box"><p><strong>수치 예시.</strong> N = 10, α = 0.1이면 S<sub>G</sub> = 10 − 0.1×9 = <b>9.1배</b>다. 이는 10개 코어가 100분에 끝낸 확장된 작업을 한 코어로 하면 910분 걸린다는 뜻이다.</p><p><strong>적용 상황.</strong> 더 큰 데이터셋, 더 높은 해상도, 더 촘촘한 시뮬레이션처럼 작업 크기를 늘릴 가치가 있을 때 유용하다. 순차 시간이 거의 일정하고 병렬 작업을 충분히 늘릴 수 있어야 한다.</p><p><strong>경계값.</strong> N = 1이면 속도 향상은 1배다. α = 1이면 확장할 병렬 작업이 없어 1배다. α = 0인 이상적인 경우에는 N배다.</p></div>
 <h3>‘9.1배’가 뜻하지 않는 것</h3>
 <p>원래 100분짜리 <em>같은 작업</em>이 10개 코어에서 100/9.1분 만에 끝난다는 뜻이 아니다. 10개 코어가 100분 동안 훨씬 큰 작업을 처리했고, 그 큰 작업을 한 코어로 수행했을 때의 시간과 비교한 값이다.</p>
+<p>이 계산에서는 코어가 늘어도 순차 부분은 10분으로 유지되고, 나머지 90분을 채울 만큼 병렬 작업을 추가한다. 따라서 <i>α = 0.1</i>은 모든 크기의 작업에 자동으로 적용되는 상수가 아니다. 실제 작업이 커지면서 파일 읽기, 결과 합치기, 통신 시간도 커진다면 α는 다시 측정해야 한다.</p>
+<div class="ve-table"><table><thead><tr><th>코어 수</th><th>실제 실행 시간</th><th>순차 작업의 한 코어 시간</th><th>병렬 작업의 한 코어 시간</th><th>동등 작업량</th></tr></thead><tbody><tr><td class="num">1</td><td class="num">100분</td><td class="num">10분</td><td class="num">90분</td><td class="num">100분</td></tr><tr><td class="num">2</td><td class="num">100분</td><td class="num">10분</td><td class="num">180분</td><td class="num">190분</td></tr><tr><td class="num">4</td><td class="num">100분</td><td class="num">10분</td><td class="num">360분</td><td class="num">370분</td></tr><tr><td class="num">10</td><td class="num">100분</td><td class="num">10분</td><td class="num">900분</td><td class="num">910분</td></tr><tr><td class="num">16</td><td class="num">100분</td><td class="num">10분</td><td class="num">1,440분</td><td class="num">1,450분</td></tr></tbody></table></div>
+<h3>이미지 처리로 바꾸어 보면</h3>
+<p>작업 준비에 10분이 들고 이미지 100장을 한 코어로 처리하는 데 90분이 든다고 하자. 같은 100장을 10개 코어에 나누면 암달의 계산에서는 19분이 걸린다. 구스타프손의 실험에서는 10개 코어가 각각 100장씩 처리해 이미지 1,000장을 100분에 끝낸다. 그 1,000장을 한 코어로 처리하면 10분 + 900분 = 910분이다. 이 예시는 준비 시간이 이미지 수와 무관하고 이미지별 처리 시간이 일정하다는 가정을 쓴다.<sup class="footnote-ref"><a href="#note-scaling" aria-label="각주 3: 강한 확장과 약한 확장">3</a></sup></p>
 </section>
 
 <section id="compare">
@@ -542,8 +592,8 @@ main{max-width:1120px}
 <h2>100분짜리 기준 작업에서 바꾸는 것은 하나뿐이다</h2>
 <figure>
 <div class="frame comparison">
-<article><h3>실험 A — 작업량 100분 분량 고정</h3><p>순차 10분 + 병렬 90분. 코어 10개가 병렬 부분을 9분에 처리한다.</p><p class="answer">100분 → 19분</p><p>속도 향상: 100/19 ≈ <b>5.26배</b></p><svg class="ve-svg ve-stack" viewBox="0 0 800 70" role="img" aria-label="10개 코어의 실행 시간: 순차 10분, 병렬 9분"><rect class="hot" x="0" y="0" width="421.05" height="40"/><text x="210.53" y="62">순차 10분</text><rect x="421.05" y="0" width="378.95" height="40"/><text x="610.53" y="62">병렬 9분</text></svg></article>
-<article><h3>실험 B — 실행 시간 100분 고정</h3><p>순차 10분 + 10개 코어가 병렬 작업을 90분 동안 처리한다.</p><p class="answer">100분 → 910분 분량</p><p>한 코어 환산 작업량: 10 + 10×90 = <b>910분</b></p><svg class="ve-svg ve-stack" viewBox="0 0 800 70" role="img" aria-label="한 코어 환산 작업량: 순차 10분, 병렬 900분"><rect class="hot" x="0" y="0" width="8.79" height="40"/><text x="24" y="62">순차 10분</text><rect x="8.79" y="0" width="791.21" height="40"/><text x="404.4" y="62">병렬 900분</text></svg></article>
+<article><h3>실험 A — 작업량 100분 분량 고정</h3><p>순차 10분 + 병렬 90분. 코어 10개가 병렬 부분을 9분에 처리한다.</p><p class="answer">100분 → 19분</p><p>속도 향상: 100/19 ≈ <b>5.26배</b></p><div class="segment-bar" role="img" aria-label="10코어 실행 시간 19분 중 순차 10분과 병렬 9분"><span class="s" style="width:52.63%"></span><span class="p" style="width:47.37%"></span></div><div class="segment-labels"><span>순차 10분</span><span>병렬 9분</span></div></article>
+<article><h3>실험 B — 실행 시간 100분 고정</h3><p>순차 10분 + 10개 코어가 병렬 작업을 90분 동안 처리한다.</p><p class="answer">100분 → 910분 분량</p><p>한 코어 환산 작업량: 10 + 10×90 = <b>910분</b></p><div class="segment-bar" role="img" aria-label="한 코어 환산 작업량 910분 중 순차 10분과 병렬 900분"><span class="s" style="width:1.1%"></span><span class="p" style="width:98.9%"></span></div><div class="segment-labels"><span>순차 10분</span><span>병렬 900분</span></div></article>
 </div>
 <figcaption><span class="fig-n">Fig. 5</span>암달의 5.26배와 구스타프손의 9.1배는 서로 다른 크기의 작업에서 나온다.</figcaption>
 </figure>
@@ -566,6 +616,47 @@ main{max-width:1120px}
 <div class="note-box"><p><strong>흔한 오류.</strong> 암달의 <i>s = 0.1</i>과 구스타프손의 <i>α = 0.1</i>을 같은 작업의 동일한 관측값이라고 놓고 5.26배와 9.1배를 직접 비교하는 것이다. 비율을 측정한 실행과 작업 크기부터 확인해야 한다.</p></div>
 </section>
 
+<section id="metrics">
+<p class="topic-label">결과를 읽는 방법</p>
+<h2>속도 향상률, 코어 효율, 처리량은 서로 다른 값이다</h2>
+<p>속도 향상률 <i>S(N)</i>은 동일한 작업의 한 코어 실행 시간 <i>T<sub>1</sub></i>을 N개 코어의 실행 시간 <i>T<sub>N</sub></i>으로 나눈 값이다. 코어 효율 <i>E(N)</i>은 속도 향상률을 코어 수로 다시 나눈 값이다. <i>E(N) = S(N)/N</i>이며, 이상적인 선형 속도 향상 <i>S(N)=N</i>에서는 효율이 100%다.</p>
+<figure>
+<div class="frame">
+<svg class="ve-svg" viewBox="0 0 900 310" role="img" aria-label="코어 1개부터 32개까지 코어 효율 추세. 고정 작업의 효율은 100%에서 약 24%로 낮아지고 확장 작업의 효율은 약 90%에 가까워진다" style="--ve-min: 772px">
+<path class="ve-axis" d="M76 30V230H795"/>
+<path class="ve-axis" d="M76 130H795"/>
+<text class="ve-axis-t" x="24" y="35">100%</text><text class="ve-axis-t" x="32" y="135">50%</text><text class="ve-axis-t" x="41" y="235">0%</text>
+<text class="ve-axis-t" x="68" y="260">1</text><text class="ve-axis-t" x="195" y="260">2</text><text class="ve-axis-t" x="322" y="260">4</text><text class="ve-axis-t" x="449" y="260">8</text><text class="ve-axis-t" x="570" y="260">16</text><text class="ve-axis-t" x="696" y="260">32코어</text>
+<polyline points="76,30 203,48 330,76 457,112 584,150 711,181" fill="none" stroke="var(--accent)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+<polyline points="76,30 203,40 330,45 457,48 584,49 711,49" fill="none" stroke="var(--parallel)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+<circle cx="711" cy="181" r="5" fill="var(--accent)"/><circle cx="711" cy="49" r="5" fill="var(--parallel)"/>
+<text x="730" y="55" fill="var(--text)" font-size="15">확장 작업 · 약 90%</text>
+<text x="730" y="185" fill="var(--text)" font-size="15">고정 작업 · 약 24%</text>
+<text class="ve-axis-t" x="76" y="292" style="text-anchor:start">코어 수는 두 배씩 증가 · 간격은 배수 기준</text>
+</svg>
+</div>
+<figcaption><span class="fig-n">Fig. 7</span>순차 시간 10% 예시에서 고정 작업의 코어 효율은 낮아진다. 확장 작업의 높은 효율은 더 큰 문제를 처리한 결과다.</figcaption>
+</figure>
+<div class="ve-table"><table><thead><tr><th>지표</th><th>정의</th><th>10코어·고정 작업</th><th>10코어·확장 작업</th></tr></thead><tbody><tr><td>실행 시간</td><td>작업 시작부터 끝까지</td><td class="num">19분</td><td class="num">100분</td></tr><tr><td>한 코어 환산 작업량</td><td>해당 작업을 한 코어로 처리할 시간</td><td class="num">100분</td><td class="num">910분</td></tr><tr><td>속도 향상률</td><td>각 실험의 한 코어 시간 ÷ 10코어 시간</td><td class="num">5.26배</td><td class="num">9.1배</td></tr><tr><td>코어 효율</td><td>속도 향상률 ÷ 10</td><td class="num">52.6%</td><td class="num">91%</td></tr></tbody></table></div>
+<p>표의 두 효율은 <b>서로 다른 크기의 작업</b>에서 측정한 값이다. 확장 작업의 91%를 고정 작업보다 하드웨어 사용률이 높다는 직접적인 증거로 읽으면 안 된다. CPU 사용률은 코어가 바쁘게 동작한 시간의 비율이며, 코어 효율은 이상적인 선형 속도 향상에 대한 비율이다. 둘은 정의가 다르다.<sup class="footnote-ref"><a href="#note-efficiency" aria-label="각주 4: 코어 효율과 CPU 사용률">4</a></sup></p>
+<p>처리량은 일정 시간에 완료한 작업 수로 측정한다. 예를 들어 초당 처리한 요청 수나 분당 처리한 이미지 수다. 지연 시간은 작업 하나가 완료될 때까지 기다린 시간이다. 서버에서는 처리량을 높여도 개별 요청의 지연 시간이 줄지 않을 수 있으므로 둘을 따로 기록해야 한다.</p>
+</section>
+
+<section id="scaling">
+<p class="topic-label">병렬 성능 실험의 설계</p>
+<h2>강한 확장은 작업을 고정하고, 약한 확장은 코어당 일을 고정한다</h2>
+<figure>
+<div class="frame limits">
+<article><h3>강한 확장</h3><p><b>총 작업량을 고정</b>한다. 이미지 100장을 코어 1개와 10개로 각각 처리해 시간을 비교한다. 암달의 법칙이 이 조건의 이상적 상한을 설명한다.</p></article>
+<article><h3>약한 확장</h3><p><b>코어당 작업량을 고정</b>한다. 1코어에 이미지 100장이라면 10코어에는 1,000장을 준다. 실행 시간이 거의 같으면 약한 확장이 잘 되는 것이다.</p></article>
+<article><h3>구스타프손의 관점</h3><p><b>실행 시간을 기준</b>으로 병렬 작업량을 키운다. 약한 확장 실험과 가깝지만 두 용어가 완전히 같은 정의는 아니다. 구스타프손의 식은 N코어 실행에서 측정한 순차 비율 α를 사용한다.</p></article>
+</div>
+<figcaption><span class="fig-n">Fig. 8</span>작업량을 어떻게 늘렸는지 기록해야 병렬 성능 수치를 해석할 수 있다.</figcaption>
+</figure>
+<div class="detail-grid"><article><h3>고정된 입력 크기</h3><p>같은 데이터셋을 두고 코어 수만 늘린다. 성능 목표는 완료 시간 단축이다. 많은 코어를 추가한 뒤에도 입력 데이터가 작으면 코어마다 맡을 일이 너무 적어져 분배 비용이 두드러진다.</p></article><article><h3>커지는 입력 크기</h3><p>데이터 크기나 해상도를 늘린다. 성능 목표는 정해진 시간에 더 많은 결과를 얻는 것이다. 하지만 입력이 커지면 메모리 사용량, 데이터 이동량, 결과 합치기 시간도 같이 늘어날 수 있다.</p></article></div>
+<p class="reading-note">“약한 확장”을 평가할 때는 코어당 데이터량, 총 실행 시간, 메모리 용량이 함께 어떻게 변했는지 확인한다. “강한 확장”을 평가할 때는 동일한 입력과 출력 조건인지 확인한다.</p>
+</section>
+
 <section id="explore">
 <p class="topic-label">직접 계산</p>
 <h2>순차 비율과 코어 수를 바꾸어 차이를 확인한다</h2>
@@ -576,7 +667,7 @@ main{max-width:1120px}
 <div class="demo-output"><div class="demo-result"><span>암달 · 고정 작업의 완료 시간</span><strong id="out-am-time">19분</strong><div class="demo-bar"><i id="bar-am" style="width:19%"></i></div><span id="out-am-speed">100분의 작업을 5.26배 빠르게 완료</span></div><div class="demo-result"><span>구스타프손 · 100분에 처리한 작업</span><strong id="out-gu-work">910분 분량</strong><div class="demo-bar"><i id="bar-gu" style="width:91%"></i></div><span id="out-gu-speed">한 코어로는 910분 · 작업 처리량 9.1배</span></div></div>
 <p class="demo-note" id="demo-note">이상적 분할을 가정한 계산이다. 작업 분배와 동기화 비용은 포함하지 않는다.</p>
 </div>
-<figcaption><span class="fig-n">Fig. 7</span>같은 순차 시간에서 코어를 늘리면 고정 작업의 시간은 바닥에 접근하고, 확장된 작업량은 커진다.</figcaption>
+<figcaption><span class="fig-n">Fig. 9</span>같은 순차 시간에서 코어를 늘리면 고정 작업의 시간은 바닥에 접근하고, 확장된 작업량은 커진다.</figcaption>
 </figure>
 </section>
 
@@ -586,9 +677,50 @@ main{max-width:1120px}
 <div class="limits"><article><h3>작업 분배·동기화</h3><p>스레드 시작, 결과 합치기, 잠금 대기, 노드 간 통신이 시간을 쓴다. 암달의 단순식에는 이 비용이 없다.</p></article><article><h3>메모리·입출력</h3><p>코어가 많아도 메모리 대역폭, 저장장치, 네트워크가 함께 늘지 않으면 병렬 부분이 1/N로 줄지 않는다.</p></article><article><h3>확장 가능한 작업량</h3><p>구스타프손의 계산은 유익한 병렬 작업을 늘릴 수 있어야 한다. 데이터가 작거나 순차 단계도 커지면 성립 범위가 좁아진다.</p></article></div>
 <div class="formula" role="math" aria-label="실제 시간은 순차 시간 더하기 병렬 시간 나누기 N 더하기 추가 비용 h N">T<sub>N</sub> = s + p/N + h(N)</div>
 <p>여기서 <i>h(N)</i>은 코어가 늘면서 생기는 추가 비용을 나타내는 단순화된 항이다. 이 비용이 커지면 코어를 더해도 속도 향상이 작아지거나 실행 시간이 오히려 늘 수 있다.</p>
+<figure>
+<div class="frame split-figure">
+<div class="bar-chart" aria-label="추가 비용이 코어마다 늘어나는 예시. 1, 2, 4, 8, 16, 32코어의 실행 시간은 100, 55.5, 34, 24.75, 23.125, 28.3125분이다">
+<div class="bar-key"><span><i class="k-s"></i>순차와 추가 비용</span><span><i class="k-p"></i>병렬 계산</span></div>
+<div class="bar-row"><span>1코어</span><div class="track"><i class="s" style="width:10%"></i><i class="p" style="width:90%"></i></div><span class="value">100분</span></div>
+<div class="bar-row"><span>2코어</span><div class="track"><i class="s" style="width:10.5%"></i><i class="p" style="width:45%"></i></div><span class="value">55.5분</span></div>
+<div class="bar-row"><span>4코어</span><div class="track"><i class="s" style="width:11.5%"></i><i class="p" style="width:22.5%"></i></div><span class="value">34분</span></div>
+<div class="bar-row"><span>8코어</span><div class="track"><i class="s" style="width:13.5%"></i><i class="p" style="width:11.25%"></i></div><span class="value">24.75분</span></div>
+<div class="bar-row"><span>16코어</span><div class="track"><i class="s" style="width:17.5%"></i><i class="p" style="width:5.625%"></i></div><span class="value">23.13분</span></div>
+<div class="bar-row"><span>32코어</span><div class="track"><i class="s" style="width:25.5%"></i><i class="p" style="width:2.8125%"></i></div><span class="value">28.31분</span></div>
+</div>
+<div class="worked"><p>설명용 가정</p><span class="big">표시한 값 중 16코어가 최소</span><p>T<sub>N</sub> = 10 + 90/N + 0.5(N−1)분. 코어마다 0.5분의 추가 비용이 생긴다고 가정했다.</p></div>
+</div>
+<figcaption><span class="fig-n">Fig. 10</span>추가 비용이 커지면 32코어가 16코어보다 느릴 수 있다. 수치는 원리를 보여주기 위한 가상 예시다.</figcaption>
+</figure>
+<h3>순차 시간은 고정된 물리량이 아니다</h3>
+<p>프로그램을 병렬화할 때 순차 구간의 길이가 바뀔 수 있다. 예를 들어 스레드 생성과 결과 합치기가 새로 생긴다. 입력을 키우면 순차적으로 읽어야 하는 데이터나 검증해야 하는 결과도 늘 수 있다. 따라서 한 번 측정한 <i>s</i>나 <i>α</i>를 모든 코어 수와 입력 크기에 그대로 적용하지 않는다.</p>
+<p>작업을 나누는 방법도 중요하다. 한 코어가 다른 코어보다 오래 일하면 나머지는 기다린다. 이를 부하 불균형이라고 한다. 공유 메모리의 대역폭이 포화되거나 저장장치가 병목이 되면 병렬 부분 자체가 <i>p/N</i>보다 오래 걸린다.<sup class="footnote-ref"><a href="#note-bottleneck" aria-label="각주 5: 메모리 병목과 루프라인 모델">5</a></sup></p>
 <div class="ve-table"><table><thead><tr><th>성능 목표</th><th>먼저 볼 법칙</th><th>실제로 확인할 값</th></tr></thead><tbody><tr><td>같은 요청·작업의 지연 시간 단축</td><td>암달</td><td>기준 실행의 순차 시간, 코어별 완료 시간</td></tr><tr><td>같은 시간의 처리량·문제 크기 확대</td><td>구스타프손</td><td>확장된 작업량, 순차 시간, 처리량</td></tr><tr><td>실제 시스템의 코어 증설 결정</td><td>두 관점 모두</td><td>통신·동기화·메모리 병목과 측정값</td></tr></tbody></table></div>
 <h3>기억할 문장</h3>
 <p><b>암달</b>은 고정된 일을 더 빨리 끝내려 할 때 남는 순차 시간이 한계를 만든다고 말한다. <b>구스타프손</b>은 병렬로 할 일을 늘릴 수 있다면 같은 시간에 훨씬 큰 문제를 다룰 수 있다고 말한다. 두 법칙 모두 어떤 작업을 비교하는지와 순차 비율을 어디서 측정했는지를 명시해야 올바르게 사용할 수 있다.</p>
+</section>
+<section id="practice">
+<p class="topic-label">실제로 계산할 때</p>
+<h2>작업 조건을 적고 시간을 재야 법칙을 적용할 수 있다</h2>
+<ol class="checklist"><li><b>성능 목표를 정한다.</b> 같은 입력의 완료 시간을 줄일지, 정해진 시간 안에 처리할 입력을 늘릴지 먼저 결정한다.</li><li><b>입력과 출력을 고정하거나 기록한다.</b> 데이터 크기, 해상도, 처리할 항목 수, 결과의 정확도가 달라지면 비교 기준도 달라진다.</li><li><b>기준 실행을 측정한다.</b> 한 코어의 총시간과 시간이 많이 드는 구간을 여러 번 재고, 편차도 함께 본다. 순차 비율은 추측보다 측정값을 우선한다.</li><li><b>코어별 실행을 측정한다.</b> 2, 4, 8, 16개처럼 여러 지점에서 전체 시간, 순차 시간, 통신·동기화 대기 시간을 기록한다.</li><li><b>모델과 측정값을 비교한다.</b> 실제 시간이 <i>s+p/N</i>보다 길다면 추가 비용과 공유 자원 병목을 조사한다. 확장 작업에서는 입력이 늘어도 순차 시간과 총시간이 유지되는지 확인한다.</li></ol>
+<div class="note-box"><p><strong>측정 예.</strong> 100분짜리 한 코어 실행에서 순차 구간이 10분이라면 암달의 이상적인 10코어 예상 시간은 19분이다. 실제 10코어 실행이 27분이라면 차이 8분을 분배·대기·메모리·입출력 비용 중 어디서 썼는지 조사한다. 이 경우 실제 속도 향상은 100/27 ≈ <b>3.70배</b>다.</p></div>
+<p class="reading-note">속도 향상이 코어 수보다 커지는 “초선형 속도 향상”이 관측되기도 한다. 캐시 적중률이나 메모리 동작이 달라졌을 수 있으므로, 단순한 두 법칙만으로 원인을 결론 내리지 말고 메모리와 I/O 측정값을 함께 살펴본다.</p>
+</section>
+
+<section id="further">
+<p class="topic-label">각주 · 더 보기</p>
+<h2>다음 개념을 찾아보면 성능 분석이 더 정확해진다</h2>
+<p>아래 항목은 본문의 가정이 깨지는 지점을 이해할 때 유용하다. 제목을 열면 핵심 질문과 찾아볼 용어가 나온다.</p>
+<div class="further-list">
+<details id="note-profile"><summary>1. 프로파일링: 병렬화할 시간을 어떻게 찾는가?</summary><p>함수별 실행 시간뿐 아니라 호출 빈도, 대기 시간, 입력 크기별 변화를 측정한다. 순차 비율 <i>s</i>는 코드의 줄 수가 아니라 기준 실행 시간에서 차지하는 비율이다. 찾아볼 용어: <b>CPU profiler, sampling profiler, flame graph, critical path</b>.</p></details>
+<details id="note-optimization"><summary>2. 부분 최적화의 일반식: 어디를 먼저 빠르게 만들까?</summary><p>전체 실행 시간의 비율 <i>f</i>를 차지하는 부분을 <i>k</i>배 가속하면 전체 속도 향상은 다음과 같다. 현재 시간을 많이 쓰는 부분을 고르는 데 쓴다.</p><div class="formula">S = 1 / ((1−f) + f/k)</div><p>찾아볼 용어: <b>Amdahl’s law for optimization, performance profiling</b>.</p></details>
+<details id="note-scaling"><summary>3. 강한 확장과 약한 확장: 작업량을 어떻게 바꾸는가?</summary><p>강한 확장에서는 총 입력 크기를 고정한다. 약한 확장에서는 코어당 입력 크기를 고정한다. 구스타프손의 법칙은 확장된 작업을 일정한 실행 시간 관점에서 평가한다. 찾아볼 용어: <b>strong scaling, weak scaling, scaled speedup</b>.</p></details>
+<details id="note-efficiency"><summary>4. 코어 효율과 CPU 사용률: 왜 서로 다른가?</summary><p>코어 효율은 <i>속도 향상률/코어 수</i>다. CPU 사용률은 코어가 실행 중이었던 시간의 비율이다. 모든 코어가 바빠도 대기·중복 계산 때문에 코어 효율이 낮을 수 있다. 찾아볼 용어: <b>parallel efficiency, utilization, throughput, latency</b>.</p></details>
+<details id="note-bottleneck"><summary>5. 메모리 병목: 계산을 나눠도 왜 빨라지지 않는가?</summary><p>모든 코어가 같은 메모리와 저장장치를 사용한다. 데이터 이동이 계산보다 오래 걸리면 코어를 추가해도 속도 향상이 작다. 계산량과 메모리 이동량의 비율을 살펴보는 <b>Roofline 모델</b>이 다음 단계다. 찾아볼 용어: <b>memory bandwidth, cache locality, arithmetic intensity, Roofline model</b>.</p></details>
+<details><summary>6. 불균형과 통신: 가장 늦은 코어를 왜 기다리는가?</summary><p>병렬 구간의 완료 시간은 평균 코어 시간보다 가장 늦게 끝난 코어의 시간에 가까울 수 있다. 코어 사이의 데이터 전달과 동기화도 추가된다. 찾아볼 용어: <b>load balancing, synchronization overhead, communication cost, critical path</b>.</p></details>
+<details><summary>7. 유효 순차 비율: 측정값에서 병렬화의 한계를 어떻게 추정하는가?</summary><p>N &gt; 1일 때 실제로 측정한 속도 향상 <i>S(N)</i>에서 암달의 단순 모델에 대응하는 순차 비율을 역산할 수 있다. 이 값은 프로그램의 순수한 순차 코드 비율이라기보다 통신·대기 등까지 반영한 진단 지표다.</p><div class="formula">e = (1/S(N) − 1/N) / (1 − 1/N)</div><p>찾아볼 용어: <b>Karp–Flatt metric</b>.</p></details>
+</div>
+<p class="reading-note">각주는 추가 탐색을 위한 길잡이다. 실제 시스템에는 여러 병목이 동시에 나타나므로 위 개념들을 측정 결과와 함께 적용한다.</p>
 </section>
 <section class="sources" aria-label="출처"><p class="ve-label caps">원전</p><p class="source-list">Gene M. Amdahl, “Validity of the Single Processor Approach to Achieving Large Scale Computing Capabilities,” AFIPS Spring Joint Computer Conference, 1967. John L. Gustafson, “Reevaluating Amdahl’s Law,” <i>Communications of the ACM</i> 31(5), 1988, pp. 532–533.</p></section>
 </main>
@@ -624,6 +756,42 @@ main{max-width:1120px}
   sInput.addEventListener('input',update);
   nInput.addEventListener('input',update);
   update();
+})();
+(() => {
+  const nav = document.querySelector('.ve-toc');
+  if (!nav) return;
+  const items = Array.from(nav.querySelectorAll('a[href^="#"]'))
+    .map(link => ({link, section: document.getElementById(link.hash.slice(1))}))
+    .filter(item => item.section);
+  if (!items.length) return;
+  let pending = false;
+  function updateCurrent() {
+    pending = false;
+    let current = items[0];
+    for (const item of items) {
+      if (item.section.getBoundingClientRect().top <= 160) current = item;
+      else break;
+    }
+    for (const item of items) {
+      if (item === current) {
+        item.link.dataset.current = 'true';
+        item.link.setAttribute('aria-current', 'location');
+      } else {
+        delete item.link.dataset.current;
+        item.link.removeAttribute('aria-current');
+      }
+    }
+  }
+  function scheduleUpdate() {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(updateCurrent);
+  }
+  addEventListener('scroll', scheduleUpdate, {passive:true});
+  addEventListener('resize', scheduleUpdate);
+  addEventListener('hashchange', scheduleUpdate);
+  addEventListener('load', scheduleUpdate);
+  updateCurrent();
 })();
 </script>
 <script data-ve-kit>

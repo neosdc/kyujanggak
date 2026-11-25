@@ -18,7 +18,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 | 경로 | 내용 |
 | --- | --- |
 | `ai/` | AI 도구와 모델: 코딩 에이전트, 로컬 AI 모델 선택, 오프라인 음성 인식(STT)·합성(TTS) |
-| `computer_science/` | 소프트웨어 아키텍처, 네트워크·인프라, 관측성, 병렬 처리 성능 모델 |
+| `computer_science/` | 소프트웨어 아키텍처, 네트워크·인프라, 관측성, 로그 레벨, 병렬 처리 성능 모델 |
 | `hardware/` | 보드·카메라 등 하드웨어 선택과 구성(CCTV), 제어의 기초(PID) |
 | `system_engineering/` | 시스템 엔지니어링 운영: 장애 등급, 시스템 모니터링 |
 | `index.html` | GitHub Pages 목차 페이지 (루트에 유지) |
@@ -29,7 +29,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 ## 저장소의 성격
 
 - 기술 참고 자료, 학습 가이드와 기획 문서를 모아 두는 저장소입니다. 문서에는 구조도, 비교표, 명령어·설정·의사 코드 예제가 포함됩니다.
-- 현재 자료는 한국어로 작성된 **HTML 가이드 21개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
+- 현재 자료는 한국어로 작성된 **HTML 가이드 22개와 Markdown 기획서 1개**입니다. 이 README는 전체 자료의 목차와 이용 안내를 제공합니다.
 - HTML의 스타일, 스크립트와 SVG 도식은 각 파일 안에 포함되어 있습니다. 글꼴은 외부 Google Fonts를 사용하며, 일부 문서에는 단계별 도식 재생·검색·복사 같은 상호작용이 있습니다.
 - 문서를 열기 위한 빌드나 서버는 필요하지 않습니다. 별도의 빌드 설정, 자동 테스트나 배포 스크립트는 없습니다.
 
@@ -57,6 +57,7 @@ GitHub Pages로 배포하면 별도 설치 없이 브라우저에서 바로 읽�
 | [computer_science/cloud-internal-vpn.html](./computer_science/cloud-internal-vpn.html) | 클라우드 ↔ 내부망 VPN | WireGuard로 클라우드 VM과 내부망을 연결하고 Nginx가 내부 웹에 접근하도록 하는 구성 노트 |
 | [computer_science/opentelemetry-jaeger.html](./computer_science/opentelemetry-jaeger.html) | OpenTelemetry + Jaeger | 계측·문맥 전파·OTLP 수집과 Jaeger의 Trace 저장·조회, 샘플링·운영을 설명한 가이드 |
 | [computer_science/amdahl-and-gustafson-laws.html](./computer_science/amdahl-and-gustafson-laws.html) | 암달·구스타프손의 법칙 | 작업량을 고정하는 암달의 법칙과 실행 시간을 고정하는 구스타프손의 법칙을 식 유도, 100분 기준 예시, 계산 모형으로 비교한 학습 가이드 |
+| [computer_science/software-log-levels.html](./computer_science/software-log-levels.html) | 소프트웨어 로그 레벨 | TRACE부터 FATAL까지 로그 레벨의 의미와 출력 설정, 로그 작성·수집·조회, 운영 정책과의 연결을 개발자·System Engineer·SRE용으로 설명한 안내서 |
 | [system_engineering/system-engineering-incident-priority.html](./system_engineering/system-engineering-incident-priority.html) | P0–P4 장애 등급과 모니터링 | 사용자 영향에서 출발해 P0–P4 등급을 정하는 방법과 알림 설계, 대응·에스컬레이션, SLO와의 연결을 System Engineer 입문자용으로 정리한 교육용 안내서 |
 | [linux-command-game-experience-plan.ko.md](./linux-command-game-experience-plan.ko.md) | 리눅스 명령어 학습 게임 기획 | 기록 정거장 복구를 통해 파일·경로·명령 선택과 결과 확인을 배우는 게임의 경험 기획서 |
 
@@ -273,6 +274,19 @@ OpenTelemetry의 계측·수집·전송과 Jaeger v2의 Trace 저장·조회 역
 - 100분짜리 기준 작업에서 두 실험(작업량 고정, 실행 시간 고정)을 비교하고, 같은 작업으로 맞추면 두 식이 같은 답을 낸다는 점을 보입니다.
 - 순차 비율과 코어 수를 바꿔 보는 계산 모형, 작업 분배·동기화, 메모리·입출력, 확장 가능한 작업량 같은 현실의 제약을 다룹니다.
 - 암달의 법칙이 병렬 처리 밖의 최적화에도 적용된다는 점(이미지 처리 예), 속도 향상률·코어 효율·처리량의 구분, 강한 확장과 약한 확장, 순차 시간이 고정된 값이 아니라는 점을 정리합니다.
+
+### 소프트웨어 로그 레벨 상세 안내서
+
+`computer_science/software-log-levels.html`
+
+개발자·System Engineer·SRE가 함께 읽을 수 있도록, TRACE·DEBUG·INFO·WARN·ERROR·FATAL의 의미부터 로그 작성, 수집, 조회, 운영 정책까지 이어서 설명한 안내서입니다. 레벨은 사건의 심각도를, 출력 설정은 기록할 범위를 정한다는 구분을 중심에 둡니다.
+
+- 높은 레벨이 더 많은 정보가 아니라 더 심각한 사건을 뜻한다는 점, INFO로 설정하면 일반적으로 INFO 이상을 통과시킨다는 점
+- 예외 유무보다 기대한 결과와 실패 범위로 레벨을 정하는 방법, ERROR 한 줄과 P1 장애는 같은 단위가 아니라는 점, 같은 실패를 계층마다 ERROR로 반복하면 영향이 부풀려진다는 점
+- 레벨만으로는 원인을 찾을 수 없어 맥락을 연결해야 한다는 점, 플랫폼마다 다른 레벨 숫자를 정규화 없이 비교하면 안 된다는 점
+- 자세한 로그를 필요한 범위와 시간에 한정해 늘리는 방법, 출력을 끈 로그에도 비용이 생길 수 있다는 점, DEBUG에도 비밀을 남기면 안 되고 INFO가 필수 감사 기록일 수 있다는 점
+- Python 예제(로거는 DEBUG, 콘솔 출력은 INFO)와 팀의 로그 정책에 넣을 항목
+- 참고한 공식 자료: Python `logging`, Log4j, .NET 로깅, RFC 5424, OpenTelemetry 로그 데이터 모델, OWASP 로깅 치트시트. 공식 정의와 팀이 정해야 할 정책을 구분해 읽도록 안내함
 
 ### P0–P4 장애 등급과 시스템 모니터링 안내서
 
